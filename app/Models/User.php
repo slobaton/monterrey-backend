@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\AllowedFilter;
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasUuids;
@@ -78,12 +81,12 @@ class User extends Authenticatable
         ];
     }
 
-    protected static function getDefaultSort()
+    protected static function getDefaultSort(): String
     {
         return 'name';
     }
 
-    protected static function getAllowedIncludes()
+    protected static function getAllowedIncludes(): Array
     {
         return [];
     }
