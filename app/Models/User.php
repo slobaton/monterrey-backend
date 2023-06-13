@@ -5,13 +5,13 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-
-use Spatie\QueryBuilder\AllowedSort;
-use Spatie\QueryBuilder\AllowedFilter;
 
 class User extends Authenticatable
 {
@@ -86,27 +86,27 @@ class User extends Authenticatable
         return 'name';
     }
 
-    protected static function getAllowedIncludes(): Array
+    protected static function getAllowedIncludes(): array
     {
         return [];
     }
 
     public function scopeAll(Builder $query, $search): Builder
     {
-        return $query->where('name', 'ILIKE', "%{$search}%")
+        return $query->where('name', 'LIKE', "%{$search}%")
             ->orWhere('paternal_surname', '=', $search)
             ->orWhere('maternal_surname', '=', $search)
             ->orWhere('email', '=', $search);
     }
 
-    public function checkBeforeUpdatePassword(Request $request): Array
+    public function checkBeforeUpdatePassword(Request $request): array
     {
-      $userInputs = $request->all();
+        $userInputs = $request->all();
 
-      if ($request->has('password') && empty($request->password)) {
-          unset($userInputs['password']);
-      }
+        if ($request->has('password') && empty($request->password)) {
+            unset($userInputs['password']);
+        }
 
-      return $userInputs;
+        return $userInputs;
     }
 }
