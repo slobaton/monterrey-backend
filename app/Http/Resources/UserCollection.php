@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Resources\Security;
+namespace App\Http\Resources;
 
 use App\Http\Resources\ApiResourceCollection;
-use App\Http\Resources\Security\UserResource;
+use App\Http\Resources\UserResource;
 
 class UserCollection extends ApiResourceCollection
 {
