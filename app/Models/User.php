@@ -3,14 +3,20 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Http\Request;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\AllowedFilter;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasUuids;
 
     /**
      * The attributes that are mass assignable.
@@ -19,7 +25,10 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'paternal_surname',
+        'maternal_surname',
         'email',
+        'username',
         'password',
     ];
 
@@ -42,4 +51,66 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    protected function password(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $password) => bcrypt($password),
+        );
+    }
+
+    protected static function getAllowedFilters()
+    {
+        return [
+            'username',
+            'name',
+            'email',
+            'paternal_surname',
+            'maternal_surname',
+            AllowedFilter::scope('all'),
+        ];
+    }
+
+    protected static function getAllowedSorts()
+    {
+        return [
+            'username',
+            'name',
+            'email',
+            'paternal_surname',
+            'maternal_surname',
+            AllowedSort::field('created_at'),
+            AllowedSort::field('updated_at'),
+        ];
+    }
+
+    protected static function getDefaultSort(): String
+    {
+        return 'name';
+    }
+
+    protected static function getAllowedIncludes(): array
+    {
+        return [];
+    }
+
+    public function scopeAll(Builder $query, $search): Builder
+    {
+        return $query->where(DB::raw('LOWER(username)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(name)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(paternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(maternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(email)'), 'LIKE', "%" . strtolower($search) . "%");
+    }
+
+    public function checkBeforeUpdatePassword(Request $request): array
+    {
+        $userInputs = $request->all();
+
+        if ($request->has('password') && empty($request->password)) {
+            unset($userInputs['password']);
+        }
+
+        return $userInputs;
+    }
 }
