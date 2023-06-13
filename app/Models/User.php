@@ -61,6 +61,7 @@ class User extends Authenticatable
     protected static function getAllowedFilters()
     {
         return [
+            'username',
             'name',
             'email',
             'paternal_surname',
@@ -72,6 +73,7 @@ class User extends Authenticatable
     protected static function getAllowedSorts()
     {
         return [
+            'username',
             'name',
             'email',
             'paternal_surname',
@@ -93,10 +95,11 @@ class User extends Authenticatable
 
     public function scopeAll(Builder $query, $search): Builder
     {
-        return $query->where('name', 'LIKE', "%{$search}%")
-            ->orWhere('paternal_surname', '=', $search)
-            ->orWhere('maternal_surname', '=', $search)
-            ->orWhere('email', '=', $search);
+        return $query->where('username', 'LIKE', "%{$search}%")
+            ->orWhere('name', 'LIKE', "%{$search}%")
+            ->orWhere('paternal_surname', 'LIKE', $search)
+            ->orWhere('maternal_surname', 'LIKE', $search)
+            ->orWhere('email', 'LIKE', $search);
     }
 
     public function checkBeforeUpdatePassword(Request $request): array
