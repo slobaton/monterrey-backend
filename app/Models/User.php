@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -95,11 +96,11 @@ class User extends Authenticatable
 
     public function scopeAll(Builder $query, $search): Builder
     {
-        return $query->where('username', 'LIKE', "%{$search}%")
-            ->orWhere('name', 'LIKE', "%{$search}%")
-            ->orWhere('paternal_surname', 'LIKE', $search)
-            ->orWhere('maternal_surname', 'LIKE', $search)
-            ->orWhere('email', 'LIKE', $search);
+        return $query->where(DB::raw('LOWER(username)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(name)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(paternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(maternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(email)'), 'LIKE', "%" . strtolower($search) . "%");
     }
 
     public function checkBeforeUpdatePassword(Request $request): array
