@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
@@ -32,7 +33,12 @@ class Client extends Model
         'user_id'
     ];
 
-    protected static function getAllowedFilters()
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public static function getAllowedFilters()
     {
         return [
             'nit',
@@ -46,7 +52,7 @@ class Client extends Model
         ];
     }
 
-    protected static function getAllowedSorts()
+    public static function getAllowedSorts()
     {
         return [
             'nit',
@@ -60,14 +66,16 @@ class Client extends Model
         ];
     }
 
-    protected static function getDefaultSort(): String
+    public static function getDefaultSort(): String
     {
         return 'name';
     }
 
-    protected static function getAllowedIncludes(): array
+    public static function getAllowedIncludes(): array
     {
-        return [];
+        return [
+            'users'
+        ];
     }
 
     public function scopeAll(Builder $query, $search): Builder
