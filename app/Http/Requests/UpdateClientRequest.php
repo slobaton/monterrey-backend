@@ -23,6 +23,7 @@ class UpdateClientRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'id'                => 'required|uuid',
             'nit'               => [
                 'string',
                 'max:20',
