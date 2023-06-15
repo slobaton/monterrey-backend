@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,10 +22,12 @@ class ClientFactory extends Factory
             'name' => fake()->name(),
             'paternal_surname' => fake()->lastName(),
             'maternal_surname' => fake()->lastName(),
-            'phone' => fake()->phoneNumber(),
-            'cellphone' => fake()->phoneNumber(),
+            'phone' => fake()->numerify('###############'),
+            'cellphone' => fake()->numerify('###############'),
             'address' => fake()->address(),
             'observations' => fake()->text(),
+            'is_active' => fake()->boolean(),
+            'user_id' => User::factory()
         ];
     }
 }
