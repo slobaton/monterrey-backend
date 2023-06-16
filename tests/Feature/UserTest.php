@@ -7,19 +7,31 @@ use function Pest\Laravel\getJson;
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
+// use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+
+use Laravel\Sanctum\Sanctum;
+
 
 it('should return every user (index)', function () {
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
+
     User::factory()->count(3)->create();
 
-    $users = getJson(route('users.index'))
+    $users = getJson(route('users.index'), )
         ->assertStatus(Response::HTTP_OK)
         ->json('data');
 
-    expect($users)->toHaveCount(3);
+    expect($users)->toHaveCount(4);
 });
 
 it('should create a user (store)', function () {
-    $user = [
+    $user = User::factory()->create();
+    Sanctum::actingAs($user);
+
+    $userData = [
         'name'             => 'Sergio',
         'paternal_surname' => 'Lobaton',
         'maternal_surname' => 'Arcani',
@@ -28,7 +40,7 @@ it('should create a user (store)', function () {
         'password'         => 'sergio123!',
         'password_confirmation' => 'sergio123!'
     ];
-    $response = postJson(route('users.store'), $user)
+    $response = postJson(route('users.store'), $userData)
         ->assertStatus(Response::HTTP_CREATED);
 
     expect($response->getData())
@@ -36,8 +48,8 @@ it('should create a user (store)', function () {
 });
 
 it('should update an existing user (update)', function () {
-
     $user = User::factory()->create();
+    Sanctum::actingAs($user);
 
     $newData = [
         'name'             => 'Sergio',
@@ -71,7 +83,10 @@ it('should return a user (show)', function () {
         'username'         => 'procha'
     ])->create();
 
+    Sanctum::actingAs($user);
+
     $response = getJson(route('users.show', ['user' => $user->id]))->json('data');
+
     expect($response)->toMatchArray([
         'name'             => 'Pamela',
         'paternal_surname' => 'Rocha',
@@ -83,6 +98,7 @@ it('should return a user (show)', function () {
 
 it('should delete a user (destroy)', function () {
     $user = User::factory()->create();
+    Sanctum::actingAs($user);
 
     deleteJson(route('users.destroy', ['user' => $user->id]))
         ->assertStatus(Response::HTTP_OK);
