@@ -18,12 +18,12 @@ class ClientFactory extends Factory
     public function definition(): array
     {
         return [
-            'nit' => fake()->numerify('#############'),
+            'nit' => fake()->numerify('##########'),
             'name' => fake()->name(),
             'paternal_surname' => fake()->lastName(),
             'maternal_surname' => fake()->lastName(),
-            'phone' => fake()->numerify('###############'),
-            'cellphone' => fake()->numerify('###############'),
+            'phone' => fake()->numerify('#######'),
+            'cellphone' => fake()->numerify('########'),
             'address' => fake()->address(),
             'observations' => fake()->text(),
             'is_active' => fake()->boolean(),

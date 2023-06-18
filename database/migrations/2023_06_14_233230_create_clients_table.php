@@ -17,9 +17,9 @@ return new class extends Migration
             $table->string('nit', 20)
                 ->nullable()
                 ->unique();
-            $table->string('name', 80);
-            $table->string('paternal_surname', 80);
-            $table->string('maternal_surname', 80);
+            $table->string('name');
+            $table->string('paternal_surname');
+            $table->string('maternal_surname');
             $table->string('phone', 15)->nullable();
             $table->string('cellphone', 15)->nullable();
             $table->text('address')->nullable();

@@ -23,9 +23,9 @@ class StoreClientRequest extends FormRequest
     {
         return [
             'nit'               => 'string|max:20|unique:App\Models\Client,nit',
-            'name'              => 'required|string|max:80',
-            'paternal_surname'  => 'required_without:maternal_surname|string|max:80',
-            'maternal_surname'  => 'required_without:paternal_surname|string|max:80',
+            'name'              => 'required|string|max:255',
+            'paternal_surname'  => 'required_without:maternal_surname|string|max:255',
+            'maternal_surname'  => 'required_without:paternal_surname|string|max:255',
             'phone'             => 'string|max:15',
             'cellphone'         => 'string|max:15'
         ];

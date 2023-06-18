@@ -61,6 +61,7 @@ class Client extends Model
             'maternal_surname',
             'phone',
             'cellphone',
+            'is_active',
             AllowedSort::field('created_at'),
             AllowedSort::field('updated_at'),
         ];
