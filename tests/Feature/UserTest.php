@@ -7,17 +7,14 @@ use function Pest\Laravel\getJson;
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
-// use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
-
 use Laravel\Sanctum\Sanctum;
 
+beforeEach(function () {
+    Sanctum::actingAs(User::factory()->create());
+});
 
 it('should return every user (index)', function () {
-    $user = User::factory()->create();
-    Sanctum::actingAs($user);
-
     User::factory()->count(3)->create();
 
     $users = getJson(route('users.index'), )
@@ -28,9 +25,6 @@ it('should return every user (index)', function () {
 });
 
 it('should create a user (store)', function () {
-    $user = User::factory()->create();
-    Sanctum::actingAs($user);
-
     $userData = [
         'name'             => 'Sergio',
         'paternal_surname' => 'Lobaton',
@@ -49,8 +43,6 @@ it('should create a user (store)', function () {
 
 it('should update an existing user (update)', function () {
     $user = User::factory()->create();
-    Sanctum::actingAs($user);
-
     $newData = [
         'name'             => 'Sergio',
         'paternal_surname' => 'Lobaton',
@@ -98,10 +90,8 @@ it('should return a user (show)', function () {
 
 it('should delete a user (destroy)', function () {
     $user = User::factory()->create();
-    Sanctum::actingAs($user);
-
     deleteJson(route('users.destroy', ['user' => $user->id]))
         ->assertStatus(Response::HTTP_OK);
 
-    $this->assertDatabaseCount('users', 0);
+    $this->assertDatabaseMissing('users', $user->toArray());
 });
