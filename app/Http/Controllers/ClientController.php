@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreClientRequest;
-use App\Http\Requests\UpdateClientRequest;
-use App\Http\Resources\ClientCollection;
-use App\Http\Resources\ClientResource;
 use App\Models\Client;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
+use App\Http\Resources\ClientResource;
+use App\Http\Resources\ClientCollection;
+use App\Http\Requests\StoreClientRequest;
+use App\Http\Requests\UpdateClientRequest;
 
 class ClientController extends Controller
 {
@@ -36,13 +35,7 @@ class ClientController extends Controller
      */
     public function store(StoreClientRequest $request)
     {
-        $data = [
-            ...$request->all(),
-            'user_id' => User::first()->id, //TODO -> Add the current auth user Id
-            'is_active' => true
-        ];
-
-        Client::create($data);
+        Client::create($request->all());
 
         return $this->respondCreated([
             'message' => 'Client has been created!'
@@ -68,12 +61,7 @@ class ClientController extends Controller
      */
     public function update(UpdateClientRequest $request, Client $client): ClientResource
     {
-        $data = [
-            ...$request->all(),
-            'user_id' => User::first()->id, //TODO -> Add the current auth user Id
-        ];
-
-        $client->update($data);
+        $client->update($request->all());
 
         return new ClientResource($client);
     }

@@ -2,13 +2,18 @@
 
 namespace Tests\Feature;
 
-use App\Models\Client;
 use App\Models\User;
-use Symfony\Component\HttpFoundation\Response;
+use App\Models\Client;
+use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\getJson;
-use function Pest\Laravel\deleteJson;
-use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
+use function Pest\Laravel\postJson;
+use function Pest\Laravel\deleteJson;
+use Symfony\Component\HttpFoundation\Response;
+
+beforeEach(function () {
+    Sanctum::actingAs(User::factory()->create());
+});
 
 it('should return every client (index)', function () {
     Client::factory()->count(3)->create();
@@ -41,7 +46,6 @@ it('should create a client (store)', function () {
 
 it('should update an existing client (update)', function () {
 
-    $authUser = User::factory()->create();
     $client = Client::factory()->create();
 
     $newData = [
@@ -74,8 +78,7 @@ it('should update an existing client (update)', function () {
         ->phone->toBe($client->phone)
         ->cellphone->toBe($newData['cellphone'])
         ->observations->toBe($client->observations)
-        ->is_active->toBe(false)
-        ->user_id->toBe($authUser->id);
+        ->is_active->toBe(false);
 });
 
 it('should return a client (show)', function () {
