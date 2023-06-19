@@ -1,17 +1,21 @@
 <?php
 namespace Tests\Feature;
 
+use App\Enums\Roles;
+use App\Models\Role;
 use App\Models\User;
-use Symfony\Component\HttpFoundation\Response;
-use function Pest\Laravel\getJson;
-use function Pest\Laravel\deleteJson;
-use function Pest\Laravel\postJson;
-use function Pest\Laravel\putJson;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Sanctum\Sanctum;
+use function Pest\Laravel\getJson;
+use function Pest\Laravel\putJson;
+use function Pest\Laravel\postJson;
+use function Pest\Laravel\deleteJson;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 beforeEach(function () {
-    Sanctum::actingAs(User::factory()->create());
+    $user = User::factory()->create();
+    $user->roles()->attach(Role::create(['name' => Roles::ADMIN->value]));
+    Sanctum::actingAs($user);
 });
 
 it('should return every user (index)', function () {
@@ -74,8 +78,6 @@ it('should return a user (show)', function () {
         'email'            => 'pamela.0722@gmail.com',
         'username'         => 'procha'
     ])->create();
-
-    Sanctum::actingAs($user);
 
     $response = getJson(route('users.show', ['user' => $user->id]))->json('data');
 

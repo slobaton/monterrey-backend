@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Roles;
 use App\Models\User;
-use App\Http\Requests\PaginationRequest;
-use App\Http\Requests\StoreUserRequest;
-use App\Http\Resources\UserResource;
-use App\Http\Resources\UserCollection;
-use App\Http\Requests\UpdateUserRequest;
-
 use Illuminate\Http\JsonResponse;
-
+use App\Http\Resources\UserResource;
 use Spatie\QueryBuilder\QueryBuilder;
+use App\Http\Resources\UserCollection;
+
+use App\Http\Requests\StoreUserRequest;
+
+use App\Http\Requests\PaginationRequest;
+use App\Http\Requests\UpdateUserRequest;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:'.Roles::ADMIN->value);
+    }
     /**
      * Display a listing of the resource.
      */
