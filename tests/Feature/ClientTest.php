@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Enums\Roles;
 use App\Models\User;
 use App\Models\Client;
+use App\Models\Role;
 use Laravel\Sanctum\Sanctum;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\putJson;
@@ -12,7 +14,9 @@ use function Pest\Laravel\deleteJson;
 use Symfony\Component\HttpFoundation\Response;
 
 beforeEach(function () {
-    Sanctum::actingAs(User::factory()->create());
+    $user = User::factory()->create();
+    $user->roles()->attach(Role::create(['name' => Roles::ADMIN->value]));
+    Sanctum::actingAs($user);
 });
 
 it('should return every client (index)', function () {

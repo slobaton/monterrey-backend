@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Roles;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -12,6 +13,11 @@ use App\Http\Requests\UpdateClientRequest;
 
 class ClientController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value);
+    }
+
     /**
      * Display a listing of the resource.
      */
