@@ -26,8 +26,7 @@ class ClientFactory extends Factory
             'cellphone' => fake()->numerify('########'),
             'address' => fake()->address(),
             'observations' => fake()->text(),
-            'is_active' => fake()->boolean(),
-            'user_id' => User::factory()
+            'is_active' => fake()->boolean()
         ];
     }
 }
