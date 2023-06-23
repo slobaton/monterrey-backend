@@ -27,9 +27,6 @@ return new class extends Migration
             $table->boolean('is_active')
                 ->default(true);
 
-            $table->foreignUuid('user_id')
-                ->constrained(table: 'users');
-
             $table->timestamps();
         });
     }

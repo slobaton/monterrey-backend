@@ -29,8 +29,11 @@ class Client extends Model
         'cellphone',
         'address',
         'observations',
-        'is_active',
-        'user_id'
+        'is_active'
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -84,16 +87,6 @@ class Client extends Model
 
     public static function getAllowedIncludes(): array
     {
-        return [
-            'users'
-        ];
-    }
-
-    public static function boot()
-    {
-        parent::boot();
-        self::creating(function ($model) {
-            $model->user_id = auth()->id();
-        });
+        return [];
     }
 }
