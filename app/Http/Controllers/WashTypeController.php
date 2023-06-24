@@ -44,7 +44,7 @@ class WashTypeController extends Controller
         WashType::create($request->all());
 
         return $this->respondCreated([
-            'message' => 'WashType has been created!'
+            'message' => 'Wash Type has been created!'
         ]);
     }
 

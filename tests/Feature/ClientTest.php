@@ -30,7 +30,6 @@ it('should return every client (index)', function () {
 });
 
 it('should create a client (store)', function () {
-    User::factory()->create();
     $client = [
         'nit'              => '133012233',
         'name'             => 'Abel',
@@ -73,7 +72,6 @@ it('should update an existing client (update)', function () {
         ->json('data');
 
     expect($updatedClient)
-        ->nit->toBe($newData['nit'])
         ->nit->toBe($newData['nit'])
         ->name->toBe($newData['name'])
         ->paternal_surname->toBe($newData['paternal_surname'])
