@@ -17,7 +17,7 @@ class ClothTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'washtype-' . fake()->unique()->name(),
+            'name' => 'clothtype-' . fake()->unique()->name(),
             'description' => fake()->text(),
             'is_active' => fake()->boolean()
         ];
