@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreWashTypeRequest extends FormRequest
+class StoreClothTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class StoreWashTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:150|unique:App\Models\WashType,name',
+            'name' => 'required|string|max:150|unique:App\Models\ClothType,name',
             'description' => 'nullable|sometimes|string'
         ];
     }

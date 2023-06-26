@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreWashTypeRequest extends FormRequest
+class UpdateClothTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +23,14 @@ class StoreWashTypeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|max:150|unique:App\Models\WashType,name',
-            'description' => 'nullable|sometimes|string'
+            'name' => [
+                'required',
+                'string',
+                'max:150',
+                Rule::unique('cloth_types', 'name')->ignore($this->request->get('id'), 'id')
+            ],
+            'description' => 'nullable|sometimes|string',
+            'is_active' => 'boolean'
         ];
     }
 }
