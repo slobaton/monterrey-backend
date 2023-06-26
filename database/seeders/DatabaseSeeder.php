@@ -37,5 +37,6 @@ class DatabaseSeeder extends Seeder
         $secre->roles()->attach($secreRole);
         \App\Models\User::factory(100)->create();
         \App\Models\Client::factory(100)->create();
+        \App\Models\WashType::factory(100)->create();
     }
 }
