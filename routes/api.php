@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\EffectController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WashTypeController;
@@ -25,4 +26,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [LoginController::class, 'logout']);
     Route::apiResource('clients', ClientController::class);
     Route::apiResource('wash-types', WashTypeController::class);
+    Route::apiResource('effects', EffectController::class);
 });
