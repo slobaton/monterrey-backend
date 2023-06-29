@@ -3,10 +3,10 @@
 namespace Database\Seeders;
 
 use App\Enums\Roles;
-use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,12 +26,12 @@ class DatabaseSeeder extends Seeder
         $admin = \App\Models\User::create([
             'name' => 'Admin',
             'username' => 'admin',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+            'password' => 'password'
         ]);
         $secre = \App\Models\User::create([
             'name' => 'Secretary',
             'username' => 'secre',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+            'password' => 'password'
         ]);
         $admin->roles()->attach($role);
         $secre->roles()->attach($secreRole);
@@ -39,5 +39,6 @@ class DatabaseSeeder extends Seeder
         \App\Models\Client::factory(100)->create();
         \App\Models\WashType::factory(100)->create();
         \App\Models\ClothType::factory(100)->create();
+        \App\Models\Effect::factory(100)->create();
     }
 }
