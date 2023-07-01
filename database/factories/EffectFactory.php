@@ -18,9 +18,9 @@ class EffectFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->word(),
+            'name' => fake()->unique()->word(),
             'description' => fake()->paragraph(2, true),
-            'price' => fake()->randomFloat(2, 50),
+            'price' => fake()->randomFloat(2, 50, 200),
             'is_active' => fake()->boolean()
         ];
     }

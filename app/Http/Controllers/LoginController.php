@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use F9Web\ApiResponseHelpers;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
@@ -25,7 +26,9 @@ class LoginController extends Controller
             return $this->respondForbidden('These credentials do not match our records');
         }
 
-        $user = $request->user();
+        $userId = $request->user()->id;
+        $user = User::with('roles')->find($userId);
+
         $token = $user->createToken("{$user->email} Personal Access Token");
 
         $user->token = [
