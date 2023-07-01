@@ -28,6 +28,8 @@ class ClothSize extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'wash_price' => 'double',
+        'wash_special_price' => 'double'
     ];
 
     public function scopeAll(Builder $query, $search): Builder
