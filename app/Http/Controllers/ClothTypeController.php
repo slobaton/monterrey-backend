@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Roles;
+use App\Http\Requests\PaginationRequest;
 use App\Models\ClothType;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -21,7 +22,7 @@ class ClothTypeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(PaginationRequest $request)
     {
         $clothTypes = QueryBuilder::for(ClothType::class)
             ->allowedFilters(ClothType::getAllowedFilters())

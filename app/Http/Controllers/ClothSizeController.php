@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Roles;
+use App\Http\Requests\PaginationRequest;
 use App\Models\ClothSize;
 use App\Http\Requests\StoreClothSizeRequest;
 use App\Http\Requests\UpdateClothSizeRequest;
@@ -21,7 +22,7 @@ class ClothSizeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(PaginationRequest $request)
     {
         $clothSizes = QueryBuilder::for(ClothSize::class)
             ->allowedFilters(ClothSize::getAllowedFilters())
