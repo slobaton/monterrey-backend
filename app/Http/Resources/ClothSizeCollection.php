@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-class ClothTypeCollection extends ApiResourceCollection
+class ClothSizeCollection extends ApiResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -15,8 +15,8 @@ class ClothTypeCollection extends ApiResourceCollection
     {
         return [
             'data' => $this->collection
-                ->map(function ($clothType) {
-                    return new ClothTypeResource($clothType);
+                ->map(function ($clothSize) {
+                    return new ClothSizeResource($clothSize);
                 })
         ];
     }
