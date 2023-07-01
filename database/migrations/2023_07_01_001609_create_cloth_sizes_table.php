@@ -21,7 +21,8 @@ return new class extends Migration
             $table->decimal('wash_price', 10, 2)
                 ->unsigned();
             $table->decimal('wash_special_price', 10, 2)
-                ->unsigned();
+                ->unsigned()
+                ->nullable();
             $table->boolean('is_active')
                 ->default(true);
 
