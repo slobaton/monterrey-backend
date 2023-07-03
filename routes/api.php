@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClothSizeController;
 use App\Http\Controllers\EffectController;
 use App\Http\Controllers\ClothTypeController;
 use App\Http\Controllers\UserController;
@@ -29,4 +30,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('wash-types', WashTypeController::class);
     Route::apiResource('effects', EffectController::class);
     Route::apiResource('cloth-types', ClothTypeController::class);
+    Route::apiResource('cloth-sizes', ClothSizeController::class);
 });

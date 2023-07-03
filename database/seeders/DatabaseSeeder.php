@@ -40,5 +40,6 @@ class DatabaseSeeder extends Seeder
         \App\Models\WashType::factory(100)->create();
         \App\Models\ClothType::factory(100)->create();
         \App\Models\Effect::factory(100)->create();
+        \App\Models\ClothSize::factory(100)->create();
     }
 }

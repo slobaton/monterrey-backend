@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Roles;
+use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\StoreWashTypeRequest;
 use App\Http\Requests\UpdateWashTypeRequest;
 use App\Http\Resources\WashTypeCollection;
@@ -21,7 +22,7 @@ class WashTypeController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(PaginationRequest $request)
     {
         $washTypes = QueryBuilder::for(WashType::class)
             ->allowedFilters(WashType::getAllowedFilters())
