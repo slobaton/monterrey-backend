@@ -43,7 +43,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $user = User::create($request->all());
+       User::create($request->all());
 
         return $this->respondCreated([
             'message' => 'User has been created',
