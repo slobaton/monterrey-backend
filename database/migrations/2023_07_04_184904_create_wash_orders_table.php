@@ -17,12 +17,17 @@ return new class extends Migration
             $table->unsignedBigInteger('wash_type_id');
             $table->bigInteger('code')->unique();
             $table->date('date');
-            $table->integer('total_quantity');
+            $table->integer('total_quantity')
+                ->nullable();
             $table->decimal('total_price', 10, 2)
-                ->unsigned();
-            $table->integer('deliver_quantity');
-            $table->datetime('deliver_date');
-            $table->text('observations');
+                ->unsigned()
+                ->nullable();
+            $table->integer('deliver_quantity')
+                ->nullable();
+            $table->datetime('deliver_date')
+                ->nullable();
+            $table->text('observations')
+                ->nullable();
             $table->timestamps();
 
             $table->foreign('client_id')
