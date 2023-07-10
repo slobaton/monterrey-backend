@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\WashOrderCollection;
 use App\Models\WashOrder;
 use Illuminate\Http\Request;
-
+use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
+
 use App\Http\Requests\PaginationRequest;
-use App\Http\Resources\WashTypeResource;
+use App\Http\Resources\WashOrderResource;
+use App\Http\Resources\WashOrderCollection;
+use App\Http\Requests\StoreWashOrderRequest;
 
 class WashOrderController extends Controller
 {
@@ -33,21 +35,24 @@ class WashOrderController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreWashOrderRequest $request): WashOrderResource
     {
-        WashOrder::create($request->all());
-
-        return $this->respondCreated([
-            'message' => 'Wash order has been created',
-        ]);
+        $washOrder = WashOrder::create($request->all());
+        $washOrder->client;
+        $washOrder->washType;
+        return new WashOrderResource($washOrder);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(WashOrder $order)
     {
-        //
+        $washOrder = QueryBuilder::for($order)
+            ->allowedIncludes(WashOrder::getAllowedIncludes())
+            ->firstOrFail();
+
+        return new WashOrderResource($washOrder);
     }
 
     /**

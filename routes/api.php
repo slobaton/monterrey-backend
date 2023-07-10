@@ -33,5 +33,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('effects', EffectController::class);
     Route::apiResource('cloth-types', ClothTypeController::class);
     Route::apiResource('cloth-sizes', ClothSizeController::class);
-    Route::apiResource('wash-orders', WashOrderController::class);
+    Route::apiResource('wash-orders', WashOrderController::class)
+        ->parameters(['wash-orders' => 'order']);
 });
