@@ -53,7 +53,11 @@ final class WashOrder extends Model
     {
         return [
             AllowedFilter::scope('client'),
+            AllowedFilter::scope('wash_type'),
+            AllowedFilter::scope('observations'),
             AllowedFilter::exact('date', 'date'),
+            AllowedFilter::exact('code', 'code'),
+            'total_price'
         ];
     }
 
@@ -72,9 +76,13 @@ final class WashOrder extends Model
 
     public function scopeWashType(Builder $query, $search): Builder
     {
-        return $query->join('clients', 'wash_orders.client_id', '=', 'clients.id')
-            ->where(DB::raw('LOWER(clients.name)'), 'LIKE', "%" . strtolower($search) . "%")
-            ->orWhere(DB::raw('LOWER(clients.paternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
-            ->orWhere(DB::raw('LOWER(clients.maternal_surname)'), 'LIKE', "%" . strtolower($search) . "%");
+        return $query->join('wash_types', 'wash_orders.wash_type_id', '=', 'wash_types.id')
+            ->where(DB::raw('LOWER(wash_types.name)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(wash_types.description)'), 'LIKE', "%" . strtolower($search) . "%");
+    }
+
+    public function scopeObservations(Builder $query, $search): Builder
+    {
+        return $query->where(DB::raw('LOWER(observations)'), 'LIKE', "%" . strtolower($search) . "%");
     }
 }

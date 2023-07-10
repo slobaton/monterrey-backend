@@ -13,7 +13,7 @@ class WashOrderObserver
     {
         $lastWashOrderUuid = $washOrder->query()->latest()->first();
 
-        $washOrder->code = $lastWashOrderUuid->code + 1 ?: 1;
+        $washOrder->code = $lastWashOrderUuid ? $lastWashOrderUuid->code + 1 : 1;
     }
 
     /**
