@@ -3,20 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
-use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\QueryBuilder\AllowedInclude;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 final class WashOrder extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory, HasUuids, SoftDeletes;
 
     protected $fillable = [
         'client_id',

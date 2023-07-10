@@ -11,6 +11,7 @@ use App\Http\Requests\PaginationRequest;
 use App\Http\Resources\WashOrderResource;
 use App\Http\Resources\WashOrderCollection;
 use App\Http\Requests\StoreWashOrderRequest;
+use App\Http\Requests\UpdateWashOrderRequest;
 
 class WashOrderController extends Controller
 {
@@ -58,16 +59,22 @@ class WashOrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateWashOrderRequest $request, WashOrder $order)
     {
-        //
+        $order->update($request->all());
+
+        return new WashOrderResource($order);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(WashOrder $order)
     {
-        //
+        $order->delete();
+
+        return $this->respondWithSuccess([
+            'message' => 'Wash Order has been deleted'
+        ]);
     }
 }

@@ -28,6 +28,7 @@ return new class extends Migration
             $table->text('observations')
                 ->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('client_id')
                 ->references('id')
