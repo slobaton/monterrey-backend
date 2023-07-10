@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\WashOrderCollection;
 use App\Models\WashOrder;
-use App\Http\Requests\PaginationRequest;
-
 use Illuminate\Http\Request;
+
 use Spatie\QueryBuilder\QueryBuilder;
+use App\Http\Requests\PaginationRequest;
+use App\Http\Resources\WashTypeResource;
 
 class WashOrderController extends Controller
 {
@@ -25,7 +27,7 @@ class WashOrderController extends Controller
             ? $washOrder->jsonPaginate()
             : $washOrder->get();
 
-        return ($washOrder);
+        return new WashOrderCollection($washOrder);
     }
 
     /**
