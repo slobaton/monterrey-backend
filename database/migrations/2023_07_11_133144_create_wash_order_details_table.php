@@ -25,7 +25,7 @@ return new class extends Migration
             $table->boolean('is_special_wash')->default(false);
             $table->decimal('wash_price', 10, 2)->nullable();
             $table->decimal('effect_price', 10, 2)->nullable();
-            $table->integer('num_buttonholes', 10, 2)->nullable();
+            $table->integer('num_buttonholes')->default(0);
             $table->decimal('additional_price', 10, 2)->nullable();
             $table->decimal('additional_price_desc', 10, 2)->nullable();
             $table->decimal('unit_price', 10, 2)->nullable();
