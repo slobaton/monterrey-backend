@@ -7,7 +7,8 @@ use App\Http\Controllers\ClothTypeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\WashTypeController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\WashOrderController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -24,11 +25,14 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [LoginController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('users', UserController::class);
     Route::post('logout', [LoginController::class, 'logout']);
+
+    Route::apiResource('users', UserController::class);
     Route::apiResource('clients', ClientController::class);
     Route::apiResource('wash-types', WashTypeController::class);
     Route::apiResource('effects', EffectController::class);
     Route::apiResource('cloth-types', ClothTypeController::class);
     Route::apiResource('cloth-sizes', ClothSizeController::class);
+    Route::apiResource('wash-orders', WashOrderController::class)
+        ->parameters(['wash-orders' => 'order']);
 });
