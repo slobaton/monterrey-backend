@@ -13,15 +13,9 @@ return new class extends Migration
     {
         Schema::create('wash_order_details', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreign('wash_order_id')
-                ->references('id')
-                ->on('wash_orders');
-            $table->foreign('cloth_type_id')
-                ->references('id')
-                ->on('cloth_types');
-            $table->foreign('cloth_size_id')
-                ->references('id')
-                ->on('cloth_types');
+            $table->uuid('wash_order_id');
+            $table->unsignedBigInteger('cloth_type_id');
+            $table->unsignedBigInteger('cloth_size_id');
             $table->boolean('is_special_wash')->default(false);
             $table->decimal('wash_price', 10, 2)->nullable();
             $table->decimal('effect_price', 10, 2)->nullable();
@@ -31,8 +25,12 @@ return new class extends Migration
             $table->decimal('unit_price', 10, 2)->nullable();
             $table->integer('quantity')->nullable();
             $table->decimal('sub_total_price', 20, 2)->nullable();
-            $table->text('observations');
+            $table->text('observations')->nullable();
             $table->timestamps();
+
+            $table->foreign('wash_order_id')->references('id')->on('wash_orders');
+            $table->foreign('cloth_type_id')->references('id')->on('cloth_types');
+            $table->foreign('cloth_size_id')->references('id')->on('cloth_sizes');
         });
     }
 

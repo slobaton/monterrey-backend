@@ -25,11 +25,15 @@ class WashOrderDetail extends Model
         'effect_price',
         'num_buttonholes',
         'additional_price',
-        'additional_price_desc'.
+        'additional_price_desc',
         'unit_price',
         'quantity',
         'sub_total_price',
         'observations'
+    ];
+
+    protected $casts = [
+        'is_special_wash' => 'boolean',
     ];
 
     public function washOrder(): BelongsTo

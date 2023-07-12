@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\WashOrder;
-use Illuminate\Http\Request;
-use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
 
+use App\Models\WashOrder;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Resources\WashOrderResource;
 use App\Http\Resources\WashOrderCollection;
