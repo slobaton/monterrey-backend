@@ -10,6 +10,8 @@ use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Resources\WashOrderDetailResource;
 use App\Http\Resources\WashOrderDetailCollection;
+use App\Http\Requests\StoreWashOrderDetailRequest;
+use App\Http\Requests\UpdateWashOrderDetailRequest;
 
 class WashOrderDetailController extends Controller
 {
@@ -34,7 +36,7 @@ class WashOrderDetailController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreWashOrderDetailRequest $request)
     {
         $washOrder = WashOrderDetail::create($request->all());
         $washOrder->clothType;
@@ -53,9 +55,12 @@ class WashOrderDetailController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, WashOrderDetail $washOrderDetail)
+    public function update(UpdateWashOrderDetailRequest $request, WashOrderDetail $washOrderDetail)
     {
-        //
+        $washOrderDetail->update($request->all());
+        $washOrderDetail->clothType;
+        $washOrderDetail->clothSize;
+        return new WashOrderDetailResource($washOrderDetail);
     }
 
     /**
