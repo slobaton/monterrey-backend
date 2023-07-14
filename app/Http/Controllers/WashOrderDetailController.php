@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\WashOrderDetail;
 
 use Spatie\QueryBuilder\QueryBuilder;
@@ -86,6 +85,7 @@ class WashOrderDetailController extends Controller
      */
     public function destroy(WashOrderDetail $washOrderDetail)
     {
+        $washOrderDetail->effects()->detach();
         $washOrderDetail->delete();
 
         return $this->respondWithSuccess([
