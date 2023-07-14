@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -28,6 +30,11 @@ final class WashOrder extends Model
         'observations',
         'code'
     ];
+
+    public function details(): HasMany
+    {
+        return $this->hasMany(WashOrderDetail::class, 'wash_order_id', 'id');
+    }
 
     public function washType(): BelongsTo
     {
@@ -48,6 +55,7 @@ final class WashOrder extends Model
     {
         return [
             'client',
+            'details',
             AllowedInclude::relationship('wash_type', 'washType')
         ];
     }

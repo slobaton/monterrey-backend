@@ -39,6 +39,11 @@ class WashOrderResource extends ApiResource
             $data['wash_type'] = $washType;
         }
 
+        $details = WashOrderDetailResource::collection($this->whenLoaded('details'));
+        if (!is_null($details)) {
+            $data['details'] = $details;
+        }
+
         return $data;
     }
 }
