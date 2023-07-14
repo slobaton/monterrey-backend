@@ -72,6 +72,10 @@ class WashOrderDetailController extends Controller
      */
     public function destroy(WashOrderDetail $washOrderDetail)
     {
-        //
+        $washOrderDetail->delete();
+
+        return $this->respondWithSuccess([
+            'message' => 'Wash Order Detail has been deleted'
+        ]);
     }
 }
