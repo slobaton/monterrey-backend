@@ -74,6 +74,7 @@ class WashOrderDetail extends Model
     public static function getAllowedFilters()
     {
         return [
+            AllowedFilter::exact('wash_order_id'),
             AllowedFilter::scope('cloth_type'),
             AllowedFilter::scope('cloth_size'),
             AllowedFilter::scope('observations'),

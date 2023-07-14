@@ -21,10 +21,10 @@ class WashOrderDetailController extends Controller
     public function index(PaginationRequest $request)
     {
         $washOrderDetail = QueryBuilder::for(WashOrderDetail::class)
-        ->allowedFilters(WashOrderDetail::getAllowedFilters())
-        ->defaultSort(WashOrderDetail::getDefaultSort())
-        ->allowedSorts(WashOrderDetail::getAllowedSorts())
-        ->allowedIncludes(WashOrderDetail::getAllowedIncludes());
+            ->allowedFilters(WashOrderDetail::getAllowedFilters())
+            ->defaultSort(WashOrderDetail::getDefaultSort())
+            ->allowedSorts(WashOrderDetail::getAllowedSorts())
+            ->allowedIncludes(WashOrderDetail::getAllowedIncludes());
 
         $washOrderDetail = $request->has('page.number') && $request->has('page.size')
             ? $washOrderDetail->jsonPaginate()
@@ -39,11 +39,15 @@ class WashOrderDetailController extends Controller
     public function store(StoreWashOrderDetailRequest $request)
     {
         $washOrderDetail = WashOrderDetail::create($request->all());
+
         if ($request->has('effects')) {
             $washOrderDetail->effects()->attach($request->effects);
         }
+
         $washOrderDetail->clothType;
         $washOrderDetail->clothSize;
+        $washOrderDetail->effects;
+
         return new WashOrderDetailResource($washOrderDetail);
     }
 
@@ -53,8 +57,8 @@ class WashOrderDetailController extends Controller
     public function show(WashOrderDetail $washOrderDetail)
     {
         $washOrder = QueryBuilder::for($washOrderDetail)
-        ->allowedIncludes(WashOrderDetail::getAllowedIncludes())
-        ->firstOrFail();
+            ->allowedIncludes(WashOrderDetail::getAllowedIncludes())
+            ->firstOrFail();
 
         return new WashOrderDetailResource($washOrder);
     }
@@ -65,11 +69,15 @@ class WashOrderDetailController extends Controller
     public function update(UpdateWashOrderDetailRequest $request, WashOrderDetail $washOrderDetail)
     {
         $washOrderDetail->update($request->all());
+
         if ($request->has('effects')) {
             $washOrderDetail->effects()->sync($request->effects);
         }
+
         $washOrderDetail->clothType;
         $washOrderDetail->clothSize;
+        $washOrderDetail->effects;
+
         return new WashOrderDetailResource($washOrderDetail);
     }
 
