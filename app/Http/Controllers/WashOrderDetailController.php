@@ -49,7 +49,11 @@ class WashOrderDetailController extends Controller
      */
     public function show(WashOrderDetail $washOrderDetail)
     {
-        //
+        $washOrder = QueryBuilder::for($washOrderDetail)
+        ->allowedIncludes(WashOrderDetail::getAllowedIncludes())
+        ->firstOrFail();
+
+        return new WashOrderDetailResource($washOrder);
     }
 
     /**
