@@ -54,7 +54,7 @@ class WashOrderDetail extends Model
 
     public function effects(): BelongsToMany
     {
-        return $this->belongsToMany(Effect::class, 'wash_order_detail_effect', 'wash_order_detail_id', 'effect_id')->withPivot('price');
+        return $this->belongsToMany(Effect::class, 'wash_order_detail_effect', 'wash_order_detail_id', 'effect_id');
     }
 
     public static function getDefaultSort(): String
