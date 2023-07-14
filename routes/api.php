@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\ClothSizeController;
-use App\Http\Controllers\EffectController;
-use App\Http\Controllers\ClothTypeController;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\EffectController;
 use App\Http\Controllers\WashTypeController;
-use App\Http\Controllers\WashOrderController;
+use App\Http\Controllers\ClothSizeController;
+use App\Http\Controllers\ClothTypeController;
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WashOrderController;
+use App\Http\Controllers\WashOrderDetailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,4 +36,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('cloth-sizes', ClothSizeController::class);
     Route::apiResource('wash-orders', WashOrderController::class)
         ->parameters(['wash-orders' => 'order']);
+    Route::apiResource('wash-order-details', WashOrderDetailController::class)
+        ->parameters(['wash-order-details' => 'washOrderDetail']);
 });
