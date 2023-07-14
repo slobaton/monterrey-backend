@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 use Spatie\QueryBuilder\AllowedFilter;
@@ -33,7 +34,7 @@ class WashOrderDetail extends Model
     ];
 
     protected $casts = [
-        'is_special_wash' => 'boolean',
+        'is_special_wash' => 'boolean'
     ];
 
     public function washOrder(): BelongsTo
@@ -51,6 +52,11 @@ class WashOrderDetail extends Model
         return $this->belongsTo(ClothSize::class, 'cloth_size_id', 'id');
     }
 
+    public function effects(): BelongsToMany
+    {
+        return $this->belongsToMany(Effect::class, 'wash_order_detail_effect', 'wash_order_detail_id', 'effect_id')->withPivot('price');
+    }
+
     public static function getDefaultSort(): String
     {
         return '-wash_order_id';
@@ -60,7 +66,8 @@ class WashOrderDetail extends Model
     {
         return [
             AllowedInclude::relationship('cloth_type', 'clothType'),
-            AllowedInclude::relationship('cloth_size', 'clothSize')
+            AllowedInclude::relationship('cloth_size', 'clothSize'),
+            'effects'
         ];
     }
 

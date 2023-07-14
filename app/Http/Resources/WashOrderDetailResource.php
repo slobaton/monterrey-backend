@@ -44,6 +44,12 @@ class WashOrderDetailResource extends ApiResource
             $data['cloth_size'] = $clothSize;
         }
 
+        $effects = EffectResource::collection($this->whenLoaded('effects'));
+
+        if (!is_null($effects)) {
+            $data['effects'] = $effects;
+        }
+
         return $data;
     }
 }

@@ -38,10 +38,13 @@ class WashOrderDetailController extends Controller
      */
     public function store(StoreWashOrderDetailRequest $request)
     {
-        $washOrder = WashOrderDetail::create($request->all());
-        $washOrder->clothType;
-        $washOrder->clothSize;
-        return new WashOrderDetailResource($washOrder);
+        $washOrderDetail = WashOrderDetail::create($request->all());
+        if ($request->has('effects')) {
+            $washOrderDetail->effects()->attach($request->effects);
+        }
+        $washOrderDetail->clothType;
+        $washOrderDetail->clothSize;
+        return new WashOrderDetailResource($washOrderDetail);
     }
 
     /**
@@ -62,6 +65,9 @@ class WashOrderDetailController extends Controller
     public function update(UpdateWashOrderDetailRequest $request, WashOrderDetail $washOrderDetail)
     {
         $washOrderDetail->update($request->all());
+        if ($request->has('effects')) {
+            $washOrderDetail->effects()->sync($request->effects);
+        }
         $washOrderDetail->clothType;
         $washOrderDetail->clothSize;
         return new WashOrderDetailResource($washOrderDetail);
