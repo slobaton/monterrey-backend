@@ -23,6 +23,7 @@ class StoreWashTypeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:150|unique:App\Models\WashType,name',
+            'price' => 'required|numeric|min:0|max:99999999,99',
             'description' => 'nullable|sometimes|string'
         ];
     }

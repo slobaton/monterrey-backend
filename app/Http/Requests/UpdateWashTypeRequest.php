@@ -30,6 +30,7 @@ class UpdateWashTypeRequest extends FormRequest
                 'max:150',
                 Rule::unique('wash_types', 'name')->ignore($this->request->get('id'), 'id')
             ],
+            'price' => 'required|numeric|min:0|max:99999999,99',
             'description' => 'nullable|sometimes|string',
             'is_active' => 'boolean'
         ];

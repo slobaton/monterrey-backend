@@ -20,11 +20,13 @@ class WashType extends Model
      */
     protected $fillable = [
         'name',
+        'price',
         'description',
         'is_active'
     ];
 
     protected $casts = [
+        'price'     => 'decimal:2',
         'is_active' => 'boolean',
     ];
 
