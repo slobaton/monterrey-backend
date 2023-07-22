@@ -32,6 +32,7 @@ it('should return every wash type (index)', function () {
 it('should create a wash type (store)', function () {
     $washType = [
         'name'        => 'WashType Mock',
+        'price'       => 199.50,
         'description' => 'Lorem ipsum, test observation'
     ];
     $response = postJson(route('wash-types.store'), $washType)
@@ -48,6 +49,7 @@ it('should update an existing wash type (update)', function () {
     $newData = [
         'id'               => $washType->id,
         'name'             => 'WashType Mock',
+        'price'            => '199.99',
         'description' => $washType->description,
         'is_active' => false
     ];
@@ -61,6 +63,7 @@ it('should update an existing wash type (update)', function () {
 
     expect($updatedWashType)
         ->name->toBe($newData['name'])
+        ->price->toBe($newData['price'])
         ->description->toBe($washType->description)
         ->is_active->toBe(false);
 });
@@ -68,12 +71,14 @@ it('should update an existing wash type (update)', function () {
 it('should return a wash type (show)', function () {
     $washType = WashType::factory([
         'name'             => 'WashType Mock',
+        'description'   => 199.99,
         'description' => 'Lorem ipsum, test observation'
     ])->create();
 
     $response = getJson(route('wash-types.show', ['wash_type' => $washType->id]))->json('data');
     expect($response)->toMatchArray([
         'name'             => 'WashType Mock',
+        'description'   => '199.99',
         'description' => 'Lorem ipsum, test observation'
     ]);
 });

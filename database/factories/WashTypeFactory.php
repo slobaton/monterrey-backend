@@ -18,6 +18,7 @@ class WashTypeFactory extends Factory
     {
         return [
             'name' => 'washtype-' . fake()->unique()->name(),
+            'price' => fake()->numerify('####.##'),
             'description' => fake()->text(),
             'is_active' => fake()->boolean()
         ];

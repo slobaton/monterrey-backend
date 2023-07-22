@@ -20,17 +20,20 @@ class WashType extends Model
      */
     protected $fillable = [
         'name',
+        'price',
         'description',
         'is_active'
     ];
 
     protected $casts = [
+        'price'     => 'decimal:2',
         'is_active' => 'boolean',
     ];
 
     public function scopeAll(Builder $query, $search): Builder
     {
         return $query->where(DB::raw('LOWER(name)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(price)'), 'LIKE', "%" . strtolower($search) . "%")
             ->orWhere(DB::raw('LOWER(description)'), 'LIKE', "%" . strtolower($search) . "%");
     }
 
@@ -38,6 +41,7 @@ class WashType extends Model
     {
         return [
             'name',
+            'price',
             'description',
             AllowedFilter::scope('all'),
         ];
@@ -47,6 +51,7 @@ class WashType extends Model
     {
         return [
             'name',
+            'price',
             'description',
             'is_active',
             AllowedSort::field('created_at'),

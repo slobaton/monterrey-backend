@@ -12,10 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('wash_types', function (Blueprint $table) {
+            $table->comment('reference :: wash color');
+
             $table->id();
 
             $table->string('name', 150)
                 ->unique();
+            $table->decimal('price', 10, 2)
+                ->unsigned();
             $table->text('description')
                 ->nullable();
             $table->boolean('is_active')
