@@ -90,4 +90,20 @@ class ClientWashTypePriceController extends Controller
 
         return $this->respondOk('Wash type price updated.');
     }
+
+    public function deletePrice($clientId, $washTypeId, $id)
+    {
+        $washTypePrice = ClientWashTypePrice::where('id', $id)
+            ->where('client_id', $clientId)
+            ->where('wash_type_id', $washTypeId)
+            ->first();
+
+        if (is_null($washTypePrice)) {
+            return $this->respondNotFound('Wash type price not found for the client.');
+        }
+
+        $washTypePrice->delete();
+
+        return $this->respondNoContent();
+    }
 }
