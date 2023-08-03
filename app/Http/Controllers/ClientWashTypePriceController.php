@@ -3,12 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Roles;
-use App\Http\Requests\StoreClientWashTypePriceRequest;
-use App\Http\Requests\UpdateClientWashTypePriceRequest;
 use App\Models\Client;
-use App\Models\ClientWashTypePrice;
 use App\Models\WashType;
 use Illuminate\Http\Request;
+use App\Models\ClientWashTypePrice;
+use Spatie\QueryBuilder\QueryBuilder;
+use App\Http\Requests\StoreClientWashTypePriceRequest;
+use App\Http\Requests\UpdateClientWashTypePriceRequest;
 
 class ClientWashTypePriceController extends Controller
 {
@@ -17,10 +18,32 @@ class ClientWashTypePriceController extends Controller
         $this->middleware('role:' . Roles::ADMIN->value);
     }
 
-    public function getPrice($clientId, $washTypeId)
+    public function getPrices(Request $request, $clientId, $washTypeId)
     {
-        $washTypePrice = ClientWashTypePrice::where('client_id', $clientId)
-            ->where('wash_type_id', $washTypeId)
+        $query = ClientWashTypePrice::where('client_id', $clientId)
+            ->where('wash_type_id', $washTypeId);
+
+        $washTypePrices = QueryBuilder::for($query)
+            ->allowedFilters(ClientWashTypePrice::getAllowedFilters())
+            ->defaultSort(ClientWashTypePrice::getDefaultSort())
+            ->allowedSorts(ClientWashTypePrice::getAllowedSorts())
+            ->allowedIncludes(ClientWashTypePrice::getAllowedIncludes());
+
+        $washTypePrices = $request->has('page.number') && $request->has('page.size')
+            ? $washTypePrices->jsonPaginate()
+            : $washTypePrices->get();
+
+        return $this->respondWithSuccess($washTypePrices);
+    }
+
+    public function getPriceById($clientId, $washTypeId, $id)
+    {
+        $query = ClientWashTypePrice::where('id', $id)
+            ->where('client_id', $clientId)
+            ->where('wash_type_id', $washTypeId);
+
+        $washTypePrice = QueryBuilder::for($query)
+            ->allowedIncludes(ClientWashTypePrice::getAllowedIncludes())
             ->first();
 
         if (is_null($washTypePrice)) {
@@ -28,9 +51,7 @@ class ClientWashTypePriceController extends Controller
         }
 
         return $this->respondWithSuccess([
-            'data' => [
-                'wash_type_price' => $washTypePrice
-            ]
+            'data' => $washTypePrice
         ]);
     }
 

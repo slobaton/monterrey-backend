@@ -41,7 +41,8 @@ Route::middleware('auth:sanctum')->group(function () {
         ->parameters(['wash-order-details' => 'washOrderDetail']);
 
     Route::controller(ClientWashTypePriceController::class)->group(function () {
-        Route::get('clients/{clientId}/wash-types/{washTypeId}/prices', 'getPrice');
+        Route::get('clients/{clientId}/wash-types/{washTypeId}/prices', 'getPrices');
+        Route::get('clients/{clientId}/wash-types/{washTypeId}/prices/{id}', 'getPriceById');
         Route::post('clients/{client}/wash-types/{washType}/prices', 'assignPrice');
         Route::patch('clients/{client}/wash-types/{washType}/prices/{id}', 'updatePrice');
     });
