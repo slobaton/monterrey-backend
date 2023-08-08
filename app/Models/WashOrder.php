@@ -3,9 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Facades\DB;
-use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Model;
-use Spatie\QueryBuilder\AllowedInclude;
 use Illuminate\Database\Eloquent\Builder;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -14,6 +12,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
+
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\AllowedInclude;
+
+use App\Helpers\QueryBuilderHelpers;
 
 final class WashOrder extends Model
 {
@@ -65,10 +68,11 @@ final class WashOrder extends Model
         return [
             AllowedFilter::scope('client'),
             AllowedFilter::scope('wash_type'),
+            AllowedFilter::scope('all'),
             AllowedFilter::scope('observations'),
             AllowedFilter::exact('date', 'date'),
             AllowedFilter::exact('code', 'code'),
-            'total_price'
+            'total_price',
         ];
     }
 
@@ -79,21 +83,51 @@ final class WashOrder extends Model
 
     public function scopeClient(Builder $query, $search): Builder
     {
-        return $query->join('clients', 'wash_orders.client_id', '=', 'clients.id')
-            ->where(DB::raw('LOWER(clients.name)'), 'LIKE', "%" . strtolower($search) . "%")
-            ->orWhere(DB::raw('LOWER(clients.paternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
-            ->orWhere(DB::raw('LOWER(clients.maternal_surname)'), 'LIKE', "%" . strtolower($search) . "%");
+        if (!QueryBuilderHelpers::isJoined($query, 'clients')) {
+            $query->join('clients', 'wash_orders.client_id', '=', 'clients.id')
+                ->where(DB::raw('LOWER(clients.name)'), 'LIKE', "%" . strtolower($search) . "%")
+                ->orWhere(DB::raw('LOWER(clients.paternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
+                ->orWhere(DB::raw('LOWER(clients.maternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
+                ->orWhere(DB::raw('LOWER(clients.nit)'), 'LIKE', "%" . strtolower($search) . "%");
+        }
+        return $query;
     }
 
     public function scopeWashType(Builder $query, $search): Builder
     {
-        return $query->join('wash_types', 'wash_orders.wash_type_id', '=', 'wash_types.id')
-            ->where(DB::raw('LOWER(wash_types.name)'), 'LIKE', "%" . strtolower($search) . "%")
-            ->orWhere(DB::raw('LOWER(wash_types.description)'), 'LIKE', "%" . strtolower($search) . "%");
+        if (!QueryBuilderHelpers::isJoined($query, 'wash_types')) {
+            $query->join('wash_types', 'wash_orders.wash_type_id', '=', 'wash_types.id')
+                ->where(DB::raw('LOWER(wash_types.name)'), 'LIKE', "%" . strtolower($search) . "%")
+                ->orWhere(DB::raw('LOWER(wash_types.description)'), 'LIKE', "%" . strtolower($search) . "%");
+        }
+
+        return $query;
     }
 
     public function scopeObservations(Builder $query, $search): Builder
     {
         return $query->where(DB::raw('LOWER(observations)'), 'LIKE', "%" . strtolower($search) . "%");
+    }
+
+    public function scopeAll(Builder $query, $search): Builder
+    {
+        if (!QueryBuilderHelpers::isJoined($query, 'clients')) {
+            $query->join('clients', 'wash_orders.client_id', '=', 'clients.id');
+        }
+
+        if (!QueryBuilderHelpers::isJoined($query, 'wash_types')) {
+            $query->join('wash_types', 'wash_orders.wash_type_id', '=', 'wash_types.id');
+        }
+
+        $query->where(DB::raw('LOWER(clients.name)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(clients.paternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(clients.maternal_surname)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(clients.nit)'), 'LIKE', "%" . strtolower($search) . "%")->where(DB::raw('LOWER(wash_types.name)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(wash_types.description)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(wash_orders.observations)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhereDate('wash_orders.date', '=', $search)
+            ->orWhere(DB::raw('LOWER(wash_orders.code)'), 'LIKE', "%" . $search . "%");
+
+        return $query;
     }
 }
