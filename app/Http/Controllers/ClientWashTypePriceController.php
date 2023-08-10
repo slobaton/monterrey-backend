@@ -18,24 +18,6 @@ class ClientWashTypePriceController extends Controller
         $this->middleware('role:' . Roles::ADMIN->value);
     }
 
-    public function getPrices(Request $request, $clientId, $washTypeId)
-    {
-        $query = ClientWashTypePrice::where('client_id', $clientId)
-            ->where('wash_type_id', $washTypeId);
-
-        $washTypePrices = QueryBuilder::for($query)
-            ->allowedFilters(ClientWashTypePrice::getAllowedFilters())
-            ->defaultSort(ClientWashTypePrice::getDefaultSort())
-            ->allowedSorts(ClientWashTypePrice::getAllowedSorts())
-            ->allowedIncludes(ClientWashTypePrice::getAllowedIncludes());
-
-        $washTypePrices = $request->has('page.number') && $request->has('page.size')
-            ? $washTypePrices->jsonPaginate()
-            : $washTypePrices->get();
-
-        return $this->respondWithSuccess($washTypePrices);
-    }
-
     public function getPriceById($clientId, $washTypeId, $id)
     {
         $query = ClientWashTypePrice::where('id', $id)

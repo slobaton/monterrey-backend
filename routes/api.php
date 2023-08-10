@@ -30,7 +30,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [LoginController::class, 'logout']);
 
     Route::apiResource('users', UserController::class);
+
     Route::apiResource('clients', ClientController::class);
+    Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);
+
     Route::apiResource('wash-types', WashTypeController::class);
     Route::apiResource('effects', EffectController::class);
     Route::apiResource('cloth-types', ClothTypeController::class);
@@ -41,7 +44,6 @@ Route::middleware('auth:sanctum')->group(function () {
         ->parameters(['wash-order-details' => 'washOrderDetail']);
 
     Route::controller(ClientWashTypePriceController::class)->group(function () {
-        Route::get('clients/{clientId}/wash-types/{washTypeId}/prices', 'getPrices');
         Route::get('clients/{clientId}/wash-types/{washTypeId}/prices/{id}', 'getPriceById');
         Route::post('clients/{client}/wash-types/{washType}/prices', 'assignPrice');
         Route::patch('clients/{clientId}/wash-types/{washTypeId}/prices/{id}', 'updatePrice');

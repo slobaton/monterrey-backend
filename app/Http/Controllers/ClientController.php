@@ -83,4 +83,20 @@ class ClientController extends Controller
             'message' => 'Client has been deleted'
         ]);
     }
+
+    /**
+     * Get Client Wash Types
+     */
+    public function getWashTypes(Request $request, Client $client)
+    {
+        $washTypes = QueryBuilder::for($client->washTypes());
+
+        $washTypes = $request->has('page.number') && $request->has('page.size')
+            ? $washTypes->jsonPaginate()
+            : $washTypes->get();
+
+        return $this->respondWithSuccess([
+            'data' => $washTypes
+        ]);
+    }
 }
