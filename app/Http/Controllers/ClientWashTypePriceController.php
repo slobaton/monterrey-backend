@@ -23,7 +23,6 @@ class ClientWashTypePriceController extends Controller
         $washTypePrice = $client->washTypes()
             ->wherePivot('wash_type_id', $washTypeId)
             ->wherePivot('id', $id)
-            ->as('wash_type_price')
             ->first();
 
         if (is_null($washTypePrice)) {

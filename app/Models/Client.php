@@ -47,8 +47,7 @@ class Client extends Model
     {
         return $this->belongsToMany(WashType::class, 'client_wash_type_prices')
             ->orderByPivot('created_at', 'desc')
-            ->withPivot(['id', 'price'])
-            ->as('washTypePrice');
+            ->withPivot(['id', 'price']);
     }
 
     public function scopeAll(Builder $query, $search): Builder
