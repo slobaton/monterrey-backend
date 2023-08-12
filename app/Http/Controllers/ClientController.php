@@ -10,6 +10,7 @@ use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientCollection;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
+use App\Http\Resources\ClientWashTypePriceCollection;
 
 class ClientController extends Controller
 {
@@ -95,8 +96,6 @@ class ClientController extends Controller
             ? $washTypes->jsonPaginate()
             : $washTypes->get();
 
-        return $this->respondWithSuccess([
-            'data' => $washTypes
-        ]);
+        return new ClientWashTypePriceCollection($washTypes);
     }
 }

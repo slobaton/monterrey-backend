@@ -7,9 +7,9 @@ use App\Models\Client;
 use App\Models\WashType;
 use Illuminate\Http\Request;
 use App\Models\ClientWashTypePrice;
-use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Requests\StoreClientWashTypePriceRequest;
 use App\Http\Requests\UpdateClientWashTypePriceRequest;
+use App\Http\Resources\ClientWashTypePriceResource;
 
 class ClientWashTypePriceController extends Controller
 {
@@ -18,23 +18,19 @@ class ClientWashTypePriceController extends Controller
         $this->middleware('role:' . Roles::ADMIN->value);
     }
 
-    public function getPriceById($clientId, $washTypeId, $id)
+    public function getPriceById(Client $client, $washTypeId, $id)
     {
-        $query = ClientWashTypePrice::where('id', $id)
-            ->where('client_id', $clientId)
-            ->where('wash_type_id', $washTypeId);
-
-        $washTypePrice = QueryBuilder::for($query)
-            ->allowedIncludes(ClientWashTypePrice::getAllowedIncludes())
+        $washTypePrice = $client->washTypes()
+            ->wherePivot('wash_type_id', $washTypeId)
+            ->wherePivot('id', $id)
+            ->as('wash_type_price')
             ->first();
 
         if (is_null($washTypePrice)) {
             return $this->respondNotFound('Wash type price not found for the client.');
         }
 
-        return $this->respondWithSuccess([
-            'data' => $washTypePrice
-        ]);
+        return new ClientWashTypePriceResource($washTypePrice);
     }
 
     public function assignPrice(StoreClientWashTypePriceRequest $request, Client $client, WashType $washType)
