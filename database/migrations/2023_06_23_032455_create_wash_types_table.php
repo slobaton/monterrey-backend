@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('name', 150)
                 ->unique();
             $table->decimal('price', 10, 2)
+                ->nullable()
                 ->unsigned();
             $table->text('description')
                 ->nullable();
