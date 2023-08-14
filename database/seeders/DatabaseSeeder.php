@@ -36,10 +36,15 @@ class DatabaseSeeder extends Seeder
         $admin->roles()->attach($role);
         $secre->roles()->attach($secreRole);
         \App\Models\User::factory(100)->create();
-        \App\Models\Client::factory(100)->create();
+        // \App\Models\Client::factory(100)->create();
         \App\Models\WashType::factory(100)->create();
         \App\Models\ClothType::factory(100)->create();
-        \App\Models\Effect::factory(100)->create();
+        // \App\Models\Effect::factory(100)->create();
         \App\Models\ClothSize::factory(100)->create();
+
+        $this->call([
+            ClientSeeder::class,
+            EffectSeeder::class,
+        ]);
     }
 }
