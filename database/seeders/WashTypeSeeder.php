@@ -13,8 +13,6 @@ class WashTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        $faker = \Faker\Factory::create();
-
         WashType::insert([
             ['name' => 'Enzima'],
             ['name' => 'Casual'],
