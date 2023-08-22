@@ -18,8 +18,8 @@ return new class extends Migration
                 ->nullable()
                 ->unique();
             $table->string('name');
-            $table->string('paternal_surname');
-            $table->string('maternal_surname');
+            $table->string('paternal_surname')->nullable();
+            $table->string('maternal_surname')->nullable();
             $table->string('phone', 15)->nullable();
             $table->string('cellphone', 15)->nullable();
             $table->text('address')->nullable();
