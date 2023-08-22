@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientWashTypePriceController;
 use App\Http\Controllers\EffectController;
 use App\Http\Controllers\WashTypeController;
 use App\Http\Controllers\ClothSizeController;
@@ -29,7 +30,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [LoginController::class, 'logout']);
 
     Route::apiResource('users', UserController::class);
+
     Route::apiResource('clients', ClientController::class);
+    Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);
+
     Route::apiResource('wash-types', WashTypeController::class);
     Route::apiResource('effects', EffectController::class);
     Route::apiResource('cloth-types', ClothTypeController::class);
@@ -38,4 +42,11 @@ Route::middleware('auth:sanctum')->group(function () {
         ->parameters(['wash-orders' => 'order']);
     Route::apiResource('wash-order-details', WashOrderDetailController::class)
         ->parameters(['wash-order-details' => 'washOrderDetail']);
+
+    Route::controller(ClientWashTypePriceController::class)->group(function () {
+        Route::get('clients/{client}/wash-types/{washTypeId}/prices/{id}', 'getPriceById');
+        Route::post('clients/{client}/wash-types/{washType}/prices', 'assignPrice');
+        Route::patch('clients/{client}/wash-types/{washType}/prices/{id}', 'updatePrice');
+        Route::delete('clients/{clientId}/wash-types/{washTypeId}/prices/{id}', 'deletePrice');
+    });
 });

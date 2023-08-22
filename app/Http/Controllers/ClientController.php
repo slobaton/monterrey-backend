@@ -10,6 +10,7 @@ use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientCollection;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
+use App\Http\Resources\ClientWashTypePriceCollection;
 
 class ClientController extends Controller
 {
@@ -82,5 +83,19 @@ class ClientController extends Controller
         return $this->respondWithSuccess([
             'message' => 'Client has been deleted'
         ]);
+    }
+
+    /**
+     * Get Client Wash Types
+     */
+    public function getWashTypes(Request $request, Client $client)
+    {
+        $washTypes = QueryBuilder::for($client->washTypes());
+
+        $washTypes = $request->has('page.number') && $request->has('page.size')
+            ? $washTypes->jsonPaginate()
+            : $washTypes->get();
+
+        return new ClientWashTypePriceCollection($washTypes);
     }
 }
