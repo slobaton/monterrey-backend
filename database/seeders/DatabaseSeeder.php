@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\User::factory(100)->create();
 
         $this->call([
+            ParametersSeeder::class,
             ClientSeeder::class,
             EffectSeeder::class,
             WashTypeSeeder::class,
