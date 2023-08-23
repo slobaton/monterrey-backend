@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientEffectPriceController;
 use App\Http\Controllers\ClientWashTypePriceController;
 use App\Http\Controllers\EffectController;
 use App\Http\Controllers\WashTypeController;
@@ -33,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('clients', ClientController::class);
     Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);
+    Route::get('clients/{client}/effects', [ClientController::class, 'getEffects']);
 
     Route::apiResource('wash-types', WashTypeController::class);
     Route::apiResource('effects', EffectController::class);
@@ -48,5 +50,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('clients/{client}/wash-types/{washType}/prices', 'assignPrice');
         Route::patch('clients/{client}/wash-types/{washType}/prices/{id}', 'updatePrice');
         Route::delete('clients/{clientId}/wash-types/{washTypeId}/prices/{id}', 'deletePrice');
+    });
+
+    Route::controller(ClientEffectPriceController::class)->group(function () {
+        Route::get('clients/{client}/effects/{effectId}/prices/{id}', 'getPriceById');
+        Route::post('clients/{client}/effects/{effect}/prices', 'assignPrice');
+        Route::patch('clients/{client}/effects/{effect}/prices/{id}', 'updatePrice');
+        Route::delete('clients/{clientId}/effects/{effectId}/prices/{id}', 'deletePrice');
     });
 });
