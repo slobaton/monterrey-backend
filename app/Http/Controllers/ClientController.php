@@ -10,6 +10,7 @@ use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientCollection;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
+use App\Http\Resources\ClientEffectPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
 
 class ClientController extends Controller
@@ -97,5 +98,19 @@ class ClientController extends Controller
             : $washTypes->get();
 
         return new ClientWashTypePriceCollection($washTypes);
+    }
+
+    /**
+     * Get Client Effects Prices
+     */
+    public function getEffects(Request $request, Client $client)
+    {
+        $effects = QueryBuilder::for($client->effects());
+
+        $effects = $request->has('page.number') && $request->has('page.size')
+            ? $effects->jsonPaginate()
+            : $effects->get();
+
+        return new ClientEffectPriceCollection($effects);
     }
 }

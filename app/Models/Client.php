@@ -50,6 +50,13 @@ class Client extends Model
             ->withPivot(['id', 'price']);
     }
 
+    public function effects(): BelongsToMany
+    {
+        return $this->belongsToMany(Effect::class, 'client_effect_prices')
+            ->orderByPivot('created_at', 'desc')
+            ->withPivot(['id', 'price']);
+    }
+
     public function scopeAll(Builder $query, $search): Builder
     {
         return $query->where(DB::raw('LOWER(nit)'), 'LIKE', "%" . strtolower($search) . "%")
