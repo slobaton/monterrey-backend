@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\ChargeParameterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientEffectPriceController;
+use App\Http\Controllers\ClientParameterPriceController;
 use App\Http\Controllers\ClientWashTypePriceController;
 use App\Http\Controllers\EffectController;
 use App\Http\Controllers\WashTypeController;
@@ -35,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('clients', ClientController::class);
     Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);
     Route::get('clients/{client}/effects', [ClientController::class, 'getEffects']);
+    Route::get('clients/{client}/parameters', [ClientController::class, 'getParameters']);
 
     Route::apiResource('wash-types', WashTypeController::class);
     Route::apiResource('effects', EffectController::class);
@@ -57,5 +60,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('clients/{client}/effects/{effect}/prices', 'assignPrice');
         Route::patch('clients/{client}/effects/{effect}/prices/{id}', 'updatePrice');
         Route::delete('clients/{clientId}/effects/{effectId}/prices/{id}', 'deletePrice');
+    });
+
+    Route::controller(ClientParameterPriceController::class)->group(function () {
+        Route::get('clients/{client}/parameters/{parameterId}/prices/{id}', 'getPriceById');
+        Route::post('clients/{client}/parameters/{parameter}/prices', 'assignPrice');
+        Route::patch('clients/{client}/parameters/{parameter}/prices/{id}', 'updatePrice');
+        Route::delete('clients/{clientId}/parameters/{parameterId}/prices/{id}', 'deletePrice');
+    });
+
+    Route::controller(ChargeParameterController::class)->group(function () {
+        Route::get('parameters', 'index');
+        Route::get('parameters/{parameter}', 'show');
+        Route::patch('parameters/{parameter}', 'update');
     });
 });

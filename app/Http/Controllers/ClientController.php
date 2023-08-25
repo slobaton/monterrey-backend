@@ -11,6 +11,7 @@ use App\Http\Resources\ClientCollection;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientEffectPriceCollection;
+use App\Http\Resources\ClientParameterPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
 
 class ClientController extends Controller
@@ -112,5 +113,19 @@ class ClientController extends Controller
             : $effects->get();
 
         return new ClientEffectPriceCollection($effects);
+    }
+
+    /**
+     * Get Client Parameter Prices
+     */
+    public function getParameters(Request $request, Client $client)
+    {
+        $parameters = QueryBuilder::for($client->parameters());
+
+        $parameters = $request->has('page.number') && $request->has('page.size')
+            ? $parameters->jsonPaginate()
+            : $parameters->get();
+
+        return new ClientParameterPriceCollection($parameters);
     }
 }
