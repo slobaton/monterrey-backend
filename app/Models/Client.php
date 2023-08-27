@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
@@ -53,6 +52,13 @@ class Client extends Model
     public function effects(): BelongsToMany
     {
         return $this->belongsToMany(Effect::class, 'client_effect_prices')
+            ->orderByPivot('created_at', 'desc')
+            ->withPivot(['id', 'price']);
+    }
+
+    public function parameters(): BelongsToMany
+    {
+        return $this->belongsToMany(ChargeParameter::class, 'client_parameter_prices')
             ->orderByPivot('created_at', 'desc')
             ->withPivot(['id', 'price']);
     }
