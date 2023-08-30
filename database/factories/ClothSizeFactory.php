@@ -19,8 +19,6 @@ class ClothSizeFactory extends Factory
         return [
             'name' => fake()->unique()->name(),
             'description' => fake()->text(),
-            'wash_price' => fake()->numerify('####.##'),
-            'wash_special_price' => fake()->numerify('####.##'),
             'is_active' => fake()->boolean()
         ];
     }
