@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientEffectPriceCollection;
 use App\Http\Resources\ClientParameterPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ClientController extends Controller
 {

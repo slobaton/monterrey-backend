@@ -12,7 +12,7 @@ use App\Http\Controllers\EffectController;
 use App\Http\Controllers\WashTypeController;
 use App\Http\Controllers\ClothSizeController;
 use App\Http\Controllers\ClothTypeController;
-
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\WashOrderController;
 use App\Http\Controllers\WashOrderDetailController;
 
@@ -75,3 +75,5 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('parameters/{parameter}', 'update');
     });
 });
+
+Route::get('reports/client', [ReportController::class, 'downloadReport']);
