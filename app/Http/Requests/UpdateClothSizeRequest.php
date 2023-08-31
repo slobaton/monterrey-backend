@@ -31,8 +31,6 @@ class UpdateClothSizeRequest extends FormRequest
                     ->ignore($this->request->get('id'), 'id')
             ],
             'description' => 'nullable|sometimes|string',
-            'wash_price' => 'required|numeric|max:99999999,99',
-            'wash_special_price' => 'nullable|sometimes|numeric|max:99999999,99',
             'is_active' => 'required|boolean'
         ];
     }

@@ -14,9 +14,9 @@ class ClothSizeSeeder extends Seeder
     public function run(): void
     {
         ClothSize::insert([
-            ['name' => 'G', 'wash_price' => 0.8],
-            ['name' => 'J', 'wash_price' => 0.6],
-            ['name' => 'P', 'wash_price' => 0.5],
+            ['name' => 'G'],
+            ['name' => 'J'],
+            ['name' => 'P'],
         ]);
     }
 }

@@ -21,15 +21,11 @@ class ClothSize extends Model
     protected $fillable = [
         'name',
         'description',
-        'wash_price',
-        'wash_special_price',
         'is_active'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
-        'wash_price' => 'double',
-        'wash_special_price' => 'double'
     ];
 
     public function scopeAll(Builder $query, $search): Builder
@@ -52,8 +48,6 @@ class ClothSize extends Model
         return [
             'name',
             'description',
-            'wash_price',
-            'wash_special_price',
             'is_active',
             AllowedSort::field('created_at'),
             AllowedSort::field('updated_at'),

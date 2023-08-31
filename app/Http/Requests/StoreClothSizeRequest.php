@@ -23,9 +23,7 @@ class StoreClothSizeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:App\Models\ClothSize,name',
-            'description' => 'nullable|sometimes|string',
-            'wash_price' => 'required|numeric|max:99999999,99',
-            'wash_special_price' => 'nullable|sometimes|numeric|max:99999999,99'
+            'description' => 'nullable|sometimes|string'
         ];
     }
 }
