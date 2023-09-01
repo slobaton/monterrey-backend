@@ -15,11 +15,17 @@ return new class extends Migration
             $table->id();
             $table->uuid('wash_order_detail_id');
             $table->uuid('effect_id');
-            $table->decimal('price', 10, 2)->nullable();
+            $table->decimal('price', 10, 2)
+                ->unsigned();
 
-            $table->foreign('effect_id')->references('id')->on('effects');
-            $table->foreign('wash_order_detail_id')->references('id')->on('wash_order_details');
             $table->timestamps();
+
+            $table->foreign('effect_id')
+                ->references('id')
+                ->on('effects');
+            $table->foreign('wash_order_detail_id')
+                ->references('id')
+                ->on('wash_order_details');
         });
     }
 
