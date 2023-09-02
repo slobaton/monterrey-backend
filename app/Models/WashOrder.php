@@ -25,13 +25,14 @@ final class WashOrder extends Model
     protected $fillable = [
         'client_id',
         'wash_type_id',
+        'code',
         'date',
         'total_quantity',
         'total_price',
         'deliver_quantity',
         'deliver_date',
         'observations',
-        'code'
+        'is_special_price'
     ];
 
     public function details(): HasMany

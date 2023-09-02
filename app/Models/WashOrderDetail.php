@@ -21,12 +21,14 @@ class WashOrderDetail extends Model
         'wash_order_id',
         'cloth_type_id',
         'cloth_size_id',
-        'is_special_wash',
         'wash_price',
         'effect_price',
+        'is_focalizado_active',
+        'focalizado_price',
+        'is_nevado_active',
+        'nevado_price',
         'num_buttonholes',
-        'additional_price',
-        'additional_price_desc',
+        'buttonholes_price',
         'unit_price',
         'quantity',
         'sub_total_price',
@@ -77,8 +79,7 @@ class WashOrderDetail extends Model
             AllowedFilter::exact('wash_order_id'),
             AllowedFilter::scope('cloth_type'),
             AllowedFilter::scope('cloth_size'),
-            AllowedFilter::scope('observations'),
-            AllowedFilter::exact('is_special_wash')
+            AllowedFilter::scope('observations')
         ];
     }
 
@@ -86,8 +87,7 @@ class WashOrderDetail extends Model
     {
         return [
             'cloth_type_id',
-            'cloth_size_id',
-            'is_special_wash'
+            'cloth_size_id'
         ];
     }
 
