@@ -18,8 +18,24 @@ return new class extends Migration
             $table->unsignedBigInteger('cloth_type_id');
             $table->unsignedBigInteger('cloth_size_id');
 
-            $table->decimal('effect_price', 10, 2)
+            $table->decimal('wash_price', 10, 2)
                 ->unsigned();
+
+            $table->decimal('effect_price', 10, 2)
+                ->unsigned()
+                ->nullable();
+
+            $table->boolean('is_focalizado_active')
+                ->default(false);
+            $table->decimal('focalizado_price', 10, 2)
+                ->unsigned()
+                ->nullable();
+
+            $table->boolean('is_nevado_active')
+                ->default(false);
+            $table->decimal('nevado_price', 10, 2)
+                ->unsigned()
+                ->nullable();
 
             $table->integer('num_buttonholes')
                 ->default(0);

@@ -17,20 +17,9 @@ return new class extends Migration
             $table->uuid('client_id');
             $table->unsignedBigInteger('wash_type_id');
 
-            $table->bigInteger('code')->unique();
+            $table->bigInteger('code')
+                ->unique();
             $table->date('date');
-
-            $table->decimal('wash_price', 10, 2)
-                ->unsigned()
-                ->nullable();
-
-            $table->decimal('focalizado_price', 10, 2)
-                ->unsigned()
-                ->nullable();
-
-            $table->decimal('nevado_price', 10, 2)
-                ->unsigned()
-                ->nullable();
 
             $table->integer('total_quantity');
             $table->decimal('total_price', 10, 2)
