@@ -136,8 +136,19 @@ class WashOrderDetailController extends Controller
      */
     public function destroy(WashOrderDetail $washOrderDetail)
     {
+        $washOrder = $washOrderDetail->washOrder;
+
         $washOrderDetail->effects()->detach();
         $washOrderDetail->delete();
+
+        $washOrderDetails = $washOrder->details;
+
+        $totalPrice = $washOrderDetails->sum('subtotal_price');
+        $totalQuantity = $washOrderDetails->sum("quantity");
+
+        $washOrder->total_price = $totalPrice;
+        $washOrder->total_quantity = $totalQuantity;
+        $washOrder->save();
 
         return $this->respondWithSuccess([
             'message' => 'Wash Order Detail has been deleted'

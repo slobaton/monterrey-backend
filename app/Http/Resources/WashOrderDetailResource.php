@@ -30,7 +30,7 @@ class WashOrderDetailResource extends ApiResource
             'buttonholes_price'      => $this->buttonholes_price,
             'unit_price'             => $this->unit_price,
             'quantity'               => $this->quantity,
-            'sub_total_price'        => $this->sub_total_price,
+            'subtotal_price'        => $this->subtotal_price,
             'observations'           => $this->observations,
             'created_at'             => $this->created_at,
             'updated_at'             => $this->updated_at
