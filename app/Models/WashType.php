@@ -8,6 +8,7 @@ use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class WashType extends Model
 {
@@ -29,6 +30,11 @@ class WashType extends Model
         'price'     => 'decimal:2',
         'is_active' => 'boolean',
     ];
+
+    public function clientPrices(): HasMany
+    {
+        return $this->hasMany(ClientWashTypePrice::class, 'wash_type_id', 'id');
+    }
 
     public function scopeAll(Builder $query, $search): Builder
     {

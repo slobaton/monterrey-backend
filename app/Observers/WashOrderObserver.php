@@ -7,13 +7,15 @@ use App\Models\WashOrder;
 class WashOrderObserver
 {
     /**
-     * Handle the WashOrder "created" event.
+     * Handle the WashOrder "creating" event.
      */
     public function creating(WashOrder $washOrder): void
     {
         $lastWashOrderUuid = $washOrder->query()->latest()->first();
 
         $washOrder->code = $lastWashOrderUuid ? $lastWashOrderUuid->code + 1 : 1;
+        $washOrder->total_quantity = 0;
+        $washOrder->total_price = 0;
     }
 
     /**

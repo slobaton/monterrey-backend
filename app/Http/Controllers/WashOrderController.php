@@ -37,8 +37,10 @@ class WashOrderController extends Controller
     public function store(StoreWashOrderRequest $request): WashOrderResource
     {
         $washOrder = WashOrder::create($request->all());
+
         $washOrder->client;
         $washOrder->washType;
+
         return new WashOrderResource($washOrder);
     }
 

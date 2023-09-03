@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedInclude;
 
@@ -31,12 +31,20 @@ class WashOrderDetail extends Model
         'buttonholes_price',
         'unit_price',
         'quantity',
-        'sub_total_price',
+        'subtotal_price',
         'observations'
     ];
 
     protected $casts = [
-        'is_special_wash' => 'boolean'
+        'is_focalizado_active' => 'boolean',
+        'is_nevado_active' => 'boolean',
+        'wash_price' => 'real',
+        'effect_price' => 'real',
+        'focalizado_price' => 'real',
+        'nevado_price' => 'real',
+        'buttonholes_price' => 'real',
+        'unit_price' => 'real',
+        'subtotal_price' => 'real'
     ];
 
     public function washOrder(): BelongsTo
@@ -57,6 +65,11 @@ class WashOrderDetail extends Model
     public function effects(): BelongsToMany
     {
         return $this->belongsToMany(Effect::class, 'wash_order_detail_effect', 'wash_order_detail_id', 'effect_id');
+    }
+
+    public function orderEffects(): HasMany
+    {
+        return $this->hasMany(WashOrderDetailEffect::class, 'wash_order_detail_id', 'id');
     }
 
     public static function getDefaultSort(): String

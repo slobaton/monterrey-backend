@@ -35,6 +35,11 @@ final class WashOrder extends Model
         'is_special_price'
     ];
 
+    protected $casts = [
+        'total_price' => 'real',
+        'is_special_price' => 'boolean'
+    ];
+
     public function details(): HasMany
     {
         return $this->hasMany(WashOrderDetail::class, 'wash_order_id', 'id');

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Effect extends Model
 {
@@ -25,7 +26,12 @@ class Effect extends Model
         'is_active' => 'boolean',
     ];
 
-    public static function getAllowedFilters(): Array
+    public function clientPrices(): HasMany
+    {
+        return $this->hasMany(ClientEffectPrice::class, 'effect_id', 'id');
+    }
+
+    public static function getAllowedFilters(): array
     {
         return [
             'name',
@@ -42,7 +48,7 @@ class Effect extends Model
             ->orWhere(DB::raw('LOWER(is_active)'), 'LIKE', "%" . strtolower($search) . "%");
     }
 
-    public static function getAllowedSorts(): Array
+    public static function getAllowedSorts(): array
     {
         return [
             'name',

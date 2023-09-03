@@ -45,7 +45,7 @@ return new class extends Migration
             $table->decimal('unit_price', 10, 2)
                 ->unsigned();
             $table->integer('quantity');
-            $table->decimal('sub_total_price', 14, 2)
+            $table->decimal('subtotal_price', 14, 2)
                 ->unsigned();
 
             $table->text('observations')->nullable();

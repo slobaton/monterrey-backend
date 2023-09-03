@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\WashOrder;
+use App\Models\WashOrderDetail;
+use App\Observers\WashOrderDetailObserver;
 use App\Observers\WashOrderObserver;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
@@ -13,6 +15,7 @@ class EventServiceProvider extends ServiceProvider
 {
     protected $observers = [
         WashOrder::class => [WashOrderObserver::class],
+        WashOrderDetail::class => [WashOrderDetailObserver::class]
     ];
     /**
      * The event to listener mappings for the application.
@@ -31,6 +34,7 @@ class EventServiceProvider extends ServiceProvider
     public function boot(): void
     {
         WashOrder::observe(WashOrderObserver::class);
+        WashOrderDetail::observe(WashOrderDetailObserver::class);
     }
 
     /**

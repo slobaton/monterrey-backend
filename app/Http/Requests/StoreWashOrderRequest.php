@@ -25,11 +25,10 @@ class StoreWashOrderRequest extends FormRequest
             'client_id'    => 'required|string|exists:App\Models\Client,id',
             'wash_type_id' => 'required|integer|exists:App\Models\WashType,id',
             'date'         => 'required|date',
-            'total_quantity'   => 'required|integer',
-            'total_price'      => 'nullable|sometimes|decimal:2',
             'deliver_quantity' => 'nullable|sometimes|integer',
             'deliver_date' => 'nullable|sometimes|date',
-            'observations' => 'nullable|sometimes|string'
+            'observations' => 'nullable|sometimes|string',
+            'is_special_price' => 'required|boolean'
         ];
     }
 }
