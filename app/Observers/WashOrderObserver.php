@@ -11,7 +11,10 @@ class WashOrderObserver
      */
     public function creating(WashOrder $washOrder): void
     {
-        $lastWashOrderUuid = $washOrder->query()->latest()->first();
+        $lastWashOrderUuid = $washOrder->query()
+            ->withTrashed()
+            ->latest()
+            ->first();
 
         $washOrder->code = $lastWashOrderUuid ? $lastWashOrderUuid->code + 1 : 1;
         $washOrder->total_quantity = 0;
