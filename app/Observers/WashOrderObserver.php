@@ -26,7 +26,6 @@ class WashOrderObserver
      */
     public function updated(WashOrder $washOrder): void
     {
-        //
     }
 
     /**

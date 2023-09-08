@@ -122,4 +122,75 @@ class WashOrderDetail extends Model
             ->where(DB::raw('LOWER(cloth_sizes.name)'), 'LIKE', "%" . strtolower($search) . "%")
             ->orWhere(DB::raw('LOWER(cloth_sizes.description)'), 'LIKE', "%" . strtolower($search) . "%");
     }
+
+    public function updateParams()
+    {
+        $washOrder = $this->washOrder;
+        $washType = $washOrder->washType;
+
+        // Define wash price
+        $clientWashTypePrice = $washType->clientPrices()
+            ->where('client_id', $washOrder->client_id)
+            ->first();
+
+        $this->wash_price = !is_null($clientWashTypePrice)
+            ? $clientWashTypePrice->price
+            : $washType->price;
+
+        // Define focalizado price
+        if ($this->is_focalizado_active) {
+            $focalizadoParam = ChargeParameter::where('name', 'focalizado_price')
+                ->firstOrFail();
+
+            $clientFocalizadoPrice = $focalizadoParam->clientPrices()
+                ->where('client_id', $washOrder->client_id)
+                ->first();
+
+            $this->focalizado_price = !is_null($clientFocalizadoPrice)
+                ? $clientFocalizadoPrice->price
+                : $focalizadoParam->price;
+        }
+
+        // Define nevado price
+        if ($this->is_nevado_active) {
+            $nevadoParam = ChargeParameter::where('name', 'nevado_price')
+                ->firstOrFail();
+
+            $clientNevadoPrice = $nevadoParam->clientPrices()
+                ->where('client_id', $washOrder->client_id)
+                ->first();
+
+            $this->nevado_price = !is_null($clientNevadoPrice)
+                ? $clientNevadoPrice->price
+                : $nevadoParam->price;
+        }
+    }
+
+    public function updateSubtotal()
+    {
+        $WashOrderDetailEffects = $this->orderEffects;
+
+        $washPrice = $this->wash_price;
+
+        $totalEffectsPrice = !$WashOrderDetailEffects->isEmpty()
+            ? $WashOrderDetailEffects->sum('price')
+            : 0;
+        $this->effect_price = $totalEffectsPrice;
+
+
+        $focalizadoPrice = $this->is_focalizado_active
+            ? $this->focalizado_price
+            : 0;
+
+        $nevadoPrice = $this->is_nevado_active
+            ? $this->nevado_price
+            : 0;
+
+        $buttonholes_price = $this->buttonholes_price * $this->num_buttonholes;
+
+        $this->unit_price = $washPrice + $totalEffectsPrice + $focalizadoPrice + $nevadoPrice + $buttonholes_price;
+        $this->subtotal_price = $this->unit_price * $this->quantity;
+
+        $this->save();
+    }
 }

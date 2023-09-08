@@ -63,6 +63,13 @@ class WashOrderController extends Controller
     {
         $order->update($request->all());
 
+        foreach ($order->details as $detail) {
+            $detail->updateParams();
+            $detail->updateSubtotal();
+        }
+
+        $order->updateTotal();
+
         return new WashOrderResource($order);
     }
 

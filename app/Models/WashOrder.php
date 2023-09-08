@@ -136,4 +136,16 @@ final class WashOrder extends Model
 
         return $query;
     }
+
+    public function updateTotal()
+    {
+        $washOrderDetails = $this->details;
+
+        $totalPrice = $washOrderDetails->sum('subtotal_price');
+        $totalQuantity = $washOrderDetails->sum("quantity");
+
+        $this->total_price = $totalPrice;
+        $this->total_quantity = $totalQuantity;
+        $this->save();
+    }
 }

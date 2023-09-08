@@ -63,40 +63,10 @@ class WashOrderDetailController extends Controller
 
         $washOrderDetail->clothSize;
         $washOrderDetail->clothType;
-        $WashOrderDetailEffects = $washOrderDetail->orderEffects;
         $washOrderDetail->effects;
 
-        $washPrice = $washOrderDetail->wash_price;
-
-        $totalEffectsPrice = !$WashOrderDetailEffects->isEmpty()
-            ? $WashOrderDetailEffects->sum('price')
-            : 0;
-        $washOrderDetail->effect_price = $totalEffectsPrice;
-
-
-        $focalizadoPrice = $washOrderDetail->is_focalizado_active
-            ? $washOrderDetail->focalizado_price
-            : 0;
-
-        $nevadoPrice = $washOrderDetail->is_nevado_active
-            ? $washOrderDetail->nevado_price
-            : 0;
-
-        $buttonholes_price = $washOrderDetail->buttonholes_price * $washOrderDetail->num_buttonholes;
-
-        $washOrderDetail->unit_price = $washPrice + $totalEffectsPrice + $focalizadoPrice + $nevadoPrice + $buttonholes_price;
-        $washOrderDetail->subtotal_price = $washOrderDetail->unit_price * $washOrderDetail->quantity;
-
-        $washOrderDetail->save();
-
-        $washOrderDetails = $washOrder->details;
-
-        $totalPrice = $washOrderDetails->sum('subtotal_price');
-        $totalQuantity = $washOrderDetails->sum("quantity");
-
-        $washOrder->total_price = $totalPrice;
-        $washOrder->total_quantity = $totalQuantity;
-        $washOrder->save();
+        $washOrderDetail->updateSubtotal();
+        $washOrder->updateTotal();
 
         return new WashOrderDetailResource($washOrderDetail);
     }
@@ -141,14 +111,7 @@ class WashOrderDetailController extends Controller
         $washOrderDetail->effects()->detach();
         $washOrderDetail->delete();
 
-        $washOrderDetails = $washOrder->details;
-
-        $totalPrice = $washOrderDetails->sum('subtotal_price');
-        $totalQuantity = $washOrderDetails->sum("quantity");
-
-        $washOrder->total_price = $totalPrice;
-        $washOrder->total_quantity = $totalQuantity;
-        $washOrder->save();
+        $washOrder->updateTotal();
 
         return $this->respondWithSuccess([
             'message' => 'Wash Order Detail has been deleted'
