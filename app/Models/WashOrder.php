@@ -25,13 +25,19 @@ final class WashOrder extends Model
     protected $fillable = [
         'client_id',
         'wash_type_id',
+        'code',
         'date',
         'total_quantity',
         'total_price',
         'deliver_quantity',
         'deliver_date',
         'observations',
-        'code'
+        'is_special_price'
+    ];
+
+    protected $casts = [
+        'total_price' => 'real',
+        'is_special_price' => 'boolean'
     ];
 
     public function details(): HasMany
@@ -129,5 +135,17 @@ final class WashOrder extends Model
             ->orWhere(DB::raw('LOWER(wash_orders.code)'), 'LIKE', "%" . $search . "%");
 
         return $query;
+    }
+
+    public function updateTotal()
+    {
+        $washOrderDetails = $this->details;
+
+        $totalPrice = $washOrderDetails->sum('subtotal_price');
+        $totalQuantity = $washOrderDetails->sum("quantity");
+
+        $this->total_price = $totalPrice;
+        $this->total_quantity = $totalQuantity;
+        $this->save();
     }
 }

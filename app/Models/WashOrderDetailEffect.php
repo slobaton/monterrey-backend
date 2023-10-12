@@ -2,14 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ChargeParameter extends Model
+class WashOrderDetailEffect extends Model
 {
     use HasFactory;
+
+    protected $table = 'wash_order_detail_effect';
 
     /**
      * The attributes that are mass assignable.
@@ -17,7 +18,8 @@ class ChargeParameter extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'description',
+        'wash_order_detail_id',
+        'effect_id',
         'price'
     ];
 
@@ -25,8 +27,8 @@ class ChargeParameter extends Model
         'price' => 'real',
     ];
 
-    public function clientPrices(): HasMany
+    public function effect(): BelongsTo
     {
-        return $this->hasMany(ClientParameterPrice::class, 'charge_parameter_id', 'id');
+        return $this->belongsTo(Effect::class, 'effect_id', 'id');
     }
 }

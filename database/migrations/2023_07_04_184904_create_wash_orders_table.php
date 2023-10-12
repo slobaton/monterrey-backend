@@ -13,20 +13,28 @@ return new class extends Migration
     {
         Schema::create('wash_orders', function (Blueprint $table) {
             $table->uuid('id')->primary();
+
             $table->uuid('client_id');
             $table->unsignedBigInteger('wash_type_id');
-            $table->bigInteger('code')->unique();
+
+            $table->bigInteger('code')
+                ->unique();
             $table->date('date');
+
             $table->integer('total_quantity');
             $table->decimal('total_price', 10, 2)
-                ->unsigned()
-                ->nullable();
+                ->unsigned();
+
             $table->integer('deliver_quantity')
                 ->nullable();
             $table->datetime('deliver_date')
                 ->nullable();
+
             $table->text('observations')
                 ->nullable();
+
+            $table->boolean('is_special_price');
+
             $table->timestamps();
             $table->softDeletes();
 

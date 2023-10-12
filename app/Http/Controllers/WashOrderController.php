@@ -37,8 +37,10 @@ class WashOrderController extends Controller
     public function store(StoreWashOrderRequest $request): WashOrderResource
     {
         $washOrder = WashOrder::create($request->all());
+
         $washOrder->client;
         $washOrder->washType;
+
         return new WashOrderResource($washOrder);
     }
 
@@ -60,6 +62,13 @@ class WashOrderController extends Controller
     public function update(UpdateWashOrderRequest $request, WashOrder $order)
     {
         $order->update($request->all());
+
+        foreach ($order->details as $detail) {
+            $detail->updateParams();
+            $detail->updateSubtotal();
+        }
+
+        $order->updateTotal();
 
         return new WashOrderResource($order);
     }

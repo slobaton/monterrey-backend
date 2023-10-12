@@ -11,6 +11,8 @@ use App\Http\Resources\WashOrderDetailResource;
 use App\Http\Resources\WashOrderDetailCollection;
 use App\Http\Requests\StoreWashOrderDetailRequest;
 use App\Http\Requests\UpdateWashOrderDetailRequest;
+use App\Models\Effect;
+use App\Models\WashOrderDetailEffect;
 
 class WashOrderDetailController extends Controller
 {
@@ -38,14 +40,33 @@ class WashOrderDetailController extends Controller
     public function store(StoreWashOrderDetailRequest $request)
     {
         $washOrderDetail = WashOrderDetail::create($request->all());
+        $washOrder = $washOrderDetail->washOrder;
 
         if ($request->has('effects')) {
-            $washOrderDetail->effects()->attach($request->effects);
+            foreach ($request->effects as $effectId) {
+                $effect = Effect::where('id', $effectId)
+                    ->firstOrFail();
+
+                $clientEffectPrice = $effect->clientPrices()
+                    ->where('client_id', $washOrder->client_id)
+                    ->first();
+
+                WashOrderDetailEffect::create([
+                    'wash_order_detail_id' => $washOrderDetail->id,
+                    'effect_id' => $effect->id,
+                    'price' => !is_null($clientEffectPrice)
+                        ? $clientEffectPrice->price
+                        : $effect->price
+                ]);
+            }
         }
 
-        $washOrderDetail->clothType;
         $washOrderDetail->clothSize;
+        $washOrderDetail->clothType;
         $washOrderDetail->effects;
+
+        $washOrderDetail->updateSubtotal();
+        $washOrder->updateTotal();
 
         return new WashOrderDetailResource($washOrderDetail);
     }
@@ -85,8 +106,12 @@ class WashOrderDetailController extends Controller
      */
     public function destroy(WashOrderDetail $washOrderDetail)
     {
+        $washOrder = $washOrderDetail->washOrder;
+
         $washOrderDetail->effects()->detach();
         $washOrderDetail->delete();
+
+        $washOrder->updateTotal();
 
         return $this->respondWithSuccess([
             'message' => 'Wash Order Detail has been deleted'

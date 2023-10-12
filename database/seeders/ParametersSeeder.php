@@ -13,8 +13,8 @@ class ParametersSeeder extends Seeder
     public function run(): void
     {
         ChargeParameter::insert([
-            ['name' => 'focalizado_price', 'description' => 'precio general para focalizado', 'price' => 25],
-            ['name' => 'nevado_price', 'description' => 'precio general para nevado', 'price' => 35]
+            ['name' => 'focalizado_price', 'description' => 'precio general para focalizado', 'price' => 3],
+            ['name' => 'nevado_price', 'description' => 'precio general para nevado', 'price' => 2]
         ]);
     }
 }
