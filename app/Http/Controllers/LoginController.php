@@ -8,6 +8,8 @@ use Illuminate\Http\JsonResponse;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -44,5 +46,16 @@ class LoginController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return $this->respondWithSuccess();
+    }
+
+    public function getPublicKey(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $hashKey = Crypt::encrypt($userId);
+
+        return $this->respondWithSuccess([
+            "key" => $hashKey
+        ]);
     }
 }

@@ -13,6 +13,10 @@
 
     <hr>
 
+    <h3>Usuario: {{ $userId }}</h3>
+
+    <hr>
+
     <table>
         <thead>
             <tr>

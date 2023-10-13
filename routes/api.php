@@ -75,6 +75,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('parameters/{parameter}', 'show');
         Route::patch('parameters/{parameter}', 'update');
     });
+
+    // Get authorization hash key
+    Route::get('auth/key', [LoginController::class, 'getPublicKey']);
 });
 
-Route::get('reports/client', [ReportController::class, 'downloadReport']);
+
+Route::controller(ReportController::class)
+    ->middleware('auth.publicKey')
+    ->group(function () {
+        Route::get('reports/washOrder', [ReportController::class, 'washOrderReport']);
+    });
