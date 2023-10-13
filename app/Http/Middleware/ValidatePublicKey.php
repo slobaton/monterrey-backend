@@ -31,7 +31,7 @@ class ValidatePublicKey
 
             return $next($request);
         } catch (\Throwable) {
-            abort(400);
+            abort(401);
         }
     }
 }
