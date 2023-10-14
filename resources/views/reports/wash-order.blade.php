@@ -68,10 +68,10 @@
     <table class="body">
         <tr>
             <td colspan="2"><b>Cliente:</b> {{ $client->fullname }}</td>
-            <td colspan="2"><b>Fecha:</b> {{ $washOrder->date }}</td>
+            <td colspan="2"><b>Fecha:</b> {{ $washOrder->date->format('d/m/Y') }}</td>
             <td colspan="2"><b>Tipo Lavado:</b> {{ $washOrder->washType->name }}</td>
         </tr>
-        <tr class="table-observations">
+        <tr>
             <td colspan="6"><b>Observaciones: </b> {{ $washOrder->observations }}</td>
         </tr>
         <tr class="table-detail">

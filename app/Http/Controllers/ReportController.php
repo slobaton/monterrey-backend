@@ -27,7 +27,7 @@ class ReportController extends Controller
             'details' => $washOrder->details
         ];
 
-        $pdf = Pdf::loadView('client-report', $data)
+        $pdf = Pdf::loadView('reports/wash-order', $data)
             ->setPaper('a4', 'landscape');
 
         return $pdf->stream('invoice.pdf');
