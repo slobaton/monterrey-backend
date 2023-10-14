@@ -2,21 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
+use App\Models\User;
+use App\Models\WashOrder;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
-    public function washOrderReport(Request $request)
+    public function washOrderReport(Request $request, $washOrderId)
     {
         $userId = $request->get('userId');
+        $user = User::find($userId);
 
-        $clients = Client::all();
+        $washOrder = WashOrder::find($washOrderId);
+
+        $washOrder->client;
+        $washOrder->washType;
+        $washOrder->details;
 
         $data = [
-            'userId' => $userId,
-            'clients' => $clients
+            'user' => $user,
+            'client' => $washOrder->client,
+            'washOrder' => $washOrder,
+            'details' => $washOrder->details
         ];
 
         $pdf = Pdf::loadView('client-report', $data)

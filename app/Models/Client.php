@@ -111,4 +111,9 @@ class Client extends Model
     {
         return [];
     }
+
+    public function getFullnameAttribute()
+    {
+        return $this->attributes['name'] . ' ' . $this->attributes['paternal_surname'] . ' ' . $this->attributes['maternal_surname'];
+    }
 }

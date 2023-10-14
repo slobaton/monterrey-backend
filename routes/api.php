@@ -84,5 +84,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::controller(ReportController::class)
     ->middleware('auth.publicKey')
     ->group(function () {
-        Route::get('reports/washOrder', [ReportController::class, 'washOrderReport']);
+        Route::get('reports/washOrder/{washOrderId}', [ReportController::class, 'washOrderReport']);
     });
