@@ -36,6 +36,7 @@ final class WashOrder extends Model
     ];
 
     protected $casts = [
+        'date' => 'date',
         'total_price' => 'real',
         'is_special_price' => 'boolean'
     ];
