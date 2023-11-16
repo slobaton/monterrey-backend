@@ -49,7 +49,9 @@ class WashOrderController extends Controller
      */
     public function show(WashOrder $order)
     {
-        $washOrder = QueryBuilder::for($order)
+        $query = WashOrder::where('id', $order->id);
+
+        $washOrder = QueryBuilder::for($query)
             ->allowedIncludes(WashOrder::getAllowedIncludes())
             ->firstOrFail();
 

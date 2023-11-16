@@ -23,6 +23,7 @@ class Effect extends Model
     ];
 
     protected $casts = [
+        'price' => 'real',
         'is_active' => 'boolean',
     ];
 

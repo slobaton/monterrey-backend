@@ -27,7 +27,7 @@ class WashType extends Model
     ];
 
     protected $casts = [
-        'price'     => 'decimal:2',
+        'price'     => 'real',
         'is_active' => 'boolean',
     ];
 

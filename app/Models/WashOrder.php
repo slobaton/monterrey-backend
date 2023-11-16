@@ -149,4 +149,45 @@ final class WashOrder extends Model
         $this->total_quantity = $totalQuantity;
         $this->save();
     }
+
+    public function getWashPrice()
+    {
+        $washType = $this->washType;
+
+        $clientWashTypePrice = $washType->clientPrices()
+            ->where('client_id', $this->client_id)
+            ->first();
+
+        return !is_null($clientWashTypePrice)
+            ? $clientWashTypePrice->price
+            : $washType->price;
+    }
+
+    public function getFocalizadoPrice()
+    {
+        $focalizadoParam = ChargeParameter::where('name', 'focalizado_price')
+            ->firstOrFail();
+
+        $clientFocalizadoPrice = $focalizadoParam->clientPrices()
+            ->where('client_id', $this->client_id)
+            ->first();
+
+        return !is_null($clientFocalizadoPrice)
+            ? $clientFocalizadoPrice->price
+            : $focalizadoParam->price;
+    }
+
+    public function getNevadoPrice()
+    {
+        $nevadoParam = ChargeParameter::where('name', 'nevado_price')
+            ->firstOrFail();
+
+        $clientNevadoPrice = $nevadoParam->clientPrices()
+            ->where('client_id', $this->client_id)
+            ->first();
+
+        return !is_null($clientNevadoPrice)
+            ? $clientNevadoPrice->price
+            : $nevadoParam->price;
+    }
 }
