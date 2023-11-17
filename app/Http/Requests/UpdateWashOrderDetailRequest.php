@@ -22,19 +22,16 @@ class UpdateWashOrderDetailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'wash_order_id'    => 'required|string|exists:App\Models\WashOrder,id',
-            'cloth_type_id'    => 'required|integer|exists:App\Models\ClothType,id',
-            'cloth_size_id'    => 'required|integer|exists:App\Models\ClothSize,id',
-            'is_special_wash'  => 'sometimes|nullable|boolean',
-            'wash_price'       => 'nullable|sometimes|decimal:0,2',
-            'effect_price'     => 'nullable|sometimes|decimal:0,2',
-            'num_buttonholes'  => 'required|integer',
-            'additional_price' => 'nullable|sometimes|string',
-            'additional_price_desc' => 'nullable|sometimes|decimal:0,2',
-            'unit_price'       => 'nullable|sometimes|decimal:0,2',
-            'quantity'         => 'nullable|sometimes|decimal:0,2',
-            'sub_total_price'  => 'nullable|sometimes|decimal:0,2',
-            'observations'     => 'nullable|sometimes|string'
+            'wash_order_id'         => 'required|string|exists:App\Models\WashOrder,id',
+            'cloth_type_id'         => 'required|integer|exists:App\Models\ClothType,id',
+            'cloth_size_id'         => 'required|integer|exists:App\Models\ClothSize,id',
+            'is_focalizado_active'  => 'required|boolean',
+            'is_nevado_active'      => 'required|boolean',
+            'num_buttonholes'       => 'required|integer',
+            'buttonholes_price'     => 'required|decimal:0,2',
+            'quantity'              => 'required|integer',
+            'observations'          => 'nullable|sometimes|string',
+            'effects'              => 'nullable|sometimes|array'
         ];
     }
 }

@@ -37,6 +37,20 @@ class WashOrderDetailController extends Controller
     }
 
     /**
+     * Display the specified resource.
+     */
+    public function show(WashOrderDetail $washOrderDetail)
+    {
+        $query = WashOrderDetail::where('id', $washOrderDetail->id);
+
+        $washOrderDetail = QueryBuilder::for($query)
+            ->allowedIncludes(WashOrderDetail::getAllowedIncludes())
+            ->firstOrFail();
+
+        return new WashOrderDetailResource($washOrderDetail);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(StoreWashOrderDetailRequest $request)
@@ -74,33 +88,44 @@ class WashOrderDetailController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(WashOrderDetail $washOrderDetail)
-    {
-        $query = WashOrderDetail::where('id', $washOrderDetail->id);
-
-        $washOrderDetail = QueryBuilder::for($query)
-            ->allowedIncludes(WashOrderDetail::getAllowedIncludes())
-            ->firstOrFail();
-
-        return new WashOrderDetailResource($washOrderDetail);
-    }
-
-    /**
      * Update the specified resource in storage.
      */
     public function update(UpdateWashOrderDetailRequest $request, WashOrderDetail $washOrderDetail)
     {
         $washOrderDetail->update($request->all());
+        $washOrder = $washOrderDetail->washOrder;
 
         if ($request->has('effects')) {
             $washOrderDetail->effects()->sync($request->effects);
+
+            foreach ($request->effects as $effectId) {
+                $effect = Effect::where('id', $effectId)
+                    ->firstOrFail();
+
+                $clientEffectPrice = $effect->clientPrices()
+                    ->where('client_id', $washOrder->client_id)
+                    ->first();
+
+                $washOrderDetailEffect = WashOrderDetailEffect::where('wash_order_detail_id', $washOrderDetail->id)
+                    ->where('effect_id', $effectId)
+                    ->first();
+
+                if (!is_null($washOrderDetailEffect)) {
+                    $washOrderDetailEffect->price = !is_null($clientEffectPrice)
+                        ? $clientEffectPrice->price
+                        : $effect->price;
+
+                    $washOrderDetailEffect->saveOrFail();
+                }
+            }
         }
 
         $washOrderDetail->clothType;
         $washOrderDetail->clothSize;
         $washOrderDetail->effects;
+
+        $washOrderDetail->updateSubtotal();
+        $washOrder->updateTotal();
 
         return new WashOrderDetailResource($washOrderDetail);
     }

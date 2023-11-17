@@ -16,7 +16,8 @@ return new class extends Migration
             $table->uuid('wash_order_detail_id');
             $table->uuid('effect_id');
             $table->decimal('price', 10, 2)
-                ->unsigned();
+                ->unsigned()
+                ->default(0);
 
             $table->timestamps();
 

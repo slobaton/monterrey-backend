@@ -152,7 +152,6 @@ class WashOrderDetail extends Model
             : 0;
         $this->effect_price = $totalEffectsPrice;
 
-
         $focalizadoPrice = $this->is_focalizado_active
             ? $this->focalizado_price
             : 0;

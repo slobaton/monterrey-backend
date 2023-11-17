@@ -21,9 +21,9 @@ class WashOrderDetailObserver
     /**
      * Handle the WashOrderDetail "updated" event.
      */
-    public function updated(WashOrderDetail $washOrderDetail): void
+    public function updating(WashOrderDetail $washOrderDetail): void
     {
-        //
+        $washOrderDetail->updateParams();
     }
 
     /**
