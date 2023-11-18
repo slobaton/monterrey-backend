@@ -49,7 +49,7 @@ it('should update an existing wash type (update)', function () {
     $newData = [
         'id'               => $washType->id,
         'name'             => 'WashType Mock',
-        'price'            => '199.99',
+        'price'            => 199.99,
         'description' => $washType->description,
         'is_active' => false
     ];
