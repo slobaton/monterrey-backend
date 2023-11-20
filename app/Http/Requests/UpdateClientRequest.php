@@ -25,6 +25,8 @@ class UpdateClientRequest extends FormRequest
         return [
             'id'                => 'required|uuid',
             'nit'               => [
+                'nullable',
+                'sometimes',
                 'string',
                 'max:20',
                 Rule::unique('clients', 'nit')->ignore($this->request->get('id'), 'id')
@@ -32,8 +34,8 @@ class UpdateClientRequest extends FormRequest
             'name'              => 'required|string|max:255',
             'paternal_surname'  => 'required_without:maternal_surname|string|max:255',
             'maternal_surname'  => 'required_without:paternal_surname|string|max:255',
-            'phone'             => 'string|max:15',
-            'cellphone'         => 'string|max:15',
+            'phone'             => 'nullable|sometimes|string|max:15',
+            'cellphone'         => 'nullable|sometimes|string|max:15',
             'is_active'         => 'boolean'
         ];
     }

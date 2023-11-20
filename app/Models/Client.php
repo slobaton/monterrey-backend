@@ -73,6 +73,11 @@ class Client extends Model
             ->orWhere(DB::raw('LOWER(cellphone)'), 'LIKE', "%" . strtolower($search) . "%");
     }
 
+    public function getFullnameAttribute()
+    {
+        return $this->attributes['name'] . ' ' . $this->attributes['paternal_surname'] . ' ' . $this->attributes['maternal_surname'];
+    }
+
     public static function getAllowedFilters()
     {
         return [
@@ -112,8 +117,15 @@ class Client extends Model
         return [];
     }
 
-    public function getFullnameAttribute()
+    public static function getActiveClientsCount(): int
     {
-        return $this->attributes['name'] . ' ' . $this->attributes['paternal_surname'] . ' ' . $this->attributes['maternal_surname'];
+        return Client::where('is_active', true)
+            ->count();
+    }
+
+    public static function getInactiveClientsCount(): int
+    {
+        return Client::where('is_active', false)
+            ->count();
     }
 }

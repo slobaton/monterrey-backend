@@ -78,6 +78,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('parameters/{parameter}', 'update');
     });
 
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('reports/general-count', 'generalReportCount');
+    });
+
     // Get authorization hash key
     Route::get('auth/key', [LoginController::class, 'getPublicKey']);
 });
