@@ -47,7 +47,7 @@ class ReportController extends Controller
                 'count' => WashOrder::getOrdersCount(),
                 'revenue' => WashOrder::getOrdersTotalRevenue()
             ],
-            'wash-types' => [
+            'wash_types' => [
                 'active' => WashType::getActiveCount(),
                 'inactive' => WashType::getInactiveCount()
             ],
