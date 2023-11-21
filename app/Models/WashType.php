@@ -27,7 +27,7 @@ class WashType extends Model
     ];
 
     protected $casts = [
-        'price'     => 'decimal:2',
+        'price'     => 'real',
         'is_active' => 'boolean',
     ];
 
@@ -73,5 +73,17 @@ class WashType extends Model
     public static function getAllowedIncludes(): array
     {
         return [];
+    }
+
+    public static function getActiveCount(): int
+    {
+        return WashType::where('is_active', true)
+            ->count();
+    }
+
+    public static function getInactiveCount(): int
+    {
+        return WashType::where('is_active', false)
+            ->count();
     }
 }

@@ -126,43 +126,18 @@ class WashOrderDetail extends Model
     public function updateParams()
     {
         $washOrder = $this->washOrder;
-        $washType = $washOrder->washType;
 
         // Define wash price
-        $clientWashTypePrice = $washType->clientPrices()
-            ->where('client_id', $washOrder->client_id)
-            ->first();
-
-        $this->wash_price = !is_null($clientWashTypePrice)
-            ? $clientWashTypePrice->price
-            : $washType->price;
+        $this->wash_price = $washOrder->getWashPrice();
 
         // Define focalizado price
         if ($this->is_focalizado_active) {
-            $focalizadoParam = ChargeParameter::where('name', 'focalizado_price')
-                ->firstOrFail();
-
-            $clientFocalizadoPrice = $focalizadoParam->clientPrices()
-                ->where('client_id', $washOrder->client_id)
-                ->first();
-
-            $this->focalizado_price = !is_null($clientFocalizadoPrice)
-                ? $clientFocalizadoPrice->price
-                : $focalizadoParam->price;
+            $this->focalizado_price = $washOrder->getFocalizadoPrice();
         }
 
         // Define nevado price
         if ($this->is_nevado_active) {
-            $nevadoParam = ChargeParameter::where('name', 'nevado_price')
-                ->firstOrFail();
-
-            $clientNevadoPrice = $nevadoParam->clientPrices()
-                ->where('client_id', $washOrder->client_id)
-                ->first();
-
-            $this->nevado_price = !is_null($clientNevadoPrice)
-                ? $clientNevadoPrice->price
-                : $nevadoParam->price;
+            $this->nevado_price = $washOrder->getNevadoPrice();
         }
     }
 
@@ -176,7 +151,6 @@ class WashOrderDetail extends Model
             ? $WashOrderDetailEffects->sum('price')
             : 0;
         $this->effect_price = $totalEffectsPrice;
-
 
         $focalizadoPrice = $this->is_focalizado_active
             ? $this->focalizado_price

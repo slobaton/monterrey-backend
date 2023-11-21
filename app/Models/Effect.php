@@ -23,6 +23,7 @@ class Effect extends Model
     ];
 
     protected $casts = [
+        'price' => 'real',
         'is_active' => 'boolean',
     ];
 
@@ -68,5 +69,17 @@ class Effect extends Model
     protected static function getAllowedIncludes(): array
     {
         return [];
+    }
+
+    public static function getActiveCount(): int
+    {
+        return Effect::where('is_active', true)
+            ->count();
+    }
+
+    public static function getInactiveCount(): int
+    {
+        return Effect::where('is_active', false)
+            ->count();
     }
 }

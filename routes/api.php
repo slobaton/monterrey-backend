@@ -46,8 +46,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('wash-orders', WashOrderController::class)
         ->parameters(['wash-orders' => 'order']);
+
     Route::apiResource('wash-order-details', WashOrderDetailController::class)
         ->parameters(['wash-order-details' => 'washOrderDetail']);
+    Route::post('wash-order-details/calculate', [WashOrderDetailController::class, 'calculatePrices']);
 
     Route::controller(ClientWashTypePriceController::class)->group(function () {
         Route::get('clients/{client}/wash-types/{washTypeId}/prices/{id}', 'getPriceById');
@@ -74,6 +76,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('parameters', 'index');
         Route::get('parameters/{parameter}', 'show');
         Route::patch('parameters/{parameter}', 'update');
+    });
+
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('reports/general-count', 'generalReportCount');
     });
 
     // Get authorization hash key

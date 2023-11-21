@@ -56,38 +56,6 @@ final class WashOrder extends Model
         return $this->belongsTo(Client::class, 'client_id', 'id');
     }
 
-    public static function getDefaultSort(): String
-    {
-        return '-date';
-    }
-
-    public static function getAllowedIncludes(): array
-    {
-        return [
-            'client',
-            'details',
-            AllowedInclude::relationship('wash_type', 'washType')
-        ];
-    }
-
-    public static function getAllowedFilters()
-    {
-        return [
-            AllowedFilter::scope('client'),
-            AllowedFilter::scope('wash_type'),
-            AllowedFilter::scope('all'),
-            AllowedFilter::scope('observations'),
-            AllowedFilter::exact('date', 'date'),
-            AllowedFilter::exact('code', 'code'),
-            'total_price',
-        ];
-    }
-
-    protected static function getAllowedSorts()
-    {
-        return [];
-    }
-
     public function scopeClient(Builder $query, $search): Builder
     {
         if (!QueryBuilderHelpers::isJoined($query, 'clients')) {
@@ -148,5 +116,90 @@ final class WashOrder extends Model
         $this->total_price = $totalPrice;
         $this->total_quantity = $totalQuantity;
         $this->save();
+    }
+
+    public function getWashPrice()
+    {
+        $washType = $this->washType;
+
+        $clientWashTypePrice = $washType->clientPrices()
+            ->where('client_id', $this->client_id)
+            ->first();
+
+        return !is_null($clientWashTypePrice)
+            ? $clientWashTypePrice->price
+            : $washType->price;
+    }
+
+    public function getFocalizadoPrice()
+    {
+        $focalizadoParam = ChargeParameter::where('name', 'focalizado_price')
+            ->firstOrFail();
+
+        $clientFocalizadoPrice = $focalizadoParam->clientPrices()
+            ->where('client_id', $this->client_id)
+            ->first();
+
+        return !is_null($clientFocalizadoPrice)
+            ? $clientFocalizadoPrice->price
+            : $focalizadoParam->price;
+    }
+
+    public function getNevadoPrice()
+    {
+        $nevadoParam = ChargeParameter::where('name', 'nevado_price')
+            ->firstOrFail();
+
+        $clientNevadoPrice = $nevadoParam->clientPrices()
+            ->where('client_id', $this->client_id)
+            ->first();
+
+        return !is_null($clientNevadoPrice)
+            ? $clientNevadoPrice->price
+            : $nevadoParam->price;
+    }
+
+    public static function getDefaultSort(): String
+    {
+        return '-date';
+    }
+
+    public static function getAllowedIncludes(): array
+    {
+        return [
+            'client',
+            'details',
+            AllowedInclude::relationship('wash_type', 'washType')
+        ];
+    }
+
+    public static function getAllowedFilters()
+    {
+        return [
+            AllowedFilter::scope('client'),
+            AllowedFilter::scope('wash_type'),
+            AllowedFilter::scope('all'),
+            AllowedFilter::scope('observations'),
+            AllowedFilter::exact('date', 'date'),
+            AllowedFilter::exact('code', 'code'),
+            'total_price',
+        ];
+    }
+
+    protected static function getAllowedSorts()
+    {
+        return [];
+    }
+
+    public static function getOrdersCount()
+    {
+        return WashOrder::count();
+    }
+
+    public static function getOrdersTotalRevenue(): float
+    {
+        $totalRevenue = WashOrder::sum('total_price');
+
+        return (float)$totalRevenue;
     }
 }
