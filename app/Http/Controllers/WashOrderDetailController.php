@@ -153,27 +153,27 @@ class WashOrderDetailController extends Controller
             ->firstOrFail();
 
         $washPrice = $washOrder->getWashPrice();
-        $isFocalizadoActive = $request->has('is_focalizado_active')
+        $isFocalizadoActive = $request->has('is_focalizado_active') && !is_null($request->is_focalizado_active)
             ? $request->is_focalizado_active
             : false;
-        $isNevadoActive = $request->has('is_nevado_active')
+        $isNevadoActive = $request->has('is_nevado_active') && !is_null($request->is_nevado_active)
             ? $request->is_nevado_active
             : false;
         $focalizadoPrice = $washOrder->getFocalizadoPrice();
         $nevadoPrice = $washOrder->getNevadoPrice();
-        $numButtonHoles = $request->has('num_buttonholes')
+        $numButtonHoles = $request->has('num_buttonholes') && !is_null($request->num_buttonholes)
             ? $request->num_buttonholes
             : 0;
-        $buttonHolesPrice = $request->has('buttonholes_price')
+        $buttonHolesPrice = $request->has('buttonholes_price') && !is_null($request->buttonholes_price)
             ? $request->buttonholes_price
             : 0;
         $effectTotalPrice = 0;
 
-        $quantity = $request->has('quantity')
+        $quantity = $request->has('quantity') && !is_null($request->quantity)
             ? $request->quantity
             : 0;
 
-        if ($request->has('effects')) {
+        if ($request->has('effects') && !is_null($request->effects)) {
             foreach ($request->effects as $effectId) {
                 $effect = Effect::where('id', $effectId)
                     ->firstOrFail();
