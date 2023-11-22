@@ -95,7 +95,7 @@
 <body>
     <table class="header">
         <tr>
-            <td><img class="logo" src="{{ asset('images/logo.jpg') }}" alt="Logo"></td>
+            <td><img class="logo" src="{{ asset('images/logo.png') }}" alt="Logo"></td>
             <td class="title">FICHA LAVADO</td>
             <td class="code">N° {{ $washOrder->code }}</td>
         </tr>
