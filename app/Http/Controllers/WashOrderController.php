@@ -104,8 +104,6 @@ class WashOrderController extends Controller
         $washOrder->status = OrderStatus::APPROVED->value;
         $washOrder->saveOrFail();
 
-        return $this->respondWithSuccess([
-            'message' => 'Wash Order has been approved'
-        ]);
+        return new WashOrderResource($washOrder);
     }
 }
