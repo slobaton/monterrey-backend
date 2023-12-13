@@ -64,10 +64,6 @@ class WashOrderController extends Controller
      */
     public function update(UpdateWashOrderRequest $request, WashOrder $order)
     {
-        if ($order->status !== OrderStatus::CREATED->value) {
-            return $this->respondForbidden();
-        }
-
         $order->update($request->all());
 
         foreach ($order->details as $detail) {
