@@ -161,7 +161,7 @@ final class WashOrder extends Model
 
     public static function getDefaultSort(): String
     {
-        return '-date';
+        return '-code';
     }
 
     public static function getAllowedIncludes(): array

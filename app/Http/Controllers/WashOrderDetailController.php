@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Http\Requests\CalculateWashOrderDetailPriceRequest;
 use App\Models\WashOrderDetail;
 
@@ -136,6 +137,10 @@ class WashOrderDetailController extends Controller
     public function destroy(WashOrderDetail $washOrderDetail)
     {
         $washOrder = $washOrderDetail->washOrder;
+
+        if ($washOrder->status !== OrderStatus::CREATED->value) {
+            return $this->respondForbidden();
+        }
 
         $washOrderDetail->effects()->detach();
         $washOrderDetail->delete();

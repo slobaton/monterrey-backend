@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Enums\OrderStatus;
 use App\Models\WashOrder;
 
 class WashOrderObserver
@@ -19,6 +20,7 @@ class WashOrderObserver
         $washOrder->code = $lastWashOrderUuid ? $lastWashOrderUuid->code + 1 : 1;
         $washOrder->total_quantity = 0;
         $washOrder->total_price = 0;
+        $washOrder->status = OrderStatus::CREATED->value;
     }
 
     /**

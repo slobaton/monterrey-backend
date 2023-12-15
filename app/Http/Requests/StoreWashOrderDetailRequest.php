@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\OrderStatus;
+use App\Models\WashOrder;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreWashOrderDetailRequest extends FormRequest
@@ -11,7 +13,10 @@ class StoreWashOrderDetailRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $washOrderId = $this->get('wash_order_id');
+        $washOrder = WashOrder::where('id', $washOrderId)->first();
+
+        return $washOrder ? $washOrder->status === OrderStatus::CREATED->value : false;
     }
 
     /**

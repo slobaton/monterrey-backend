@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use Spatie\QueryBuilder\QueryBuilder;
 
 use App\Models\WashOrder;
@@ -80,10 +81,29 @@ class WashOrderController extends Controller
      */
     public function destroy(WashOrder $order)
     {
+        if ($order->status !== OrderStatus::CREATED->value) {
+            return $this->respondForbidden();
+        }
+
         $order->delete();
 
         return $this->respondWithSuccess([
             'message' => 'Wash Order has been deleted'
         ]);
+    }
+
+    /**
+     * Approve the specified order
+     */
+    public function approveOrder(WashOrder $washOrder)
+    {
+        if ($washOrder->status !== OrderStatus::CREATED->value) {
+            return $this->respondError('Wash Order cannot be approved');
+        }
+
+        $washOrder->status = OrderStatus::APPROVED->value;
+        $washOrder->saveOrFail();
+
+        return new WashOrderResource($washOrder);
     }
 }

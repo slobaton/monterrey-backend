@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('wash-orders', WashOrderController::class)
         ->parameters(['wash-orders' => 'order']);
+    Route::post('wash-orders/{washOrder}/approve', [WashOrderController::class, 'approveOrder']);
 
     Route::apiResource('wash-order-details', WashOrderDetailController::class)
         ->parameters(['wash-order-details' => 'washOrderDetail']);

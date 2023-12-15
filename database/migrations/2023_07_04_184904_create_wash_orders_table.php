@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\OrderStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -24,6 +25,9 @@ return new class extends Migration
             $table->integer('total_quantity');
             $table->decimal('total_price', 10, 2)
                 ->unsigned();
+
+            $table->enum('status', [OrderStatus::CREATED->value, OrderStatus::APPROVED->value, OrderStatus::DELIVERED->value])
+                ->default(OrderStatus::CREATED->value);
 
             $table->integer('deliver_quantity')
                 ->nullable();

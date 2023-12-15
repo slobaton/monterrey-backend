@@ -23,6 +23,7 @@ class WashOrderResource extends ApiResource
             'date'               => $this->date,
             'total_quantity'     => $this->total_quantity,
             'total_price'        => $this->total_price,
+            'status'             => $this->status,
             'deliver_quantity'   => $this->deliver_quantity,
             'observations'       => $this->observations,
             'is_special_price'   => $this->is_special_price,

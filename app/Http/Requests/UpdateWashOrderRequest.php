@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\OrderStatus;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateWashOrderRequest extends FormRequest
@@ -11,7 +12,9 @@ class UpdateWashOrderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $washOrder = $this->route()->parameter('order');
+
+        return $washOrder ? $washOrder->status === OrderStatus::CREATED->value : false;
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Models\Client;
 use App\Models\Effect;
 use App\Models\User;
@@ -18,6 +19,10 @@ class ReportController extends Controller
         $user = User::find($userId);
 
         $washOrder = WashOrder::find($washOrderId);
+
+        if ($washOrder->status === OrderStatus::CREATED->value) {
+            abort(403, 'No tienes permiso.');
+        }
 
         $washOrder->client;
         $washOrder->washType;
