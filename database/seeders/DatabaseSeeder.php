@@ -21,6 +21,10 @@ class DatabaseSeeder extends Seeder
         $secreRole = \App\Models\Role::create([
             'name' => Roles::SECRETARY
         ]);
+        $receptionistRole = \App\Models\Role::create([
+            'name' => Roles::RECEPTIONIST
+        ]);
+
         $admin = \App\Models\User::create([
             'name' => 'Admin',
             'username' => 'admin',
@@ -31,8 +35,16 @@ class DatabaseSeeder extends Seeder
             'username' => 'secre',
             'password' => 'password'
         ]);
+        $receptionist = \App\Models\User::create([
+            'name' => 'Receptionist',
+            'username' => 'recep',
+            'password' => 'password'
+        ]);
+
         $admin->roles()->attach($role);
         $secre->roles()->attach($secreRole);
+        $receptionist->roles()->attach($receptionistRole);
+
         \App\Models\User::factory(100)->create();
 
         $this->call([
