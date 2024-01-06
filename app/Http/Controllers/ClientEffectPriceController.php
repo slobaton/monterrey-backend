@@ -15,7 +15,14 @@ class ClientEffectPriceController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:' . Roles::ADMIN->value);
+        $this->middleware('role:' . Roles::ADMIN->value)
+            ->only(['updatePrice', 'deletePrice']);
+
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
+            ->only(['assignPrice']);
+
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
+            ->only(['getPriceById']);
     }
 
     public function getPriceById(Client $client, $effectId, $id)

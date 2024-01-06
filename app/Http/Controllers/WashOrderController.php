@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Roles;
+use App\Models\WashOrder;
+
 use App\Enums\OrderStatus;
 use Spatie\QueryBuilder\QueryBuilder;
-
-use App\Models\WashOrder;
 use App\Http\Requests\PaginationRequest;
 use App\Http\Resources\WashOrderResource;
 use App\Http\Resources\WashOrderCollection;
@@ -14,6 +15,14 @@ use App\Http\Requests\UpdateWashOrderRequest;
 
 class WashOrderController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:' . Roles::ADMIN->value)
+            ->only(['approveOrder']);
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
+            ->except(['approveOrder']);
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -4,14 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Enums\Roles;
 use App\Http\Requests\PaginationRequest;
-use App\Models\ClothSize;
-use App\Http\Requests\StoreClothSizeRequest;
 use App\Http\Requests\UpdateChargeParameterRequest;
-use App\Http\Requests\UpdateClothSizeRequest;
 use App\Http\Resources\ChargeParameterCollection;
 use App\Http\Resources\ChargeParameterResource;
-use App\Http\Resources\ClothSizeCollection;
-use App\Http\Resources\ClothSizeResource;
 use App\Models\ChargeParameter;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;

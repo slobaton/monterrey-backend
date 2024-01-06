@@ -13,13 +13,17 @@ use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientEffectPriceCollection;
 use App\Http\Resources\ClientParameterPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
-use Barryvdh\DomPDF\Facade\Pdf;
 
 class ClientController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value);
+        $notAdminActions = ['index', 'store', 'show', 'getWashTypes', 'getEffects', 'getParameters'];
+
+        $this->middleware('role:' . Roles::ADMIN->value)
+            ->except($notAdminActions);
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
+            ->only($notAdminActions);
     }
 
     /**

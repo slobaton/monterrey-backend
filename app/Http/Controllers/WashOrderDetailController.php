@@ -2,23 +2,29 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Roles;
+use App\Models\Effect;
+use App\Models\WashOrder;
+
 use App\Enums\OrderStatus;
-use App\Http\Requests\CalculateWashOrderDetailPriceRequest;
+
 use App\Models\WashOrderDetail;
-
+use App\Models\WashOrderDetailEffect;
 use Spatie\QueryBuilder\QueryBuilder;
-
 use App\Http\Requests\PaginationRequest;
 use App\Http\Resources\WashOrderDetailResource;
 use App\Http\Resources\WashOrderDetailCollection;
 use App\Http\Requests\StoreWashOrderDetailRequest;
 use App\Http\Requests\UpdateWashOrderDetailRequest;
-use App\Models\Effect;
-use App\Models\WashOrder;
-use App\Models\WashOrderDetailEffect;
+use App\Http\Requests\CalculateWashOrderDetailPriceRequest;
 
 class WashOrderDetailController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value);
+    }
+
     /**
      * Display a listing of the resource.
      */

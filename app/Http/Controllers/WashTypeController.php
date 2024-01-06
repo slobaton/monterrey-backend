@@ -16,7 +16,14 @@ class WashTypeController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value);
+        $this->middleware('role:' . Roles::ADMIN->value)
+            ->only(['update', 'destroy']);
+
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
+            ->only(['store']);
+
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
+            ->only(['index', 'show']);
     }
 
     /**

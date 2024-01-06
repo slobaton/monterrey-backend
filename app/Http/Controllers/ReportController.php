@@ -2,17 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\OrderStatus;
+use App\Enums\Roles;
+use App\Models\User;
 use App\Models\Client;
 use App\Models\Effect;
-use App\Models\User;
-use App\Models\WashOrder;
 use App\Models\WashType;
+use App\Models\WashOrder;
+use App\Enums\OrderStatus;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class ReportController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:' . Roles::ADMIN->value)
+            ->only(['generalReportCount']);
+
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
+            ->only(['washOrderReport']);
+    }
+
     public function washOrderReport(Request $request, $washOrderId)
     {
         $userId = $request->get('userId');
