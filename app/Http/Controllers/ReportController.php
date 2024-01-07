@@ -18,9 +18,6 @@ class ReportController extends Controller
     {
         $this->middleware('role:' . Roles::ADMIN->value)
             ->only(['generalReportCount']);
-
-        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
-            ->only(['washOrderReport']);
     }
 
     public function washOrderReport(Request $request, $washOrderId)
