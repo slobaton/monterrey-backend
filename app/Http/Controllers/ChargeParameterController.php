@@ -15,7 +15,11 @@ class ChargeParameterController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:' . Roles::ADMIN->value);
+        $this->middleware('role:' . Roles::ADMIN->value)
+            ->only(['update']);
+
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
+            ->only(['index', 'show']);
     }
 
     /**

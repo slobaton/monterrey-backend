@@ -18,12 +18,12 @@ class ClientController extends Controller
 {
     public function __construct()
     {
-        $notAdminActions = ['index', 'store', 'show', 'getWashTypes', 'getEffects', 'getParameters'];
-
         $this->middleware('role:' . Roles::ADMIN->value)
-            ->except($notAdminActions);
+            ->only(['update', 'destroy']);
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
+            ->only(['getWashTypes', 'getEffects', 'getParameters']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
-            ->only($notAdminActions);
+            ->only(['index', 'store', 'show']);
     }
 
     /**
