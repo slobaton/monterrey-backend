@@ -19,8 +19,16 @@ class EffectController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:' . Roles::ADMIN->value);
+        $this->middleware('role:' . Roles::ADMIN->value)
+            ->only(['update', 'destroy']);
+
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
+            ->only(['store']);
+
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
+            ->only(['index', 'show']);
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -58,7 +66,7 @@ class EffectController extends Controller
     {
         $effectBuilder = Effect::where('id', $effect->id);
 
-        return new EffectResource(QueryBuilder::for($effectBuilder) ->first());
+        return new EffectResource(QueryBuilder::for($effectBuilder)->first());
     }
 
     /**

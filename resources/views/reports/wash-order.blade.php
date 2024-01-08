@@ -80,8 +80,8 @@
         }
 
         .code {
-            font-size: 22px;
-            font-weight: 500;
+            font-size: 24px;
+            font-weight: 600;
         }
 
         .order-observations {
@@ -121,9 +121,8 @@
                 <td><b>Tam.</b></td>
                 <td><b>Focalizado</b></td>
                 <td><b>Nevado</b></td>
-                <td><b>Precio U. (Bs.)</b></td>
+                <td><b>Efectos</b></td>
                 <td><b>Cantidad</b></td>
-                <td><b>Subtotal (Bs.)</b></td>
             </tr>
             @foreach ($details as $detail)
                 <tr class="table-detail-row">
@@ -131,13 +130,7 @@
                     <td>{{ $detail->clothSize->name }}</td>
                     <td>{{ $detail->is_focalizado_active ? 'SI' : 'NO' }}</td>
                     <td>{{ $detail->is_nevado_active ? 'SI' : 'NO' }}</td>
-                    <td>{{ $detail->unit_price }}</td>
-                    <td>{{ $detail->quantity }}</td>
-                    <td>{{ $detail->subtotal_price }}</td>
-                </tr>
-                <tr class="table-detail-row">
-                    <td colspan="1"><b>Efectos:</b></td>
-                    <td colspan="6">
+                    <td>
                         @foreach ($detail->effects as $key => $effect)
                             {{ $effect->name }}
                             @if ($key < $detail->effects->count() - 1)
@@ -145,14 +138,14 @@
                             @endif
                         @endforeach
                     </td>
+                    <td>{{ $detail->quantity }}</td>
                 </tr>
             @endforeach
         </table>
         <table class="order-total">
             <tr>
-                <td style="width: 76%"><b>TOTALES</b></td>
-                <td style="width: 12%"><b>{{ $washOrder->total_quantity }}</b></td>
-                <td style="width: 12%"><b>{{ $washOrder->total_price }}</b></td>
+                <td style="width: 90%"><b>TOTALES</b></td>
+                <td style="width: 10%"><b>{{ $washOrder->total_quantity }}</b></td>
             </tr>
         </table>
     </div>
