@@ -39,6 +39,10 @@ return new class extends Migration
 
             $table->boolean('is_special_price');
 
+            $table->decimal('debt_balance', 10, 2)
+                ->unsigned()
+                ->default(0);
+
             $table->timestamps();
             $table->softDeletes();
 
