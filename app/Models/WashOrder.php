@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
+use App\Helpers\QueryBuilderHelpers;
+use Exception;
 use Spatie\QueryBuilder\AllowedFilter;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\QueryBuilder\AllowedInclude;
 
-use App\Helpers\QueryBuilderHelpers;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Date;
 
 final class WashOrder extends Model
 {
@@ -32,13 +34,15 @@ final class WashOrder extends Model
         'deliver_quantity',
         'deliver_date',
         'observations',
-        'is_special_price'
+        'is_special_price',
+        'debt_balance'
     ];
 
     protected $casts = [
         'date' => 'date',
         'total_price' => 'real',
-        'is_special_price' => 'boolean'
+        'is_special_price' => 'boolean',
+        'debt_balance'
     ];
 
     public function details(): HasMany
@@ -157,6 +161,50 @@ final class WashOrder extends Model
         return !is_null($clientNevadoPrice)
             ? $clientNevadoPrice->price
             : $nevadoParam->price;
+    }
+
+    public function approveOrder(): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $amount = $this->total_price;
+            $client = $this->client;
+
+            $this->status = OrderStatus::APPROVED->value;
+            $this->debt_balance = $amount;
+            $orderUpdated = $this->save();
+            $movementCreated = AccountMovement::addCharge($this, $this->total_price);
+            $clientUpdated = $client->increaseDebtBalance($amount);
+
+            if (!$orderUpdated || !$movementCreated || !$clientUpdated) {
+                DB::rollBack();
+
+                return false;
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception) {
+            DB::rollBack();
+
+            return false;
+        }
+    }
+
+    public function increaseDebtBalance($amount): bool
+    {
+        $this->debt_balance += $amount;
+
+        return $this->save();
+    }
+
+    public function decreaseDebtBalance($amount): bool
+    {
+        $this->debt_balance -= $amount;
+
+        return $this->save();
     }
 
     public static function getDefaultSort(): String

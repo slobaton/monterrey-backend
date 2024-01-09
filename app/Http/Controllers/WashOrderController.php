@@ -110,8 +110,11 @@ class WashOrderController extends Controller
             return $this->respondError('Wash Order cannot be approved');
         }
 
-        $washOrder->status = OrderStatus::APPROVED->value;
-        $washOrder->saveOrFail();
+        $orderApproved = $washOrder->approveOrder();
+
+        if (!$orderApproved) {
+            return $this->respondError('Cannot approve the order');
+        }
 
         return new WashOrderResource($washOrder);
     }

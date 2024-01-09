@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum AccountMovement: string
+enum AccountMovementType: string
 {
     case CHARGE = 'charge';
     case PAYMENT = 'payment';

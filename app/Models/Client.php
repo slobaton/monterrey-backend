@@ -78,6 +78,20 @@ class Client extends Model
         return $this->attributes['name'] . ' ' . $this->attributes['paternal_surname'] . ' ' . $this->attributes['maternal_surname'];
     }
 
+    public function increaseDebtBalance($amount): bool
+    {
+        $this->debt_balance += $amount;
+
+        return $this->save();
+    }
+
+    public function decreaseDebtBalance($amount): bool
+    {
+        $this->debt_balance -= $amount;
+
+        return $this->save();
+    }
+
     public static function getAllowedFilters()
     {
         return [
