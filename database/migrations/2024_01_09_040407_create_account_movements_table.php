@@ -1,6 +1,6 @@
 <?php
 
-use App\Enums\AccountMovement;
+use App\Enums\AccountMovementType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,8 +20,8 @@ return new class extends Migration
 
             $table->date('date');
 
-            $table->enum('type', [AccountMovement::CHARGE->value, AccountMovement::PAYMENT->value])
-                ->default(AccountMovement::CHARGE->value);
+            $table->enum('type', [AccountMovementType::CHARGE->value, AccountMovementType::PAYMENT->value])
+                ->default(AccountMovementType::CHARGE->value);
 
             $table->decimal('amount', 10, 2);
 
