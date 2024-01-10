@@ -174,8 +174,35 @@ final class WashOrder extends Model
             $this->status = OrderStatus::APPROVED->value;
             $this->debt_balance = $amount;
             $orderUpdated = $this->save();
-            $movementCreated = AccountMovement::addCharge($this, $this->total_price);
             $clientUpdated = $client->increaseDebtBalance($amount);
+            $movementCreated = AccountMovement::addCharge($this, $this->total_price);
+
+            if (!$orderUpdated || !$movementCreated || !$clientUpdated) {
+                DB::rollBack();
+
+                return false;
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception) {
+            DB::rollBack();
+
+            return false;
+        }
+    }
+
+    public function makePayment($amount): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $client = $this->client;
+
+            $orderUpdated = $this->decreaseDebtBalance($amount);
+            $clientUpdated = $client->decreaseDebtBalance($amount);
+            $movementCreated = AccountMovement::addPayment($this, $amount);
 
             if (!$orderUpdated || !$movementCreated || !$clientUpdated) {
                 DB::rollBack();

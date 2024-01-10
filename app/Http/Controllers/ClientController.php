@@ -13,6 +13,7 @@ use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientEffectPriceCollection;
 use App\Http\Resources\ClientParameterPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
+use App\Models\WashOrder;
 
 class ClientController extends Controller
 {
@@ -130,5 +131,29 @@ class ClientController extends Controller
             : $parameters->get();
 
         return new ClientParameterPriceCollection($parameters);
+    }
+
+    /**
+     * Add payment for the client to an specific wash order.
+     */
+    public function addPaymentForWashOrder(Request $request, Client $client, WashOrder $washOrder)
+    {
+        if ($client->id !== $washOrder->client_id) {
+            return $this->respondForbidden();
+        }
+
+        $amount = $request->get('amount', 0);
+
+        if ($amount > $washOrder->debt_balance) {
+            return $this->respondError('invalid amount');
+        }
+
+        $paymentCompleted = $washOrder->makePayment($amount);
+
+        if (!$paymentCompleted) {
+            return $this->respondError('cannot make payment');
+        }
+
+        return $this->respondWithSuccess();
     }
 }
