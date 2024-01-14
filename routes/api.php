@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountMovementController;
 use App\Http\Controllers\ChargeParameterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -85,6 +86,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('parameters', 'index');
         Route::get('parameters/{parameter}', 'show');
         Route::patch('parameters/{parameter}', 'update');
+    });
+
+    Route::controller(AccountMovementController::class)->group(function () {
+        Route::get('account-movements', 'index');
     });
 
     Route::controller(ReportController::class)->group(function () {

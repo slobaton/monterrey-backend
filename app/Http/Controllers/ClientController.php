@@ -3,17 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Roles;
+use App\Http\Requests\AddPaymentRequest;
 use App\Models\Client;
+use App\Models\WashOrder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Resources\ClientResource;
 use App\Http\Resources\ClientCollection;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientEffectPriceCollection;
-use App\Http\Resources\ClientParameterPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
-use App\Models\WashOrder;
+use App\Http\Resources\ClientParameterPriceCollection;
 
 class ClientController extends Controller
 {
@@ -136,19 +138,20 @@ class ClientController extends Controller
     /**
      * Add payment for the client to an specific wash order.
      */
-    public function addPaymentForWashOrder(Request $request, Client $client, WashOrder $washOrder)
+    public function addPaymentForWashOrder(AddPaymentRequest $request, Client $client, WashOrder $washOrder)
     {
         if ($client->id !== $washOrder->client_id) {
             return $this->respondForbidden();
         }
 
         $amount = $request->get('amount', 0);
+        $date = $request->get('date', Date::now());
 
-        if ($amount > $washOrder->debt_balance) {
+        if ($amount <= 0 || $amount > $washOrder->debt_balance) {
             return $this->respondError('invalid amount');
         }
 
-        $paymentCompleted = $washOrder->makePayment($amount);
+        $paymentCompleted = $washOrder->makePayment($amount, $date);
 
         if (!$paymentCompleted) {
             return $this->respondError('cannot make payment');

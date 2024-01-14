@@ -193,7 +193,7 @@ final class WashOrder extends Model
         }
     }
 
-    public function makePayment($amount): bool
+    public function makePayment($amount, $date): bool
     {
         try {
             DB::beginTransaction();
@@ -202,7 +202,7 @@ final class WashOrder extends Model
 
             $orderUpdated = $this->decreaseDebtBalance($amount);
             $clientUpdated = $client->decreaseDebtBalance($amount);
-            $movementCreated = AccountMovement::addPayment($this, $amount);
+            $movementCreated = AccountMovement::addPayment($this, $amount, $date);
 
             if (!$orderUpdated || !$movementCreated || !$clientUpdated) {
                 DB::rollBack();

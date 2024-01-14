@@ -167,4 +167,32 @@ class WashOrderDetail extends Model
 
         $this->save();
     }
+
+    public static function getDetailsByOrderId($washOrderId, $balanceUntilDate)
+    {
+        $details = WashOrderDetail::where('wash_order_id', $washOrderId)
+            ->with(['clothType', 'clothSize', 'effects'])
+            ->get();
+
+        return $details->map(function ($detail, int $key) use (&$balanceUntilDate) {
+
+            $effectNames = $detail->effects->map(function ($effect, int $xkey) {
+                return $effect->name;
+            });
+
+            $balanceDebt = $balanceUntilDate + $detail->subtotal_price;
+            $balanceUntilDate = $balanceDebt;
+
+            return [
+                'id' => $detail->id,
+                'unit_price' => $detail->unit_price,
+                'quantity' => $detail->quantity,
+                'subtotal_price' => $detail->subtotal_price,
+                'cloth_type' => $detail->clothType->name,
+                'cloth_size' => $detail->clothSize->name,
+                'details' => $effectNames->join(', '),
+                'balance_debt' => $balanceDebt
+            ];
+        });
+    }
 }

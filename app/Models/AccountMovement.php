@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use App\Enums\AccountMovementType;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Date;
-use Spatie\QueryBuilder\AllowedSort;
-use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 
 class AccountMovement extends Model
 {
@@ -32,31 +30,9 @@ class AccountMovement extends Model
         'amount' => 'real',
     ];
 
-    public function scopeAll(Builder $query, $search): Builder
+    public function washOrder(): BelongsTo
     {
-        return $query->where(DB::raw('LOWER(date)'), 'LIKE', "%" . strtolower($search) . "%")
-            ->orWhere(DB::raw('LOWER(amount)'), 'LIKE', "%" . strtolower($search) . "%");
-    }
-
-    public static function getAllowedFilters()
-    {
-        return [
-            'date',
-            'type',
-            'amount',
-            AllowedFilter::scope('all'),
-        ];
-    }
-
-    public static function getAllowedSorts()
-    {
-        return [
-            'date',
-            'type',
-            'amount',
-            AllowedSort::field('created_at'),
-            AllowedSort::field('updated_at'),
-        ];
+        return $this->belongsTo(WashOrder::class, 'wash_order_id', 'id');
     }
 
     public static function getDefaultSort(): String
@@ -74,22 +50,45 @@ class AccountMovement extends Model
         $accountMovement = new AccountMovement();
         $accountMovement->client_id = $washOrder->client_id;
         $accountMovement->wash_order_id = $washOrder->id;
-        $accountMovement->date = Date::now();
+        $accountMovement->date = $washOrder->date;
         $accountMovement->type = AccountMovementType::CHARGE->value;
         $accountMovement->amount = $amount;
 
         return $accountMovement->save();
     }
 
-    public static function addPayment(WashOrder $washOrder, $amount): bool
+    public static function addPayment(WashOrder $washOrder, $amount, $date): bool
     {
         $accountMovement = new AccountMovement();
         $accountMovement->client_id = $washOrder->client_id;
         $accountMovement->wash_order_id = $washOrder->id;
-        $accountMovement->date = Date::now();
+        $accountMovement->date = $date;
         $accountMovement->type = AccountMovementType::PAYMENT->value;
         $accountMovement->amount = -$amount;
 
         return $accountMovement->save();
+    }
+
+    public static function getBalanceDebtUntilDate($date, $clientId): float
+    {
+        $data = DB::table('account_movements')
+            ->where('client_id', $clientId)
+            ->whereDate('date', '<', $date)
+            ->sum('amount');
+
+        return $data;
+    }
+
+    public static function getAccountMovementsByDate($month, $year, $clientId)
+    {
+        $data = DB::table('account_movements', 'ac')
+            ->select(['ac.wash_order_id', 'wash_orders.code', 'ac.date', 'ac.type', 'ac.amount', 'ac.created_at', 'ac.updated_at'])
+            ->join('wash_orders', 'ac.wash_order_id', '=', 'wash_orders.id')
+            ->where('ac.client_id', $clientId)
+            ->whereMonth('ac.date', $month)
+            ->whereYear('ac.date', $year)
+            ->get();
+
+        return $data;
     }
 }
