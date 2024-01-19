@@ -24,7 +24,7 @@ class ClientController extends Controller
         $this->middleware('role:' . Roles::ADMIN->value)
             ->only(['update', 'destroy']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
-            ->only(['getWashTypes', 'getEffects', 'getParameters']);
+            ->only(['getWashTypes', 'getEffects', 'getParameters', 'addPaymentForWashOrder']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
             ->only(['index', 'store', 'show']);
     }
@@ -145,7 +145,9 @@ class ClientController extends Controller
         }
 
         $amount = $request->get('amount', 0);
-        $date = $request->get('date', Date::now());
+        $date = $request->get('date', Date::now()->toDateString());
+
+        $date = Date::parse($date);
 
         if ($amount <= 0 || $amount > $washOrder->debt_balance) {
             return $this->respondError('invalid amount');
