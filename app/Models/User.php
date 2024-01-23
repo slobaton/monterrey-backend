@@ -71,7 +71,7 @@ class User extends Authenticatable
         );
     }
 
-    protected static function getAllowedFilters()
+    protected static function getAllowedFilters(): array
     {
         return [
             'username',
@@ -83,7 +83,7 @@ class User extends Authenticatable
         ];
     }
 
-    protected static function getAllowedSorts()
+    protected static function getAllowedSorts(): array
     {
         return [
             'username',

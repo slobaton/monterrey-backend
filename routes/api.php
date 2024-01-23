@@ -3,6 +3,8 @@
 use App\Http\Controllers\ChargeParameterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserRoleController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientEffectPriceController;
@@ -33,6 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [LoginController::class, 'logout']);
 
     Route::apiResource('users', UserController::class);
+    Route::post('/user/{user}/assign-roles', [UserRoleController::class, 'assignRoles']);
+    Route::get('/user/{user}/roles', [UserRoleController::class, 'getUserRoles']);
+    Route::get('/roles', RoleController::class);
 
     Route::apiResource('clients', ClientController::class);
     Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);

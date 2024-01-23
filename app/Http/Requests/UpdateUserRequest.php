@@ -27,7 +27,7 @@ class UpdateUserRequest extends FormRequest
             'maternal_surname' => 'required_without:paternal_surname|string|max:255',
             'username'         => 'required|string|max:255|unique:App\Models\User,username,'.$this->user->id,
             'email'            => 'required|email|max:255|unique:App\Models\User,email,'.$this->user->id,
-            'password'         => 'sometimes|required|confirmed',
+            'password'         => 'sometimes|nullable|confirmed',
         ];
     }
 }

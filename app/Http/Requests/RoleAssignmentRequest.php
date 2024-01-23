@@ -1,0 +1,35 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class RoleAssignmentRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, ValidationRule|array|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'role_ids' => 'required|array',
+            'role_ids.*' => [
+                'required',
+                'string',
+                Rule::exists('roles', 'id')
+            ],
+        ];
+    }
+}
