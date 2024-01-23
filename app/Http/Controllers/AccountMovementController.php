@@ -70,8 +70,6 @@ class AccountMovementController extends Controller
             'balance_debt' => null
         ];
 
-        return $this->respondWithSuccess([
-            "movement" => $accountMovement
-        ]);
+        return $this->respondWithSuccess($accountMovement);
     }
 }
