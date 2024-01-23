@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Roles;
 use App\Http\Requests\RoleAssignmentRequest;
 use App\Http\Resources\RoleCollection;
 use App\Models\Role;
@@ -10,6 +11,11 @@ use Illuminate\Http\JsonResponse;
 
 class UserRoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:' . Roles::ADMIN->value);
+    }
+
     public function assignRoles(User $user, RoleAssignmentRequest $request): JsonResponse
     {
         $roleIds = $request->input('role_ids');
