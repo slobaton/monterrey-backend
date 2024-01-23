@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\AccountMovementType;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -35,14 +34,9 @@ class AccountMovement extends Model
         return $this->belongsTo(WashOrder::class, 'wash_order_id', 'id');
     }
 
-    public static function getDefaultSort(): String
+    public function client(): BelongsTo
     {
-        return 'date';
-    }
-
-    public static function getAllowedIncludes(): array
-    {
-        return [];
+        return $this->belongsTo(Client::class, 'client_id', 'id');
     }
 
     public static function addCharge(WashOrder $washOrder, $amount): bool
@@ -87,6 +81,25 @@ class AccountMovement extends Model
             ->where('ac.client_id', $clientId)
             ->whereMonth('ac.date', $month)
             ->whereYear('ac.date', $year)
+            ->orderBy('ac.date')
+            ->orderBy('ac.type')
+            ->get();
+
+        return $data;
+    }
+
+    public static function getAccountMovements($clientId)
+    {
+        $query = DB::table('account_movements', 'ac')
+            ->select(['ac.id', 'ac.client_id', 'ac.wash_order_id', 'wash_orders.code', 'ac.date', 'ac.type', 'ac.amount', 'ac.created_at', 'ac.updated_at'])
+            ->join('wash_orders', 'ac.wash_order_id', '=', 'wash_orders.id');
+
+        if (!is_null($clientId)) {
+            $query = $query->where('ac.client_id', $clientId);
+        }
+
+        $data = $query->orderBy('ac.date')
+            ->orderBy('ac.type')
             ->get();
 
         return $data;

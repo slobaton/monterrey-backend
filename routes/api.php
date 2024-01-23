@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);
     Route::get('clients/{client}/effects', [ClientController::class, 'getEffects']);
     Route::get('clients/{client}/parameters', [ClientController::class, 'getParameters']);
+    Route::get('clients/{client}/movements', [ClientController::class, 'getAccountMovementsByMoth']);
     Route::post('clients/{client}/wash-orders/{washOrder}/payment', [ClientController::class, 'addPaymentForWashOrder']);
 
     Route::apiResource('wash-types', WashTypeController::class);
@@ -89,7 +90,8 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::controller(AccountMovementController::class)->group(function () {
-        Route::get('account-movements', 'index');
+        Route::get('account-movements', 'getMovements');
+        Route::get('account-movements/{movement}', 'getMovementById');
     });
 
     Route::controller(ReportController::class)->group(function () {
