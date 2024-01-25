@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Models\AccountMovement;
 use App\Models\WashOrderDetail;
 use App\Enums\AccountMovementType;
+use App\Http\Requests\AddDiscountRequest;
 use Illuminate\Support\Facades\Date;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Resources\ClientResource;
@@ -28,7 +29,7 @@ class ClientController extends Controller
         $this->middleware('role:' . Roles::ADMIN->value)
             ->only(['update', 'destroy']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
-            ->only(['getWashTypes', 'getEffects', 'getParameters', 'addPaymentForWashOrder']);
+            ->only(['getWashTypes', 'getEffects', 'getParameters', 'addPaymentMovement', 'addDiscountMovement']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
             ->only(['index', 'store', 'show']);
     }
@@ -186,27 +187,48 @@ class ClientController extends Controller
     }
 
     /**
-     * Add payment for the client to an specific wash order.
+     * Add payment movement for the client.
      */
-    public function addPaymentForWashOrder(AddPaymentRequest $request, Client $client, WashOrder $washOrder)
+    public function addPaymentMovement(AddPaymentRequest $request, Client $client)
     {
-        if ($client->id !== $washOrder->client_id) {
-            return $this->respondForbidden();
-        }
-
+        $receiptNumber = $request->get('receipt_number');
         $amount = $request->get('amount', 0);
         $date = $request->get('date', Date::now()->toDateString());
 
         $date = Date::parse($date);
 
-        if ($amount <= 0 || $amount > $washOrder->debt_balance) {
+        if ($amount <= 0 || $amount > $client->debt_balance) {
             return $this->respondError('invalid amount');
         }
 
-        $paymentCompleted = $washOrder->makePayment($amount, $date);
+        $paymentCompleted = $client->makePayment($receiptNumber, $amount, $date);
 
         if (!$paymentCompleted) {
             return $this->respondError('cannot make payment');
+        }
+
+        return $this->respondWithSuccess();
+    }
+
+    /**
+     * Add payment movement for the client.
+     */
+    public function addDiscountMovement(AddDiscountRequest $request, Client $client)
+    {
+        $concept = $request->get('concept');
+        $amount = $request->get('amount', 0);
+        $date = $request->get('date', Date::now()->toDateString());
+
+        $date = Date::parse($date);
+
+        if ($amount <= 0 || $amount > $client->debt_balance) {
+            return $this->respondError('invalid amount');
+        }
+
+        $discountCompleted = $client->makeDiscount($concept, $amount, $date);
+
+        if (!$discountCompleted) {
+            return $this->respondError('cannot make discount');
         }
 
         return $this->respondWithSuccess();

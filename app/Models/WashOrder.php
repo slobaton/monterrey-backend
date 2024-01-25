@@ -34,15 +34,13 @@ final class WashOrder extends Model
         'deliver_quantity',
         'deliver_date',
         'observations',
-        'is_special_price',
-        'debt_balance'
+        'is_special_price'
     ];
 
     protected $casts = [
         'date' => 'date',
         'total_price' => 'real',
-        'is_special_price' => 'boolean',
-        'debt_balance'
+        'is_special_price' => 'boolean'
     ];
 
     public function details(): HasMany
@@ -172,7 +170,6 @@ final class WashOrder extends Model
             $client = $this->client;
 
             $this->status = OrderStatus::APPROVED->value;
-            $this->debt_balance = $amount;
             $orderUpdated = $this->save();
             $clientUpdated = $client->increaseDebtBalance($amount);
             $movementCreated = AccountMovement::addCharge($this, $this->total_price);
@@ -191,47 +188,6 @@ final class WashOrder extends Model
 
             return false;
         }
-    }
-
-    public function makePayment($amount, $date): bool
-    {
-        try {
-            DB::beginTransaction();
-
-            $client = $this->client;
-
-            $orderUpdated = $this->decreaseDebtBalance($amount);
-            $clientUpdated = $client->decreaseDebtBalance($amount);
-            $movementCreated = AccountMovement::addPayment($this, $amount, $date);
-
-            if (!$orderUpdated || !$movementCreated || !$clientUpdated) {
-                DB::rollBack();
-
-                return false;
-            }
-
-            DB::commit();
-
-            return true;
-        } catch (\Exception) {
-            DB::rollBack();
-
-            return false;
-        }
-    }
-
-    public function increaseDebtBalance($amount): bool
-    {
-        $this->debt_balance += $amount;
-
-        return $this->save();
-    }
-
-    public function decreaseDebtBalance($amount): bool
-    {
-        $this->debt_balance -= $amount;
-
-        return $this->save();
     }
 
     public static function getDefaultSort(): String

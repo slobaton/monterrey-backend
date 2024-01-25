@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddPaymentRequest extends FormRequest
+class AddDiscountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class AddPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'receipt_number' => 'required|numeric|min:1|unique:account_movements,receipt_number',
+            'concept' => 'required|string',
             'amount' => 'required|numeric|min:1',
             'date' => 'sometimes|nullable|date'
         ];

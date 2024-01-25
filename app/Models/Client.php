@@ -30,11 +30,13 @@ class Client extends Model
         'cellphone',
         'address',
         'observations',
-        'is_active'
+        'is_active',
+        'debt_balance'
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'debt_balance' => 'real'
     ];
 
     public function user(): BelongsTo
@@ -76,6 +78,54 @@ class Client extends Model
     public function getFullnameAttribute()
     {
         return $this->attributes['name'] . ' ' . $this->attributes['paternal_surname'] . ' ' . $this->attributes['maternal_surname'];
+    }
+
+    public function makePayment($receiptNumber, $amount, $date): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $clientUpdated = $this->decreaseDebtBalance($amount);
+            $movementCreated = AccountMovement::addPayment($this, $receiptNumber, $amount, $date);
+
+            if (!$movementCreated || !$clientUpdated) {
+                DB::rollBack();
+
+                return false;
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception) {
+            DB::rollBack();
+
+            return false;
+        }
+    }
+
+    public function makeDiscount($concept, $amount, $date): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $clientUpdated = $this->decreaseDebtBalance($amount);
+            $movementCreated = AccountMovement::addDiscount($this, $concept, $amount, $date);
+
+            if (!$movementCreated || !$clientUpdated) {
+                DB::rollBack();
+
+                return false;
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception) {
+            DB::rollBack();
+
+            return false;
+        }
     }
 
     public function increaseDebtBalance($amount): bool

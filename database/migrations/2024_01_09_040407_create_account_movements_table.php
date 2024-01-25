@@ -21,7 +21,8 @@ return new class extends Migration
 
             $table->bigInteger('receipt_number')
                 ->unsigned()
-                ->unique();
+                ->unique()
+                ->nullable();
             $table->date('date');
             $table->string('concept', 150);
             $table->enum('type', [AccountMovementType::CHARGE->value, AccountMovementType::PAYMENT->value, AccountMovementType::DISCOUNT->value])

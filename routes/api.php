@@ -47,7 +47,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('clients/{client}/effects', [ClientController::class, 'getEffects']);
     Route::get('clients/{client}/parameters', [ClientController::class, 'getParameters']);
     Route::get('clients/{client}/movements', [ClientController::class, 'getAccountMovementsByMoth']);
-    Route::post('clients/{client}/wash-orders/{washOrder}/payment', [ClientController::class, 'addPaymentForWashOrder']);
+    Route::post('clients/{client}/payment', [ClientController::class, 'addPaymentMovement']);
+    Route::post('clients/{client}/discount', [ClientController::class, 'addDiscountMovement']);
 
     Route::apiResource('wash-types', WashTypeController::class);
     Route::apiResource('effects', EffectController::class);
