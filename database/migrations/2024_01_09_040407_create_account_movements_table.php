@@ -16,13 +16,16 @@ return new class extends Migration
             $table->id();
 
             $table->uuid('client_id');
-            $table->uuid('wash_order_id');
+            $table->uuid('wash_order_id')
+                ->nullable();
 
+            $table->bigInteger('receipt_number')
+                ->unsigned()
+                ->unique();
             $table->date('date');
-
-            $table->enum('type', [AccountMovementType::CHARGE->value, AccountMovementType::PAYMENT->value])
+            $table->string('concept', 150);
+            $table->enum('type', [AccountMovementType::CHARGE->value, AccountMovementType::PAYMENT->value, AccountMovementType::DISCOUNT->value])
                 ->default(AccountMovementType::CHARGE->value);
-
             $table->decimal('amount', 10, 2);
 
             $table->timestamps();

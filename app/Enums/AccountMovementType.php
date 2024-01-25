@@ -6,4 +6,5 @@ enum AccountMovementType: string
 {
     case CHARGE = 'charge';
     case PAYMENT = 'payment';
+    case DISCOUNT = 'discount';
 }

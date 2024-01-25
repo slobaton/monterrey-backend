@@ -19,7 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('wash_type_id');
 
             $table->bigInteger('code')
+                ->unsigned()
                 ->unique();
+
             $table->date('date');
 
             $table->integer('total_quantity');
@@ -38,10 +40,6 @@ return new class extends Migration
                 ->nullable();
 
             $table->boolean('is_special_price');
-
-            $table->decimal('debt_balance', 10, 2)
-                ->unsigned()
-                ->default(0);
 
             $table->timestamps();
             $table->softDeletes();
