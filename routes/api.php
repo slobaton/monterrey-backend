@@ -46,7 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);
     Route::get('clients/{client}/effects', [ClientController::class, 'getEffects']);
     Route::get('clients/{client}/parameters', [ClientController::class, 'getParameters']);
-    Route::get('clients/{client}/movements', [ClientController::class, 'getAccountMovementsByMoth']);
+    Route::get('clients/{client}/movements', [ClientController::class, 'getAccountMovements']);
     Route::post('clients/{client}/payment', [ClientController::class, 'addPaymentMovement']);
     Route::post('clients/{client}/discount', [ClientController::class, 'addDiscountMovement']);
 
@@ -91,7 +91,6 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::controller(AccountMovementController::class)->group(function () {
-        Route::get('account-movements', 'getMovements');
         Route::get('account-movements/{movement}', 'getMovementById');
     });
 

@@ -143,43 +143,41 @@ class ClientController extends Controller
     /**
      * Get Client Account Movements by month.
      */
-    public function getAccountMovementsByMoth(Request $request, Client $client)
+    public function getAccountMovements(Request $request, Client $client)
     {
-        $currentDate = Date::now();
-
         $clientId = $client->id;
-        $balanceMonth = $request->query('balanceMonth', $currentDate->month);
-        $balanceYear = $request->query('balanceYear', $currentDate->year);
 
-        $startBalanceDate = Carbon::createFromDate($balanceYear, $balanceMonth, 1);
-        $startBalanceDebt = AccountMovement::getBalanceDebtUntilDate($startBalanceDate, $clientId);
-        $movements = AccountMovement::getAccountMovementsByDate($balanceMonth, $balanceYear, $clientId);
+        $movements = AccountMovement::getAccountMovements($clientId);
 
-        $balanceUntilDate = $startBalanceDebt;
+        $balance = 0;
 
-        $accountMovements = $movements->map(function ($movement, int $key) use (&$balanceUntilDate) {
-            $balanceDebt = $balanceUntilDate + $movement->amount;
+        $accountMovements = $movements->map(function ($movement, int $key) use (&$balance) {
+            $balanceDebt = $balance + $movement->amount;
 
             $accountMovement = [
+                'id' => $movement->id,
+                'client_id' => $movement->client_id,
+                'receipt_number' => $movement->receipt_number,
                 'date' => $movement->date,
-                'code' => $movement->code,
+                'concept' => $movement->concept,
                 'type' => $movement->type,
+                'code' => $movement->code,
                 'wash_order_id' => $movement->wash_order_id,
                 'amount' => (float)$movement->amount,
                 'details' => $movement->type == AccountMovementType::CHARGE->value
-                    ? WashOrderDetail::getDetailsByOrderId($movement->wash_order_id, $balanceUntilDate)
+                    ? WashOrderDetail::getDetailsByOrderId($movement->wash_order_id, $balance)
                     : null,
                 'balance_debt' => $balanceDebt
             ];
 
-            $balanceUntilDate = $balanceDebt;
+            $balance = $balanceDebt;
 
             return $accountMovement;
         });
 
         $data = [
-            'start_balance' => $startBalanceDebt,
-            'final_balance' => $balanceUntilDate,
+            'start_balance' => 0,
+            'final_balance' => $balance,
             'movements' => $accountMovements
         ];
 
