@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Enums\Roles;
 use App\Models\Client;
-use App\Models\WashOrder;
 use Illuminate\Http\Request;
 use App\Models\AccountMovement;
 use App\Models\WashOrderDetail;
@@ -149,6 +147,8 @@ class ClientController extends Controller
 
         $movements = AccountMovement::getAccountMovements($clientId);
 
+        $startDate = AccountMovement::getAccountMovementsStartDate($clientId);
+        $endDate = AccountMovement::getAccountMovementsEndDate($clientId);
         $balance = 0;
 
         $accountMovements = $movements->map(function ($movement, int $key) use (&$balance) {
@@ -178,6 +178,8 @@ class ClientController extends Controller
         $data = [
             'start_balance' => 0,
             'final_balance' => $balance,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
             'movements' => $accountMovements
         ];
 

@@ -119,4 +119,26 @@ class AccountMovement extends Model
 
         return $data;
     }
+
+    public static function getAccountMovementsStartDate($clientId)
+    {
+        $startDate = DB::table('account_movements')
+            ->where('client_id', $clientId)
+            ->orderBy('date')
+            ->orderBy('created_at')
+            ->first('date');
+
+        return $startDate?->date;
+    }
+
+    public static function getAccountMovementsEndDate($clientId)
+    {
+        $startDate = DB::table('account_movements')
+            ->where('client_id', $clientId)
+            ->orderByDesc('date')
+            ->orderByDesc('created_at')
+            ->first('date');
+
+        return $startDate?->date;
+    }
 }
