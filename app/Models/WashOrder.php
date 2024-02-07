@@ -2,21 +2,23 @@
 
 namespace App\Models;
 
+use App\Enums\OrderStatus;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Builder;
-
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
+use App\Helpers\QueryBuilderHelpers;
+use Exception;
 use Spatie\QueryBuilder\AllowedFilter;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\QueryBuilder\AllowedInclude;
 
-use App\Helpers\QueryBuilderHelpers;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Date;
 
 final class WashOrder extends Model
 {
@@ -157,6 +159,35 @@ final class WashOrder extends Model
         return !is_null($clientNevadoPrice)
             ? $clientNevadoPrice->price
             : $nevadoParam->price;
+    }
+
+    public function approveOrder(): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $amount = $this->total_price;
+            $client = $this->client;
+
+            $this->status = OrderStatus::APPROVED->value;
+            $orderUpdated = $this->save();
+            $clientUpdated = $client->increaseDebtBalance($amount);
+            $movementCreated = AccountMovement::addCharge($this, $this->total_price);
+
+            if (!$orderUpdated || !$movementCreated || !$clientUpdated) {
+                DB::rollBack();
+
+                return false;
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception) {
+            DB::rollBack();
+
+            return false;
+        }
     }
 
     public static function getDefaultSort(): String

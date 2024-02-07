@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountMovementController;
 use App\Http\Controllers\ChargeParameterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -45,6 +46,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);
     Route::get('clients/{client}/effects', [ClientController::class, 'getEffects']);
     Route::get('clients/{client}/parameters', [ClientController::class, 'getParameters']);
+    Route::get('clients/{client}/movements', [ClientController::class, 'getAccountMovements']);
+    Route::post('clients/{client}/payment', [ClientController::class, 'addPaymentMovement']);
+    Route::post('clients/{client}/discount', [ClientController::class, 'addDiscountMovement']);
 
     Route::apiResource('wash-types', WashTypeController::class);
     Route::apiResource('effects', EffectController::class);
@@ -84,6 +88,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('parameters', 'index');
         Route::get('parameters/{parameter}', 'show');
         Route::patch('parameters/{parameter}', 'update');
+    });
+
+    Route::controller(AccountMovementController::class)->group(function () {
+        Route::get('account-movements/{movement}', 'getMovementById');
     });
 
     Route::controller(ReportController::class)->group(function () {

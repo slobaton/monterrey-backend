@@ -19,7 +19,9 @@ return new class extends Migration
             $table->unsignedBigInteger('wash_type_id');
 
             $table->bigInteger('code')
+                ->unsigned()
                 ->unique();
+
             $table->date('date');
 
             $table->integer('total_quantity');

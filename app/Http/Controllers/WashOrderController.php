@@ -17,7 +17,7 @@ class WashOrderController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:' . Roles::ADMIN->value)
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
             ->only(['approveOrder']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
             ->except(['approveOrder']);
@@ -110,8 +110,11 @@ class WashOrderController extends Controller
             return $this->respondError('Wash Order cannot be approved');
         }
 
-        $washOrder->status = OrderStatus::APPROVED->value;
-        $washOrder->saveOrFail();
+        $orderApproved = $washOrder->approveOrder();
+
+        if (!$orderApproved) {
+            return $this->respondError('Cannot approve the order');
+        }
 
         return new WashOrderResource($washOrder);
     }

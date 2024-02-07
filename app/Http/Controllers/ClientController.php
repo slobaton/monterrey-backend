@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use App\Enums\Roles;
 use App\Models\Client;
 use Illuminate\Http\Request;
+use App\Models\AccountMovement;
+use App\Models\WashOrderDetail;
+use App\Enums\AccountMovementType;
+use App\Http\Requests\AddDiscountRequest;
+use Illuminate\Support\Facades\Date;
 use Spatie\QueryBuilder\QueryBuilder;
 use App\Http\Resources\ClientResource;
+use App\Http\Requests\AddPaymentRequest;
 use App\Http\Resources\ClientCollection;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientEffectPriceCollection;
-use App\Http\Resources\ClientParameterPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
+use App\Http\Resources\ClientParameterPriceCollection;
 
 class ClientController extends Controller
 {
@@ -21,7 +27,7 @@ class ClientController extends Controller
         $this->middleware('role:' . Roles::ADMIN->value)
             ->only(['update', 'destroy']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
-            ->only(['getWashTypes', 'getEffects', 'getParameters']);
+            ->only(['getWashTypes', 'getEffects', 'getParameters', 'addPaymentMovement', 'addDiscountMovement']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
             ->only(['index', 'store', 'show']);
     }
@@ -130,5 +136,101 @@ class ClientController extends Controller
             : $parameters->get();
 
         return new ClientParameterPriceCollection($parameters);
+    }
+
+    /**
+     * Get Client Account Movements by month.
+     */
+    public function getAccountMovements(Request $request, Client $client)
+    {
+        $clientId = $client->id;
+
+        $movements = AccountMovement::getAccountMovements($clientId);
+
+        $startDate = AccountMovement::getAccountMovementsStartDate($clientId);
+        $endDate = AccountMovement::getAccountMovementsEndDate($clientId);
+        $balance = 0;
+
+        $accountMovements = $movements->map(function ($movement, int $key) use (&$balance) {
+            $balanceDebt = $balance + $movement->amount;
+
+            $accountMovement = [
+                'id' => $movement->id,
+                'client_id' => $movement->client_id,
+                'receipt_number' => $movement->receipt_number,
+                'date' => $movement->date,
+                'concept' => $movement->concept,
+                'type' => $movement->type,
+                'code' => $movement->code,
+                'wash_order_id' => $movement->wash_order_id,
+                'amount' => (float)$movement->amount,
+                'details' => $movement->type == AccountMovementType::CHARGE->value
+                    ? WashOrderDetail::getDetailsByOrderId($movement->wash_order_id, $balance)
+                    : null,
+                'balance_debt' => $balanceDebt
+            ];
+
+            $balance = $balanceDebt;
+
+            return $accountMovement;
+        });
+
+        $data = [
+            'start_balance' => 0,
+            'final_balance' => $balance,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+            'movements' => $accountMovements
+        ];
+
+        return $this->respondWithSuccess($data);
+    }
+
+    /**
+     * Add payment movement for the client.
+     */
+    public function addPaymentMovement(AddPaymentRequest $request, Client $client)
+    {
+        $receiptNumber = $request->get('receipt_number');
+        $amount = $request->get('amount', 0);
+        $date = $request->get('date', Date::now()->toDateString());
+
+        $date = Date::parse($date);
+
+        if ($amount <= 0 || $amount > $client->debt_balance) {
+            return $this->respondError('invalid amount');
+        }
+
+        $paymentCompleted = $client->makePayment($receiptNumber, $amount, $date);
+
+        if (!$paymentCompleted) {
+            return $this->respondError('cannot make payment');
+        }
+
+        return $this->respondWithSuccess();
+    }
+
+    /**
+     * Add payment movement for the client.
+     */
+    public function addDiscountMovement(AddDiscountRequest $request, Client $client)
+    {
+        $concept = $request->get('concept');
+        $amount = $request->get('amount', 0);
+        $date = $request->get('date', Date::now()->toDateString());
+
+        $date = Date::parse($date);
+
+        if ($amount <= 0 || $amount > $client->debt_balance) {
+            return $this->respondError('invalid amount');
+        }
+
+        $discountCompleted = $client->makeDiscount($concept, $amount, $date);
+
+        if (!$discountCompleted) {
+            return $this->respondError('cannot make discount');
+        }
+
+        return $this->respondWithSuccess();
     }
 }
