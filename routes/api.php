@@ -17,6 +17,7 @@ use App\Http\Controllers\ClothTypeController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\WashOrderController;
 use App\Http\Controllers\WashOrderDetailController;
+use App\Http\Controllers\UserPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/{user}/assign-roles', [UserRoleController::class, 'assignRoles']);
     Route::get('/user/{user}/roles', [UserRoleController::class, 'getUserRoles']);
     Route::get('/roles', RoleController::class);
+    Route::post('/users/update-password', [UserPasswordController::class, 'updatePassword']);
 
     Route::apiResource('clients', ClientController::class);
     Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);
