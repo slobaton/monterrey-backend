@@ -9,8 +9,10 @@ use App\Models\Effect;
 use App\Models\WashType;
 use App\Models\WashOrder;
 use App\Enums\OrderStatus;
+use App\Models\AccountMovement;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Date;
 
 class ReportController extends Controller
 {
@@ -44,6 +46,43 @@ class ReportController extends Controller
 
         $pdf = Pdf::loadView('reports/wash-order', $data)
             ->setPaper('a4', 'landscape');
+
+        return $pdf->stream('invoice.pdf');
+    }
+
+    public function accountMovementsByDateRangeReport(Request $request, $clientId)
+    {
+        $userId = $request->get('userId');
+        $user = User::find($userId);
+
+        $client = Client::find($clientId);
+
+        $defaultRawDate = Date::now()->toDateString();
+
+        $rawStartDate = $request->get('startDate', $defaultRawDate);
+        $rawEndDate = $request->get('endDate', $defaultRawDate);
+
+        $startDate = Date::parse($rawStartDate);
+        $endDate = Date::parse($rawEndDate);
+
+        $movements = AccountMovement::getAccountMovements($clientId, $startDate, $endDate);
+        $balanceUntilDate = AccountMovement::getBalanceUntilDate($clientId, $startDate);
+        $balance = $balanceUntilDate;
+        $detailedMovements = AccountMovement::getDetailedMovements($movements, $balance);
+        $processedMovements = AccountMovement::getProcessedMovements($detailedMovements);
+
+        $data = [
+            'user' => $user,
+            'client' => $client,
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'startBalance' => $balanceUntilDate,
+            'finalBalance' => $balance,
+            'processedMovements' => $processedMovements
+        ];
+
+        $pdf = Pdf::loadView('reports/account-movements', $data)
+            ->setPaper('a4', 'portrait');
 
         return $pdf->stream('invoice.pdf');
     }

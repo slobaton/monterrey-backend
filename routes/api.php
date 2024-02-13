@@ -107,4 +107,5 @@ Route::controller(ReportController::class)
     ->middleware('auth.publicKey')
     ->group(function () {
         Route::get('reports/washOrder/{washOrderId}', [ReportController::class, 'washOrderReport']);
+        Route::get('reports/clients/{clientId}/accountMovements', [ReportController::class, 'accountMovementsByDateRangeReport']);
     });
