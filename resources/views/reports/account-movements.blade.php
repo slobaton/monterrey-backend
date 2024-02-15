@@ -21,13 +21,28 @@
         }
 
         .title {
-            font-size: 18px;
+            font-size: 16px;
+            line-height: 0.5;
             font-weight: bold;
             text-align: center;
         }
 
         .subtitle {
+            font-size: 13px;
+            line-height: 0.5;
+            text-align: center;
+        }
+
+        .table-title {
             font-size: 14px;
+            line-height: 0.5;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .table-subtitle {
+            font-size: 12px;
+            line-height: 0.5;
             text-align: center;
         }
 
@@ -74,7 +89,7 @@
             <td class="title">ESTADO DE CUENTA: {{ $client->fullname }}</td>
         </tr>
         <tr>
-            <td class="subtitle">(Expresado en Dolares Americanos)</td>
+            <td class="subtitle">(Expresado en Dolares Americanos) - DD = Deuda | PG = Pago | DC = Descuento</td>
         </tr>
     </table>
 
@@ -84,10 +99,11 @@
                 <div class="month-info">
                     <table class="header">
                         <tr>
-                            <td class="title">{{ $processedMovement['monthHeader'] }}</td>
+                            <td class="table-title">{{ $processedMovement['monthHeader'] }}</td>
                         </tr>
                         <tr>
-                            <td class="subtitle">Saldo mes anterior: {{ $processedMovement['monthBalanceDebt'] }}</td>
+                            <td class="table-subtitle">Saldo mes anterior: {{ $processedMovement['monthBalanceDebt'] }}
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -109,7 +125,23 @@
                         @foreach ($processedMovement['monthItems'] as $processedItem)
                             <tr class="table-detail-row">
                                 <td>{{ $processedItem['date'] }}</td>
-                                <td>DD</td>
+                                <td>
+                                    @switch($processedItem['type'])
+                                        @case('charge')
+                                            DD
+                                        @break
+
+                                        @case('payment')
+                                            PG
+                                        @break
+
+                                        @case('discount')
+                                            DC
+                                        @break
+
+                                        @default
+                                    @endswitch
+                                </td>
                                 <td>{{ $processedItem['receipt_number'] }}</td>
                                 <td>{{ $processedItem['cloth_type'] }}</td>
                                 <td>{{ $processedItem['cloth_size'] }}</td>
