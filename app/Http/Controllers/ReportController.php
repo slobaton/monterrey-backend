@@ -12,6 +12,7 @@ use App\Enums\OrderStatus;
 use App\Models\AccountMovement;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
 
 class ReportController extends Controller
@@ -46,6 +47,7 @@ class ReportController extends Controller
 
         $pdf = Pdf::loadView('reports/wash-order', $data)
             ->setPaper('a4', 'landscape');
+        $this->addExtraInfo($pdf, $user);
 
         return $pdf->stream('invoice.pdf');
     }
@@ -81,8 +83,10 @@ class ReportController extends Controller
             'processedMovements' => $processedMovements
         ];
 
-        $pdf = Pdf::loadView('reports/account-movements', $data)
-            ->setPaper('a4', 'portrait');
+        $pdf = Pdf::loadView('reports/account-movements', $data);
+        $pdf->setPaper('a4', 'portrait');
+        $this->addPagination($pdf);
+        $this->addExtraInfo($pdf, $user);
 
         return $pdf->stream('invoice.pdf');
     }
@@ -109,5 +113,37 @@ class ReportController extends Controller
         ];
 
         return $this->respondWithSuccess($data);
+    }
+
+    private function addPagination($pdf)
+    {
+        $dompdf = $pdf->getDomPDF();
+        $dompdf->render();
+        $canvas = $dompdf->getCanvas();
+        $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) {
+            $text = "Página $pageNumber de $pageCount";
+            $font = $fontMetrics->getFont('monospace');
+            $pageHeight = $canvas->get_height();
+            $size = 9;
+            $canvas->text(20, $pageHeight - 20, $text, $font, $size);
+        });
+    }
+
+    private function addExtraInfo($pdf, $user)
+    {
+        $date = Carbon::now();
+
+        $dompdf = $pdf->getDomPDF();
+        $dompdf->render();
+        $canvas = $dompdf->getCanvas();
+        $canvas->page_script(function ($pageNumber, $pageCount, $canvas, $fontMetrics) use ($user, $date) {
+            $text = "U: {$user->name} - F: {$date->format('d/m/Y H:m:s')}";
+            $font = $fontMetrics->getFont('monospace');
+            $pageWidth = $canvas->get_width();
+            $pageHeight = $canvas->get_height();
+            $size = 9;
+            $width = $fontMetrics->getTextWidth($text, $font, $size);
+            $canvas->text($pageWidth - $width - 20, $pageHeight - 20, $text, $font, $size);
+        });
     }
 }

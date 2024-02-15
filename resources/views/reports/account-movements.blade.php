@@ -35,6 +35,14 @@
             margin-top: 20px;
         }
 
+        .container {
+            page-break-after: always;
+        }
+
+        .container:last-child {
+            page-break-after: unset;
+        }
+
         table.account-movements {
             width: 100%;
 
@@ -51,11 +59,11 @@
         table.account-movements thead>th {
             text-align: center;
 
-            font-size: 14px;
+            font-size: 12px;
         }
 
         tr.table-detail-row {
-            font-size: 12px;
+            font-size: 11px;
         }
     </style>
 </head>
@@ -70,51 +78,54 @@
         </tr>
     </table>
 
-    @foreach ($processedMovements as $processedMovement)
-        <div class="detail">
-            <div class="month-info">
-                <table class="header">
-                    <tr>
-                        <td class="title">{{ $processedMovement['monthHeader'] }}</td>
-                    </tr>
-                    <tr>
-                        <td class="subtitle">Saldo mes anterior: {{ $processedMovement['monthBalanceDebt'] }}</td>
-                    </tr>
+    <div class="container">
+        @foreach ($processedMovements as $processedMovement)
+            <div class="detail">
+                <div class="month-info">
+                    <table class="header">
+                        <tr>
+                            <td class="title">{{ $processedMovement['monthHeader'] }}</td>
+                        </tr>
+                        <tr>
+                            <td class="subtitle">Saldo mes anterior: {{ $processedMovement['monthBalanceDebt'] }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <table class="account-movements">
+                    <thead>
+                        <th style="width: 9%">FECHA</th>
+                        <th style="width: 4%">TIPO</th>
+                        <th style="width: 6%">NR</th>
+                        <th style="width: 8%">PRENDA</th>
+                        <th style="width: 4%">TAM.</th>
+                        <th style="width: 32%">DETALLE</th>
+                        <th style="width: 6%">CANT.</th>
+                        <th style="width: 6%">P/U</th>
+                        <th style="width: 8%">TOTAL</th>
+                        <th style="width: 8%">PAGO/C</th>
+                        <th style="width: 9%">SALDO</th>
+                    </thead>
+                    <tbody>
+                        @foreach ($processedMovement['monthItems'] as $processedItem)
+                            <tr class="table-detail-row">
+                                <td>{{ $processedItem['date'] }}</td>
+                                <td>DD</td>
+                                <td>{{ $processedItem['receipt_number'] }}</td>
+                                <td>{{ $processedItem['cloth_type'] }}</td>
+                                <td>{{ $processedItem['cloth_size'] }}</td>
+                                <td>{{ $processedItem['description'] }}</td>
+                                <td>{{ $processedItem['quantity'] }}</td>
+                                <td>{{ $processedItem['unit_price'] }}</td>
+                                <td>{{ $processedItem['subtotal_price'] }}</td>
+                                <td>{{ $processedItem['amount'] }}</td>
+                                <td>{{ $processedItem['balance_debt'] }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
-            <table class="account-movements">
-                <thead>
-                    <th style="width: 10%">FECHA</th>
-                    <th style="width: 8%">NR</th>
-                    <th style="width: 10%">PRENDA</th>
-                    <th style="width: 6%">TAM.</th>
-                    <th style="width: 26%">DETALLE</th>
-                    <th style="width: 6%">CANT.</th>
-                    <th style="width: 6%">P/U</th>
-                    <th style="width: 8%">TOTAL</th>
-                    <th style="width: 10%">PAGO/C</th>
-                    <th style="width: 10%">SALDO</th>
-                </thead>
-                <tbody>
-                    @foreach ($processedMovement['monthItems'] as $processedItem)
-                        <tr class="table-detail-row">
-                            <td>{{ $processedItem['date'] }}</td>
-                            <td>{{ $processedItem['receipt_number'] }}</td>
-                            <td>{{ $processedItem['cloth_type'] }}</td>
-                            <td>{{ $processedItem['cloth_size'] }}</td>
-                            <td>{{ $processedItem['description'] }}</td>
-                            <td>{{ $processedItem['quantity'] }}</td>
-                            <td>{{ $processedItem['unit_price'] }}</td>
-                            <td>{{ $processedItem['subtotal_price'] }}</td>
-                            <td>{{ $processedItem['amount'] }}</td>
-                            <td>{{ $processedItem['balance_debt'] }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    @endforeach
-
+        @endforeach
+    </div>
 </body>
 
 </html>
