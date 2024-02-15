@@ -46,7 +46,7 @@ class ReportController extends Controller
         ];
 
         $pdf = Pdf::loadView('reports/wash-order', $data)
-            ->setPaper('a4', 'landscape');
+            ->setPaper('letter', 'landscape');
         $this->addExtraInfo($pdf, $user);
 
         $timestamp = Carbon::now()->timestamp;
@@ -86,7 +86,7 @@ class ReportController extends Controller
         ];
 
         $pdf = Pdf::loadView('reports/account-movements', $data);
-        $pdf->setPaper('a4', 'portrait');
+        $pdf->setPaper('letter', 'portrait');
         $this->addPagination($pdf);
         $this->addExtraInfo($pdf, $user);
 
