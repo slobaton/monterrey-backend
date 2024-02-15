@@ -49,7 +49,9 @@ class ReportController extends Controller
             ->setPaper('a4', 'landscape');
         $this->addExtraInfo($pdf, $user);
 
-        return $pdf->stream('invoice.pdf');
+        $timestamp = Carbon::now()->timestamp;
+
+        return $pdf->stream("invoice-{$timestamp}.pdf");
     }
 
     public function accountMovementsByDateRangeReport(Request $request, $clientId)
@@ -88,7 +90,9 @@ class ReportController extends Controller
         $this->addPagination($pdf);
         $this->addExtraInfo($pdf, $user);
 
-        return $pdf->stream('invoice.pdf');
+        $timestamp = Carbon::now()->timestamp;
+
+        return $pdf->stream("movements-{$timestamp}.pdf");
     }
 
     public function generalReportCount(Request $request)
