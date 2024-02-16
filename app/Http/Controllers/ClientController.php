@@ -149,38 +149,16 @@ class ClientController extends Controller
 
         $startDate = AccountMovement::getAccountMovementsStartDate($clientId);
         $endDate = AccountMovement::getAccountMovementsEndDate($clientId);
+
         $balance = 0;
-
-        $accountMovements = $movements->map(function ($movement, int $key) use (&$balance) {
-            $balanceDebt = $balance + $movement->amount;
-
-            $accountMovement = [
-                'id' => $movement->id,
-                'client_id' => $movement->client_id,
-                'receipt_number' => $movement->receipt_number,
-                'date' => $movement->date,
-                'concept' => $movement->concept,
-                'type' => $movement->type,
-                'code' => $movement->code,
-                'wash_order_id' => $movement->wash_order_id,
-                'amount' => (float)$movement->amount,
-                'details' => $movement->type == AccountMovementType::CHARGE->value
-                    ? WashOrderDetail::getDetailsByOrderId($movement->wash_order_id, $balance)
-                    : null,
-                'balance_debt' => $balanceDebt
-            ];
-
-            $balance = $balanceDebt;
-
-            return $accountMovement;
-        });
+        $detailedMovements = AccountMovement::getDetailedMovements($movements, $balance);
 
         $data = [
             'start_balance' => 0,
             'final_balance' => $balance,
             'start_date' => $startDate,
             'end_date' => $endDate,
-            'movements' => $accountMovements
+            'movements' => $detailedMovements
         ];
 
         return $this->respondWithSuccess($data);

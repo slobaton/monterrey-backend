@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Enums\AccountMovementType;
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
 class AccountMovement extends Model
@@ -30,6 +32,8 @@ class AccountMovement extends Model
     protected $casts = [
         'amount' => 'real',
     ];
+
+    private static $monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
     public function washOrder(): BelongsTo
     {
@@ -79,45 +83,106 @@ class AccountMovement extends Model
         return $accountMovement->save();
     }
 
-    public static function getBalanceDebtUntilDate($date, $clientId): float
+    public static function getBalanceUntilDate($clientId, $date)
     {
-        $data = DB::table('account_movements')
+        $balance = DB::table('account_movements')
             ->where('client_id', $clientId)
-            ->whereDate('date', '<', $date)
+            ->where('date', '<', $date)
             ->sum('amount');
 
-        return $data;
+        return $balance ?? 0;
     }
 
-    public static function getAccountMovementsByDate($month, $year, $clientId)
+    public static function getAccountMovements($clientId, $startDate = null, $endDate = null)
     {
-        $data = DB::table('account_movements', 'ac')
-            ->select(['ac.wash_order_id', 'wash_orders.code', 'ac.date', 'ac.type', 'ac.amount', 'ac.created_at', 'ac.updated_at'])
-            ->join('wash_orders', 'ac.wash_order_id', '=', 'wash_orders.id')
-            ->where('ac.client_id', $clientId)
-            ->whereMonth('ac.date', $month)
-            ->whereYear('ac.date', $year)
-            ->orderBy('ac.date')
-            ->orderBy('ac.type')
-            ->get();
-
-        return $data;
-    }
-
-    public static function getAccountMovements($clientId)
-    {
-        $data = DB::table('account_movements', 'ac')
+        $query = DB::table('account_movements', 'ac')
             ->select([
                 'ac.*',
                 'wash_orders.code'
             ])
             ->leftJoin('wash_orders', 'ac.wash_order_id', '=', 'wash_orders.id')
-            ->where('ac.client_id', $clientId)
-            ->orderBy('ac.date')
+            ->where('ac.client_id', $clientId);
+
+        if (!is_null($startDate)) {
+            $rangeDates = [$startDate, $endDate ?? Date::now()];
+
+            $query = $query->whereBetween('ac.date', $rangeDates);
+        }
+
+        $data = $query->orderBy('ac.date')
             ->orderBy('ac.created_at')
             ->get();
 
         return $data;
+    }
+
+    public static function getDetailedMovements($movements, &$balance)
+    {
+        $accountMovements = $movements->map(function ($movement, int $key) use (&$balance) {
+            $balanceDebt = $balance + $movement->amount;
+
+            $accountMovement = [
+                'id' => $movement->id,
+                'client_id' => $movement->client_id,
+                'receipt_number' => $movement->receipt_number,
+                'date' => $movement->date,
+                'concept' => $movement->concept,
+                'type' => $movement->type,
+                'code' => $movement->code,
+                'wash_order_id' => $movement->wash_order_id,
+                'amount' => (float)$movement->amount,
+                'details' => $movement->type == AccountMovementType::CHARGE->value
+                    ? WashOrderDetail::getDetailsByOrderId($movement->wash_order_id, $balance)
+                    : null,
+                'balance_debt' => $balanceDebt
+            ];
+
+            $balance = $balanceDebt;
+
+            return $accountMovement;
+        });
+
+        return $accountMovements;
+    }
+
+    public static function getProcessedMovements($movements)
+    {
+        $processedDetails = AccountMovement::getProcessedDetails($movements);
+
+        $groupedItems = $processedDetails->reduce(function ($prev, $current) {
+            $date = new DateTime($current['date']);
+            $month = $date->format('n');
+            $year = $date->format('Y');
+
+            $key = "Mes de " . AccountMovement::$monthNames[$month - 1] . " del " . $year;
+
+            if (!isset($prev[$key])) {
+                $prev[$key] = [];
+            }
+
+            $prev[$key][] = $current;
+
+            return $prev;
+        }, []);
+
+        $months = array_keys($groupedItems);
+
+        $processedMovements = [];
+        $balancePrevMonth = 0;
+
+        foreach ($months as $month) {
+            $items = $groupedItems[$month] ?? [];
+
+            $processedMovements[] = [
+                'monthHeader' => $month,
+                'monthBalanceDebt' => $balancePrevMonth,
+                'monthItems' => $items
+            ];
+
+            $balancePrevMonth = end($items)['balance_debt'] ?? 0;
+        }
+
+        return $processedMovements;
     }
 
     public static function getAccountMovementsStartDate($clientId)
@@ -140,5 +205,53 @@ class AccountMovement extends Model
             ->first('date');
 
         return $startDate?->date;
+    }
+
+    private static function getProcessedDetails($movements)
+    {
+        $processedDetails = collect();
+
+        foreach ($movements as $movement) {
+            if ($movement['details'] && count($movement['details']) > 0) {
+                $movementDetails = collect($movement['details']);
+                $processedDetail = $movementDetails->map(function ($movementDetail) use ($movement) {
+                    return [
+                        'id' => $movement['id'],
+                        'code' => $movement['code'],
+                        'date' => $movement['date'],
+                        'receipt_number' => null,
+                        'cloth_type' => $movementDetail['cloth_type'],
+                        'cloth_size' => $movementDetail['cloth_size'],
+                        'description' => $movementDetail['details'],
+                        'unit_price' => $movementDetail['unit_price'],
+                        'quantity' => $movementDetail['quantity'],
+                        'subtotal_price' => $movementDetail['subtotal_price'],
+                        'amount' => null,
+                        'balance_debt' => $movementDetail['balance_debt'],
+                        'type' => $movement['type']
+                    ];
+                });
+
+                $processedDetails = $processedDetails->merge($processedDetail);
+            } else {
+                $processedDetails[] = [
+                    'id' => $movement['id'],
+                    'code' => null,
+                    'date' => $movement['date'],
+                    'receipt_number' => $movement['receipt_number'],
+                    'cloth_type' => null,
+                    'cloth_size' => null,
+                    'description' => $movement['concept'],
+                    'unit_price' => null,
+                    'quantity' => null,
+                    'subtotal_price' => null,
+                    'amount' => abs($movement['amount']),
+                    'balance_debt' => $movement['balance_debt'],
+                    'type' => $movement['type']
+                ];
+            }
+        }
+
+        return $processedDetails;
     }
 }

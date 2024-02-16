@@ -64,10 +64,17 @@ class User extends Authenticatable
         return $this->roles()->whereIn('name', $roleName)->exists();
     }
 
+    protected function fullname(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => "{$this->name} {$this->paternal_surname} {$this->maternal_surname}"
+        );
+    }
+
     protected function password(): Attribute
     {
         return Attribute::make(
-            set: fn (string $password) => bcrypt($password),
+            set: fn (string $password) => bcrypt($password)
         );
     }
 
