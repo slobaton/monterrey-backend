@@ -3,9 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
-class UpdateChargeParameterRequest extends FormRequest
+class StoreClientParameterValueRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +22,7 @@ class UpdateChargeParameterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'description' => 'nullable|sometimes|string',
-            'price' => 'required|numeric|max:99999999,99',
+            'value' => 'required|numeric|min:0|max:99999999,99'
         ];
     }
 }

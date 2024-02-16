@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountMovementController;
-use App\Http\Controllers\ChargeParameterController;
+use App\Http\Controllers\SystemParameterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserRoleController;
@@ -9,7 +9,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ClientEffectPriceController;
-use App\Http\Controllers\ClientParameterPriceController;
+use App\Http\Controllers\ClientParameterValueController;
 use App\Http\Controllers\ClientWashTypePriceController;
 use App\Http\Controllers\EffectController;
 use App\Http\Controllers\WashTypeController;
@@ -77,14 +77,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('clients/{clientId}/effects/{effectId}/prices/{id}', 'deletePrice');
     });
 
-    Route::controller(ClientParameterPriceController::class)->group(function () {
-        Route::get('clients/{client}/parameters/{parameterId}/prices/{id}', 'getPriceById');
-        Route::post('clients/{client}/parameters/{parameter}/prices', 'assignPrice');
-        Route::patch('clients/{client}/parameters/{parameter}/prices/{id}', 'updatePrice');
-        Route::delete('clients/{clientId}/parameters/{parameterId}/prices/{id}', 'deletePrice');
+    Route::controller(ClientParameterValueController::class)->group(function () {
+        Route::get('clients/{client}/parameters/{parameterId}/values/{id}', 'getValueById');
+        Route::post('clients/{client}/parameters/{parameter}/values', 'assignValue');
+        Route::patch('clients/{client}/parameters/{parameter}/values/{id}', 'updateValue');
+        Route::delete('clients/{clientId}/parameters/{parameterId}/values/{id}', 'deleteValue');
     });
 
-    Route::controller(ChargeParameterController::class)->group(function () {
+    Route::controller(SystemParameterController::class)->group(function () {
         Route::get('parameters', 'index');
         Route::get('parameters/{parameter}', 'show');
         Route::patch('parameters/{parameter}', 'update');

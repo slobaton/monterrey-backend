@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-class ChargeParameterCollection extends ApiResourceCollection
+class SystemParameterCollection extends ApiResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -16,7 +16,7 @@ class ChargeParameterCollection extends ApiResourceCollection
         return [
             'data' => $this->collection
                 ->map(function ($parameter) {
-                    return new ChargeParameterResource($parameter);
+                    return new SystemParameterResource($parameter);
                 })
         ];
     }

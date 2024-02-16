@@ -60,9 +60,9 @@ class Client extends Model
 
     public function parameters(): BelongsToMany
     {
-        return $this->belongsToMany(ChargeParameter::class, 'client_parameter_prices')
+        return $this->belongsToMany(SystemParameter::class, 'client_parameter_values')
             ->orderByPivot('created_at', 'desc')
-            ->withPivot(['id', 'price']);
+            ->withPivot(['id', 'value']);
     }
 
     public function scopeAll(Builder $query, $search): Builder

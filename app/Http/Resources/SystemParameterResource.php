@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-class ChargeParameterResource extends ApiResource
+class SystemParameterResource extends ApiResource
 {
     /**
      * Transform the resource into an array.
@@ -15,8 +15,9 @@ class ChargeParameterResource extends ApiResource
     {
         $data = [
             'id'               => $this->id,
+            'code'             => $this->code,
             'name'             => $this->name,
-            'price'            => $this->price,
+            'value'            => $this->value,
             'description'      => $this->description,
             'created_at'       => $this->created_at,
             'updated_at'       => $this->updated_at

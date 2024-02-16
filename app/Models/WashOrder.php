@@ -135,10 +135,10 @@ final class WashOrder extends Model
 
     public function getFocalizadoPrice()
     {
-        $focalizadoParam = ChargeParameter::where('name', 'focalizado_price')
+        $focalizadoParam = SystemParameter::where('code', SystemParameter::FOCALIZADO_PRICE)
             ->firstOrFail();
 
-        $clientFocalizadoPrice = $focalizadoParam->clientPrices()
+        $clientFocalizadoPrice = $focalizadoParam->clientValues()
             ->where('client_id', $this->client_id)
             ->first();
 
@@ -149,10 +149,10 @@ final class WashOrder extends Model
 
     public function getNevadoPrice()
     {
-        $nevadoParam = ChargeParameter::where('name', 'nevado_price')
+        $nevadoParam = SystemParameter::where('code', SystemParameter::NEVADO_PRICE)
             ->firstOrFail();
 
-        $clientNevadoPrice = $nevadoParam->clientPrices()
+        $clientNevadoPrice = $nevadoParam->clientValues()
             ->where('client_id', $this->client_id)
             ->first();
 

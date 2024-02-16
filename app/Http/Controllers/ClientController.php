@@ -18,7 +18,7 @@ use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientEffectPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
-use App\Http\Resources\ClientParameterPriceCollection;
+use App\Http\Resources\ClientParameterValueCollection;
 
 class ClientController extends Controller
 {
@@ -135,7 +135,7 @@ class ClientController extends Controller
             ? $parameters->jsonPaginate()
             : $parameters->get();
 
-        return new ClientParameterPriceCollection($parameters);
+        return new ClientParameterValueCollection($parameters);
     }
 
     /**
