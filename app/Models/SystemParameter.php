@@ -33,6 +33,6 @@ class SystemParameter extends Model
 
     public function clientValues(): HasMany
     {
-        return $this->hasMany(ClientParameterValue::class, 'charge_parameter_id', 'id');
+        return $this->hasMany(ClientParameterValue::class, 'system_parameter_id', 'id');
     }
 }

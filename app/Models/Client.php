@@ -142,6 +142,37 @@ class Client extends Model
         return $this->save();
     }
 
+    public function getMinButtonHolesValue()
+    {
+        $minButtonHolesParam = SystemParameter::where('code', SystemParameter::BUTTONHOLE_MIN)
+            ->firstOrFail();
+        $clientMinButtonHolesParam = $minButtonHolesParam->clientValues()
+            ->where('client_id', $this->id)
+            ->first();
+        return !is_null($clientMinButtonHolesParam)
+            ? $clientMinButtonHolesParam->value
+            : $minButtonHolesParam->value;
+    }
+
+    public function getPricePerButtonHole()
+    {
+        $buttonHolePriceParam = SystemParameter::where('code', SystemParameter::BUTTONHOLE_PRICE)
+            ->firstOrFail();
+        $clientButtonHolePriceParam = $buttonHolePriceParam->clientValues()
+            ->where('client_id', $this->id)
+            ->first();
+        return !is_null($clientButtonHolePriceParam)
+            ? $clientButtonHolePriceParam->value
+            : $buttonHolePriceParam->value;
+    }
+
+    public function getButtonHolesPrice($minButtonHoles, $pricePerButtonHole, $numButtonHoles)
+    {
+        $validButtonHoles = $numButtonHoles - $minButtonHoles;
+
+        return $validButtonHoles > 0 ? $validButtonHoles * $pricePerButtonHole : 0;
+    }
+
     public static function getAllowedFilters()
     {
         return [

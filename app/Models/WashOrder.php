@@ -143,8 +143,8 @@ final class WashOrder extends Model
             ->first();
 
         return !is_null($clientFocalizadoPrice)
-            ? $clientFocalizadoPrice->price
-            : $focalizadoParam->price;
+            ? $clientFocalizadoPrice->value
+            : $focalizadoParam->value;
     }
 
     public function getNevadoPrice()
@@ -157,8 +157,8 @@ final class WashOrder extends Model
             ->first();
 
         return !is_null($clientNevadoPrice)
-            ? $clientNevadoPrice->price
-            : $nevadoParam->price;
+            ? $clientNevadoPrice->value
+            : $nevadoParam->value;
     }
 
     public function approveOrder(): bool
