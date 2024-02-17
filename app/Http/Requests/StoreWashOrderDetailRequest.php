@@ -33,7 +33,6 @@ class StoreWashOrderDetailRequest extends FormRequest
             'is_focalizado_active' => 'required|boolean',
             'is_nevado_active'     => 'required|boolean',
             'num_buttonholes'      => 'required|integer',
-            'buttonholes_price'    => 'required|decimal:0,2',
             'quantity'             => 'required|integer',
             'observations'         => 'nullable|sometimes|string',
             'effects'              => 'nullable|sometimes|array'

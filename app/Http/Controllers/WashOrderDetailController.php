@@ -162,7 +162,6 @@ class WashOrderDetailController extends Controller
     {
         $washOrder = WashOrder::where('id', $request->wash_order_id)
             ->firstOrFail();
-        $client = $washOrder->client;
 
         $washPrice = $washOrder->getWashPrice();
         $isFocalizadoActive = $request->has('is_focalizado_active') && !is_null($request->is_focalizado_active)
@@ -176,9 +175,9 @@ class WashOrderDetailController extends Controller
         $numButtonHoles = $request->has('num_buttonholes') && !is_null($request->num_buttonholes)
             ? $request->num_buttonholes
             : 0;
-        $minButtonHoles = $client->getMinButtonHolesValue();
-        $pricePerButtonHole = $client->getPricePerButtonHole();
-        $buttonHolesPrice = $client->getButtonHolesPrice($minButtonHoles, $pricePerButtonHole, $numButtonHoles);
+        $minButtonHoles = $washOrder->getMinButtonHolesValue();
+        $pricePerButtonHole = $washOrder->getPricePerButtonHole();
+        $buttonHolesPrice = $washOrder->getButtonHolesPrice($minButtonHoles, $pricePerButtonHole, $numButtonHoles);
         $effectTotalPrice = 0;
 
         $quantity = $request->has('quantity') && !is_null($request->quantity)

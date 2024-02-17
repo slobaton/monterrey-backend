@@ -39,8 +39,16 @@ return new class extends Migration
 
             $table->integer('num_buttonholes')
                 ->default(0);
+
+            $table->integer('min_buttonholes')
+                ->default(0);
+            $table->decimal('buttonhole_unit_price', 10, 2)
+                ->unsigned()
+                ->default(0);
+
             $table->decimal('buttonholes_price', 10, 2)
-                ->unsigned();
+                ->unsigned()
+                ->default(0);
 
             $table->decimal('unit_price', 10, 2)
                 ->unsigned();
