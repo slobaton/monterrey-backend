@@ -2,7 +2,6 @@
 
 namespace App\Observers;
 
-use App\Models\ChargeParameter;
 use App\Models\WashOrderDetail;
 
 class WashOrderDetailObserver

@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-class ClientParameterPriceCollection extends ApiResourceCollection
+class ClientParameterValueCollection extends ApiResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -16,7 +16,7 @@ class ClientParameterPriceCollection extends ApiResourceCollection
         return [
             'data' => $this->collection
                 ->map(function ($clientParameterPrice) {
-                    return new ClientParameterPriceResource($clientParameterPrice);
+                    return new ClientParameterValueResource($clientParameterPrice);
                 })
         ];
     }

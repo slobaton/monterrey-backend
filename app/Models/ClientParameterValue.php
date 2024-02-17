@@ -5,9 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class ChargeParameter extends Model
+class ClientParameterValue extends Model
 {
     use HasFactory;
 
@@ -17,16 +16,22 @@ class ChargeParameter extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'description',
-        'price'
+        'system_parameter_id',
+        'client_id',
+        'value'
     ];
 
     protected $casts = [
-        'price' => 'real',
+        'value' => 'real',
     ];
 
-    public function clientPrices(): HasMany
+    public function client(): BelongsTo
     {
-        return $this->hasMany(ClientParameterPrice::class, 'charge_parameter_id', 'id');
+        return $this->belongsTo(Client::class);
+    }
+
+    public function systemParameter(): BelongsTo
+    {
+        return $this->belongsTo(SystemParameter::class);
     }
 }

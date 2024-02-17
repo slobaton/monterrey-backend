@@ -175,9 +175,9 @@ class WashOrderDetailController extends Controller
         $numButtonHoles = $request->has('num_buttonholes') && !is_null($request->num_buttonholes)
             ? $request->num_buttonholes
             : 0;
-        $buttonHolesPrice = $request->has('buttonholes_price') && !is_null($request->buttonholes_price)
-            ? $request->buttonholes_price
-            : 0;
+        $minButtonHoles = $washOrder->getMinButtonHolesValue();
+        $pricePerButtonHole = $washOrder->getPricePerButtonHole();
+        $buttonHolesPrice = $washOrder->getButtonHolesPrice($minButtonHoles, $pricePerButtonHole, $numButtonHoles);
         $effectTotalPrice = 0;
 
         $quantity = $request->has('quantity') && !is_null($request->quantity)
@@ -199,7 +199,7 @@ class WashOrderDetailController extends Controller
             }
         }
 
-        $unitPrice = $washPrice + ($buttonHolesPrice * $numButtonHoles) + $effectTotalPrice;
+        $unitPrice = $washPrice + $buttonHolesPrice + $effectTotalPrice;
 
         if ($isFocalizadoActive) {
             $unitPrice += $focalizadoPrice;
@@ -215,7 +215,9 @@ class WashOrderDetailController extends Controller
             'wash_price' => $washPrice,
             'focalizado_price' => $isFocalizadoActive ? $focalizadoPrice : 0,
             'nevado_price' => $isNevadoActive ? $nevadoPrice : 0,
-            'buttonholes_total_price' => $buttonHolesPrice * $numButtonHoles,
+            'price_per_buttonhole' => $pricePerButtonHole,
+            'min_buttonholes' => $minButtonHoles,
+            'buttonholes_total_price' => $buttonHolesPrice,
             'effect_total_price' => $effectTotalPrice,
             'unit_price' => $unitPrice,
             'subtotal_price' => $subtotalPrice

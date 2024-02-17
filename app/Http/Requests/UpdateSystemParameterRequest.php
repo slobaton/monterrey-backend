@@ -3,8 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class StoreClientParameterPriceRequest extends FormRequest
+class UpdateSystemParameterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +23,9 @@ class StoreClientParameterPriceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'price' => 'required|numeric|min:0|max:99999999,99'
+            'name' => 'required|string',
+            'description' => 'nullable|sometimes|string',
+            'value' => 'required|numeric|max:99999999,99',
         ];
     }
 }

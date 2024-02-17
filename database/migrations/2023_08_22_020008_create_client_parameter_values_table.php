@@ -11,16 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('client_parameter_prices', function (Blueprint $table) {
+        Schema::create('client_parameter_values', function (Blueprint $table) {
             $table->id();
 
-            $table->decimal('price', 10, 2);
+            $table->decimal('value', 10, 2);
 
             $table->timestamps();
 
-            $table->foreignId('charge_parameter_id')
+            $table->foreignId('system_parameter_id')
                 ->references('id')
-                ->on('charge_parameters');
+                ->on('system_parameters');
 
             $table->foreignUuid('client_id')
                 ->references('id')
@@ -33,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('client_parameter_prices');
+        Schema::dropIfExists('client_parameter_values');
     }
 };

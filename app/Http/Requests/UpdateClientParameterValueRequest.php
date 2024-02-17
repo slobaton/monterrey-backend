@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateClientParameterPriceRequest extends FormRequest
+class UpdateClientParameterValueRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class UpdateClientParameterPriceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'price' => 'required|numeric|min:0|max:99999999,99'
+            'value' => 'required|numeric|min:0|max:99999999,99'
         ];
     }
 }

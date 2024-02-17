@@ -21,17 +21,10 @@ class WashOrderDetail extends Model
         'wash_order_id',
         'cloth_type_id',
         'cloth_size_id',
-        'wash_price',
-        'effect_price',
         'is_focalizado_active',
-        'focalizado_price',
         'is_nevado_active',
-        'nevado_price',
         'num_buttonholes',
-        'buttonholes_price',
-        'unit_price',
         'quantity',
-        'subtotal_price',
         'observations'
     ];
 
@@ -42,6 +35,7 @@ class WashOrderDetail extends Model
         'effect_price' => 'real',
         'focalizado_price' => 'real',
         'nevado_price' => 'real',
+        'buttonhole_unit_price' => 'real',
         'buttonholes_price' => 'real',
         'unit_price' => 'real',
         'subtotal_price' => 'real'
@@ -139,6 +133,9 @@ class WashOrderDetail extends Model
         if ($this->is_nevado_active) {
             $this->nevado_price = $washOrder->getNevadoPrice();
         }
+
+        $this->min_buttonholes = $washOrder->getMinButtonHolesValue();
+        $this->buttonhole_unit_price = $washOrder->getPricePerButtonHole();
     }
 
     public function updateSubtotal()
@@ -160,8 +157,10 @@ class WashOrderDetail extends Model
             ? $this->nevado_price
             : 0;
 
-        $buttonholes_price = $this->buttonholes_price * $this->num_buttonholes;
+        $validButtonHoles =  $this->num_buttonholes - $this->min_buttonholes;
+        $buttonholes_price = $validButtonHoles > 0 ? $validButtonHoles * $this->buttonhole_unit_price : 0;
 
+        $this->buttonholes_price = $buttonholes_price;
         $this->unit_price = $washPrice + $totalEffectsPrice + $focalizadoPrice + $nevadoPrice + $buttonholes_price;
         $this->subtotal_price = $this->unit_price * $this->quantity;
 

@@ -4,14 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Enums\Roles;
 use App\Http\Requests\PaginationRequest;
-use App\Http\Requests\UpdateChargeParameterRequest;
-use App\Http\Resources\ChargeParameterCollection;
-use App\Http\Resources\ChargeParameterResource;
-use App\Models\ChargeParameter;
+use App\Http\Requests\UpdateSystemParameterRequest;
+use App\Http\Resources\SystemParameterCollection;
+use App\Http\Resources\SystemParameterResource;
+use App\Models\SystemParameter;
 use Illuminate\Http\Request;
 use Spatie\QueryBuilder\QueryBuilder;
 
-class ChargeParameterController extends Controller
+class SystemParameterController extends Controller
 {
     public function __construct()
     {
@@ -27,35 +27,35 @@ class ChargeParameterController extends Controller
      */
     public function index(PaginationRequest $request)
     {
-        $paramaters = QueryBuilder::for(ChargeParameter::class);
+        $paramaters = QueryBuilder::for(SystemParameter::class);
 
         $paramaters = $request->has('page.number') && $request->has('page.size')
             ? $paramaters->jsonPaginate()
             : $paramaters->get();
 
-        return new ChargeParameterCollection($paramaters);
+        return new SystemParameterCollection($paramaters);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(ChargeParameter $parameter)
+    public function show(SystemParameter $parameter)
     {
-        $query = ChargeParameter::where('id', $parameter->id);
+        $query = SystemParameter::where('id', $parameter->id);
 
         $data = QueryBuilder::for($query)
             ->first();
 
-        return new ChargeParameterResource($data);
+        return new SystemParameterResource($data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateChargeParameterRequest $request, ChargeParameter $parameter)
+    public function update(UpdateSystemParameterRequest $request, SystemParameter $parameter)
     {
         $parameter->update($request->all());
 
-        return new ChargeParameterResource($parameter);
+        return new SystemParameterResource($parameter);
     }
 }

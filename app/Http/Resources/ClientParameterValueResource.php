@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-class ClientParameterPriceResource extends ApiResource
+class ClientParameterValueResource extends ApiResource
 {
     /**
      * Transform the resource into an array.
@@ -15,12 +15,13 @@ class ClientParameterPriceResource extends ApiResource
     {
         $data = [
             'id'               => $this->id,
+            'code'             => $this->code,
             'name'             => $this->name,
-            'price'            => $this->price,
+            'value'            => $this->value,
             'description'      => $this->description,
             'created_at'       => $this->created_at,
             'updated_at'       => $this->updated_at,
-            'parameter_price'  => $this->pivot
+            'parameter_value'  => $this->pivot
         ];
 
         return $data;
