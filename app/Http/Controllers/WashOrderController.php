@@ -17,10 +17,7 @@ class WashOrderController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
-            ->only(['approveOrder']);
-        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
-            ->except(['approveOrder']);
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value);
     }
 
     /**
