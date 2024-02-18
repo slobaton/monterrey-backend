@@ -217,7 +217,7 @@ class ClientController extends Controller
         $currencyRate = $client->getCurrencyRate();
 
         $data = [
-            'currency_rate' => $currencyRate
+            'value' => $currencyRate
         ];
 
         return $this->respondWithSuccess($data);
