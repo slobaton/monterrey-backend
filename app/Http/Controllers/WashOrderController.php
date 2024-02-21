@@ -115,4 +115,19 @@ class WashOrderController extends Controller
 
         return new WashOrderResource($washOrder);
     }
+
+    public function fetchOrdersByClient(PaginationRequest $request, string $client)
+    {
+        $washOrder = QueryBuilder::for(WashOrder::where('client_id', $client))
+            ->allowedFilters(WashOrder::getAllowedFilters())
+            ->defaultSort(WashOrder::getDefaultSort())
+            ->allowedSorts(WashOrder::getAllowedSorts())
+            ->allowedIncludes(WashOrder::getAllowedIncludes());
+
+        $washOrder = $request->has('page.number') && $request->has('page.size')
+            ? $washOrder->jsonPaginate()
+            : $washOrder->get();
+
+        return new WashOrderCollection($washOrder);
+    }
 }
