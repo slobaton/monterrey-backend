@@ -107,6 +107,10 @@ class WashOrderController extends Controller
             return $this->respondError('Wash Order cannot be approved');
         }
 
+        if (count($washOrder->details) == 0) {
+            return $this->respondError('Wash Order cannot be approved');
+        }
+
         $orderApproved = $washOrder->approveOrder();
 
         if (!$orderApproved) {

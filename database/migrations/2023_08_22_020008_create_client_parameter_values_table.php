@@ -20,11 +20,13 @@ return new class extends Migration
 
             $table->foreignId('system_parameter_id')
                 ->references('id')
-                ->on('system_parameters');
+                ->on('system_parameters')
+                ->onDelete('restrict');
 
             $table->foreignUuid('client_id')
                 ->references('id')
-                ->on('clients');
+                ->on('clients')
+                ->onDelete('cascade');
         });
     }
 

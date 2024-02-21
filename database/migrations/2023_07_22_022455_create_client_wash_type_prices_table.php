@@ -18,7 +18,8 @@ return new class extends Migration
                 ->constrained('wash_types');
 
             $table->foreignUuid('client_id')
-                ->constrained('clients');
+                ->constrained('clients')
+                ->onDelete('cascade');
 
             $table->unique(['wash_type_id', 'client_id']);
 
