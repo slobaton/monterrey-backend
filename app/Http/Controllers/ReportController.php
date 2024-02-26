@@ -8,7 +8,6 @@ use App\Models\Client;
 use App\Models\Effect;
 use App\Models\WashType;
 use App\Models\WashOrder;
-use App\Enums\OrderStatus;
 use App\Models\AccountMovement;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -27,6 +26,7 @@ class ReportController extends Controller
     {
         $userId = $request->get('userId');
         $user = User::find($userId);
+
         if (!$user) {
             abort(404, 'User not found.');
         }
@@ -37,6 +37,8 @@ class ReportController extends Controller
         }
 
         $washOrder->checkPermissionOrFail();
+
+        $washOrder->checkIfUserCanPrint($washOrder, $user);
 
         $washOrder->recordPrintHistory($userId);
 

@@ -278,6 +278,13 @@ final class WashOrder extends Model
         }
     }
 
+    public function checkIfUserCanPrint($washOrder, $user): void
+    {
+        if ($washOrder->printHistories()->count() > 1 && !$user->isAdmin()) {
+            abort(403, 'Not allowed to print more than once unless you are an admin.');
+        }
+    }
+
     public function recordPrintHistory($userId): void
     {
         PrintHistory::create([

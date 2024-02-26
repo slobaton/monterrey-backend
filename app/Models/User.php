@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\Roles;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Support\Facades\DB;
@@ -62,6 +63,11 @@ class User extends Authenticatable
     public function hasAnyRole($roleName)
     {
         return $this->roles()->whereIn('name', $roleName)->exists();
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->hasAnyRole([Roles::ADMIN->value]);
     }
 
     protected function fullname(): Attribute
