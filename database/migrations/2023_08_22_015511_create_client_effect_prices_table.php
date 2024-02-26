@@ -18,8 +18,14 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->foreignUuid('effect_id')->references('id')->on('effects');
-            $table->foreignUuid('client_id')->references('id')->on('clients');
+            $table->foreignUuid('effect_id')
+                ->references('id')
+                ->on('effects')
+                ->onDelete('restrict');
+            $table->foreignUuid('client_id')
+                ->references('id')
+                ->on('clients')
+                ->onDelete('cascade');
         });
     }
 
