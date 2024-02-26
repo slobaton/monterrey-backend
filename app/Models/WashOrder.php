@@ -3,9 +3,9 @@
 namespace App\Models;
 
 use App\Enums\OrderStatus;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\QueryBuilderHelpers;
-use Exception;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\QueryBuilder\AllowedInclude;
@@ -56,6 +56,11 @@ final class WashOrder extends Model
     public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class, 'client_id', 'id');
+    }
+
+    public function printHistories(): HasMany
+    {
+        return $this->hasMany(PrintHistory::class, 'wash_order_id');
     }
 
     public function scopeClient(Builder $query, $search): Builder
@@ -263,5 +268,32 @@ final class WashOrder extends Model
         $totalRevenue = WashOrder::sum('total_price');
 
         return (float)$totalRevenue;
+    }
+
+    // report
+    public function checkPermissionOrFail(): void
+    {
+        if ($this->status === OrderStatus::CREATED->value) {
+            abort(403, 'No tienes permiso.');
+        }
+    }
+
+    public function recordPrintHistory($userId): void
+    {
+        PrintHistory::create([
+            'user_id' => $userId,
+            'wash_order_id' => $this->id,
+            'created_at' => Carbon::now(),
+        ]);
+    }
+
+    public function prepareReportData($user): array
+    {
+        return [
+            'user' => $user,
+            'client' => $this->client,
+            'washOrder' => $this,
+            'details' => $this->details
+        ];
     }
 }

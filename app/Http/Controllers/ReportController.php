@@ -27,27 +27,23 @@ class ReportController extends Controller
     {
         $userId = $request->get('userId');
         $user = User::find($userId);
-
-        $washOrder = WashOrder::find($washOrderId);
-
-        if ($washOrder->status === OrderStatus::CREATED->value) {
-            abort(403, 'No tienes permiso.');
+        if (!$user) {
+            abort(404, 'User not found.');
         }
 
-        $washOrder->client;
-        $washOrder->washType;
-        $washOrder->details;
+        $washOrder = WashOrder::with(['client', 'washType', 'details'])->find($washOrderId);
+        if (!$washOrder) {
+            abort(404, 'Wash Order not found.');
+        }
 
-        $data = [
-            'user' => $user,
-            'client' => $washOrder->client,
-            'washOrder' => $washOrder,
-            'details' => $washOrder->details
-        ];
+        $washOrder->checkPermissionOrFail();
+
+        $washOrder->recordPrintHistory($userId);
+
+        $data = $washOrder->prepareReportData($user);
 
         $pdf = Pdf::loadView('reports/wash-order', $data)
             ->setPaper('letter', 'landscape');
-        $this->addExtraInfo($pdf, $user);
 
         $timestamp = Carbon::now()->timestamp;
 

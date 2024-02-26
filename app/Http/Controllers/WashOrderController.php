@@ -26,6 +26,7 @@ class WashOrderController extends Controller
     public function index(PaginationRequest $request)
     {
         $washOrder = QueryBuilder::for(WashOrder::class)
+            ->withCount('printHistories')
             ->allowedFilters(WashOrder::getAllowedFilters())
             ->defaultSort(WashOrder::getDefaultSort())
             ->allowedSorts(WashOrder::getAllowedSorts())
@@ -60,6 +61,7 @@ class WashOrderController extends Controller
 
         $washOrder = QueryBuilder::for($query)
             ->allowedIncludes(WashOrder::getAllowedIncludes())
+            ->withCount('printHistories')
             ->firstOrFail();
 
         return new WashOrderResource($washOrder);
