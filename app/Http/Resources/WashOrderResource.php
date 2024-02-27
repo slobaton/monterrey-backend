@@ -27,6 +27,7 @@ class WashOrderResource extends ApiResource
             'deliver_quantity'   => $this->deliver_quantity,
             'observations'       => $this->observations,
             'is_special_price'   => $this->is_special_price,
+            'print_count'        => $this->print_histories_count,
             'created_at'         => $this->created_at,
             'updated_at'         => $this->updated_at
         ];
