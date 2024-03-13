@@ -47,6 +47,8 @@ class ReportController extends Controller
         $pdf = Pdf::loadView('reports/wash-order', $data)
             ->setPaper('letter', 'landscape');
 
+        $this->addExtraInfo($pdf, $user);
+
         $timestamp = Carbon::now()->timestamp;
 
         return $pdf->stream("invoice-{$timestamp}.pdf");

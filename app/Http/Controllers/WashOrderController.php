@@ -49,6 +49,8 @@ class WashOrderController extends Controller
         $washOrder->client;
         $washOrder->washType;
 
+        $washOrder->print_histories_count = $washOrder->printHistories()->count();
+
         return new WashOrderResource($washOrder);
     }
 
@@ -80,6 +82,8 @@ class WashOrderController extends Controller
         }
 
         $order->updateTotal();
+
+        $order->print_histories_count = $order->printHistories()->count();
 
         return new WashOrderResource($order);
     }
@@ -125,6 +129,7 @@ class WashOrderController extends Controller
     public function fetchOrdersByClient(PaginationRequest $request, string $client)
     {
         $washOrder = QueryBuilder::for(WashOrder::where('client_id', $client))
+            ->withCount('printHistories')
             ->allowedFilters(WashOrder::getAllowedFilters())
             ->defaultSort(WashOrder::getDefaultSort())
             ->allowedSorts(WashOrder::getAllowedSorts())
