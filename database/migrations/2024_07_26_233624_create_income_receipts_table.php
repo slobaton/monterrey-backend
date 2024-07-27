@@ -17,7 +17,7 @@ return new class extends Migration
                 ->unsigned();
 
             $table->date('date');
-            $table->enum('type', [IncomeReceiptStatus::ACTIVE->value, IncomeReceiptStatus::CANCELED->value])
+            $table->enum('status', [IncomeReceiptStatus::ACTIVE->value, IncomeReceiptStatus::CANCELED->value])
                 ->default(IncomeReceiptStatus::ACTIVE->value);
             $table->text('canceled_reason')
                 ->nullable();
