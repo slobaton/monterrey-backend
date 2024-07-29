@@ -27,4 +27,8 @@ class IncomeReceipt extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public static function verifyNumber($receiptNumber)
+    {
+    }
 }

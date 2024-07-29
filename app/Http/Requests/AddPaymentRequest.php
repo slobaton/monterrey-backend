@@ -22,7 +22,7 @@ class AddPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'receipt_number' => 'required|numeric|min:1|unique:account_movements,receipt_number',
+            'receipt_number' => 'required|numeric|min:1',
             'amount' => 'required|numeric|min:1',
             'date' => 'sometimes|nullable|date'
         ];

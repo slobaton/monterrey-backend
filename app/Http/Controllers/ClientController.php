@@ -179,6 +179,9 @@ class ClientController extends Controller
             return $this->respondError('invalid amount');
         }
 
+        //TODO: validate receipt number
+        if ()
+
         $paymentCompleted = $client->makePayment($receiptNumber, $amount, $date);
 
         if (!$paymentCompleted) {

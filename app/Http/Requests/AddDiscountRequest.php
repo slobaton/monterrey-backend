@@ -22,6 +22,7 @@ class AddDiscountRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'receipt_number' => 'required|numeric|min:1',
             'concept' => 'required|string',
             'amount' => 'required|numeric|min:1',
             'date' => 'sometimes|nullable|date'

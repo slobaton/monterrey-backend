@@ -13,8 +13,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('income_receipts', function (Blueprint $table) {
-            $table->bigIncrements('id')
-                ->unsigned();
+            $table->bigInteger('id')
+                ->unsigned()
+                ->primary();
 
             $table->date('date');
             $table->enum('status', [IncomeReceiptStatus::ACTIVE->value, IncomeReceiptStatus::CANCELED->value])
