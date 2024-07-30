@@ -19,6 +19,7 @@ use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientEffectPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
 use App\Http\Resources\ClientParameterValueCollection;
+use App\Models\IncomeReceipt;
 
 class ClientController extends Controller
 {
@@ -169,20 +170,14 @@ class ClientController extends Controller
      */
     public function addPaymentMovement(AddPaymentRequest $request, Client $client)
     {
+        $userId = $request->user()->id;
         $receiptNumber = $request->get('receipt_number');
         $amount = $request->get('amount', 0);
         $date = $request->get('date', Date::now()->toDateString());
 
         $date = Date::parse($date);
 
-        if ($amount <= 0 || $amount > $client->debt_balance) {
-            return $this->respondError('invalid amount');
-        }
-
-        //TODO: validate receipt number
-        if ()
-
-        $paymentCompleted = $client->makePayment($receiptNumber, $amount, $date);
+        $paymentCompleted = $client->makePayment($receiptNumber, $amount, $date, $userId);
 
         if (!$paymentCompleted) {
             return $this->respondError('cannot make payment');

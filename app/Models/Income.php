@@ -31,4 +31,16 @@ class Income extends Model
     {
         return $this->belongsTo(IncomeReceipt::class, 'receipt_number', 'id');
     }
+
+    public static function AddIncome($receiptNumber, $concept, $type, $amount, $date): bool
+    {
+        $income = new Income();
+        $income->receipt_number = $receiptNumber;
+        $income->date = $date;
+        $income->concept = $concept;
+        $income->type = $type;
+        $income->amount = $amount;
+
+        return $income->save();
+    }
 }

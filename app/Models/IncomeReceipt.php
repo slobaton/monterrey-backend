@@ -16,6 +16,7 @@ class IncomeReceipt extends Model
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'user_id',
         'date',
         'concept',
@@ -23,12 +24,31 @@ class IncomeReceipt extends Model
         'canceled_reason'
     ];
 
+    public $incrementing = false;
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public static function verifyNumber($receiptNumber)
+    public static function getNextConsecutive(): int
     {
+        $receipt = IncomeReceipt::orderBy('id', 'desc')
+            ->first();
+
+        return is_null($receipt) ? 1 : ($receipt->id + 1);
+    }
+
+    public static function verifyNumber($receiptNumber): bool
+    {
+        $receipt = IncomeReceipt::find($receiptNumber);
+
+        if (!is_null($receipt) || $receiptNumber == 1) {
+            return true;
+        }
+
+        $previousReceipt = IncomeReceipt::find($receiptNumber - 1);
+
+        return !is_null($previousReceipt);
     }
 }

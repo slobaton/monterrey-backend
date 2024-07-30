@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\IncomeReceiptStatus;
+use App\Enums\IncomeType;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
 
@@ -80,15 +83,20 @@ class Client extends Model
         return $this->attributes['name'] . ' ' . $this->attributes['paternal_surname'] . ' ' . $this->attributes['maternal_surname'];
     }
 
-    public function makePayment($receiptNumber, $amount, $date): bool
+    public function makePayment($receiptNumber, $amount, $date, $userId): bool
     {
         try {
             DB::beginTransaction();
 
             $clientUpdated = $this->decreaseDebtBalance($amount);
-            $movementCreated = AccountMovement::addPayment($this, $receiptNumber, $amount, $date);
+            $receipt = IncomeReceipt::firstOrCreate(
+                ['id' => $receiptNumber],
+                ['id' => $receiptNumber, 'date' => $date, 'status' => IncomeReceiptStatus::ACTIVE->value, 'user_id' => $userId]
+            );
+            $incomeCreated = Income::AddIncome($receipt->id, $this->name, IncomeType::NORMAL->value, $amount, $date);
+            $movementCreated = AccountMovement::addPayment($this, $receipt->id, $amount, $date);
 
-            if (!$movementCreated || !$clientUpdated) {
+            if (!$movementCreated || !$clientUpdated || !$incomeCreated) {
                 DB::rollBack();
 
                 return false;
@@ -97,7 +105,8 @@ class Client extends Model
             DB::commit();
 
             return true;
-        } catch (\Exception) {
+        } catch (\Exception $ex) {
+            Log::error("Unexpected error happened making the payment :: Exception: {ex}", ['ex' => $ex]);
             DB::rollBack();
 
             return false;
