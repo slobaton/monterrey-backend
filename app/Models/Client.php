@@ -134,9 +134,9 @@ class Client extends Model
                 ['id' => $receiptNumber, 'date' => $date, 'status' => IncomeReceiptStatus::ACTIVE->value, 'user_id' => $userId]
             );
             $incomeCreated = Income::AddIncome($receipt->id, $this->full_name, IncomeType::WITHLOSS->value, $amount, $date);
-            $movementCreated = AccountMovement::addDiscount($this, $concept, $amount, $date);
+            $movementCreated = AccountMovement::addDiscount($this, $receiptNumber, $concept, $amount, $date);
 
-            if (!$movementCreated || !$clientUpdated || $incomeCreated) {
+            if (!$movementCreated || !$clientUpdated || !$incomeCreated) {
                 DB::rollBack();
 
                 return false;

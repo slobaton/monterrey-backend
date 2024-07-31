@@ -71,10 +71,11 @@ class AccountMovement extends Model
         return $accountMovement->save();
     }
 
-    public static function addDiscount(Client $client, $concept, $amount, $date): bool
+    public static function addDiscount(Client $client, $receiptNumber, $concept, $amount, $date): bool
     {
         $accountMovement = new AccountMovement();
         $accountMovement->client_id = $client->id;
+        $accountMovement->receipt_number = $receiptNumber;
         $accountMovement->date = $date;
         $accountMovement->concept = $concept;
         $accountMovement->type = AccountMovementType::DISCOUNT->value;
