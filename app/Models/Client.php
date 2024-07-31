@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
-use App\Enums\IncomeReceiptStatus;
 use App\Enums\IncomeType;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use function Pest\Laravel\get;
+use App\Enums\IncomeReceiptStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\AllowedFilter;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Client extends Model
 {
@@ -41,6 +44,13 @@ class Client extends Model
         'is_active' => 'boolean',
         'debt_balance' => 'real'
     ];
+
+    protected function fullName(): Attribute
+    {
+        return Attribute::make(
+            get: fn (string $value, array $attributes) => "{$attributes['name']} {$attributes['paternal_surname']} {$attributes['maternal_surname']}"
+        );
+    }
 
     public function user(): BelongsTo
     {
@@ -93,7 +103,7 @@ class Client extends Model
                 ['id' => $receiptNumber],
                 ['id' => $receiptNumber, 'date' => $date, 'status' => IncomeReceiptStatus::ACTIVE->value, 'user_id' => $userId]
             );
-            $incomeCreated = Income::AddIncome($receipt->id, $this->name, IncomeType::NORMAL->value, $amount, $date);
+            $incomeCreated = Income::AddIncome($receipt->id, $this->full_name, IncomeType::NORMAL->value, $amount, $date);
             $movementCreated = AccountMovement::addPayment($this, $receipt->id, $amount, $date);
 
             if (!$movementCreated || !$clientUpdated || !$incomeCreated) {
@@ -113,15 +123,20 @@ class Client extends Model
         }
     }
 
-    public function makeDiscount($concept, $amount, $date): bool
+    public function makeDiscount($receiptNumber, $concept, $amount, $date, $userId): bool
     {
         try {
             DB::beginTransaction();
 
             $clientUpdated = $this->decreaseDebtBalance($amount);
+            $receipt = IncomeReceipt::firstOrCreate(
+                ['id' => $receiptNumber],
+                ['id' => $receiptNumber, 'date' => $date, 'status' => IncomeReceiptStatus::ACTIVE->value, 'user_id' => $userId]
+            );
+            $incomeCreated = Income::AddIncome($receipt->id, $this->full_name, IncomeType::WITHLOSS->value, $amount, $date);
             $movementCreated = AccountMovement::addDiscount($this, $concept, $amount, $date);
 
-            if (!$movementCreated || !$clientUpdated) {
+            if (!$movementCreated || !$clientUpdated || $incomeCreated) {
                 DB::rollBack();
 
                 return false;
@@ -130,7 +145,8 @@ class Client extends Model
             DB::commit();
 
             return true;
-        } catch (\Exception) {
+        } catch (\Exception $ex) {
+            Log::error("Unexpected error happened making the discount :: Exception: {ex}", ['ex' => $ex]);
             DB::rollBack();
 
             return false;

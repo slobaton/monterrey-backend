@@ -6,8 +6,6 @@ use App\Enums\Roles;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Models\AccountMovement;
-use App\Models\WashOrderDetail;
-use App\Enums\AccountMovementType;
 use App\Http\Requests\AddDiscountRequest;
 use Illuminate\Support\Facades\Date;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -191,17 +189,15 @@ class ClientController extends Controller
      */
     public function addDiscountMovement(AddDiscountRequest $request, Client $client)
     {
+        $userId = $request->user()->id;
+        $receiptNumber = $request->get('receipt_number');
         $concept = $request->get('concept');
         $amount = $request->get('amount', 0);
         $date = $request->get('date', Date::now()->toDateString());
 
         $date = Date::parse($date);
 
-        if ($amount <= 0 || $amount > $client->debt_balance) {
-            return $this->respondError('invalid amount');
-        }
-
-        $discountCompleted = $client->makeDiscount($concept, $amount, $date);
+        $discountCompleted = $client->makeDiscount($receiptNumber, $concept, $amount, $date, $userId);
 
         if (!$discountCompleted) {
             return $this->respondError('cannot make discount');

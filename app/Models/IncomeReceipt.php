@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\IncomeReceiptStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,6 +30,11 @@ class IncomeReceipt extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status == IncomeReceiptStatus::ACTIVE->value;
     }
 
     public static function getNextConsecutive(): int
