@@ -6,7 +6,7 @@ use App\Models\IncomeReceipt;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class ValidIncomeReceiptNumber implements ValidationRule
+class ValidIncomeReceiptNumberRule implements ValidationRule
 {
     /**
      * Run the validation rule.

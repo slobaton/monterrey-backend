@@ -6,7 +6,7 @@ use Closure;
 use App\Models\Client;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class MinClientBalance implements ValidationRule
+class MinClientBalanceRule implements ValidationRule
 {
     protected Client $client;
 
