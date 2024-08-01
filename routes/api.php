@@ -102,6 +102,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::controller(IncomeReceiptController::class)->group(function () {
+        Route::get('income-receipts', 'index');
         Route::post('income-receipts/cancel', 'cancelReceipt');
     });
 

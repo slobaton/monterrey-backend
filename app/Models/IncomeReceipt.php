@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\IncomeReceiptStatus;
+use Illuminate\Support\Facades\Log;
+use Spatie\QueryBuilder\AllowedSort;
+use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Log;
 
 class IncomeReceipt extends Model
 {
@@ -35,6 +38,11 @@ class IncomeReceipt extends Model
     public function isActive(): bool
     {
         return $this->status == IncomeReceiptStatus::ACTIVE->value;
+    }
+
+    public function scopeAll(Builder $query, $search): Builder
+    {
+        return $query->where('id', '=', $search);
     }
 
     public static function getNextConsecutive(): int
@@ -92,5 +100,34 @@ class IncomeReceipt extends Model
 
             return false;
         }
+    }
+
+    public static function getAllowedFilters()
+    {
+        return [
+            'id',
+            'date',
+            AllowedFilter::scope('all'),
+        ];
+    }
+
+    public static function getAllowedSorts()
+    {
+        return [
+            'id',
+            'date',
+            AllowedSort::field('created_at'),
+            AllowedSort::field('updated_at'),
+        ];
+    }
+
+    public static function getDefaultSort(): String
+    {
+        return 'id';
+    }
+
+    public static function getAllowedIncludes(): array
+    {
+        return [];
     }
 }

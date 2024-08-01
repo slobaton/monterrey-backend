@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\IncomeType;
-use function Pest\Laravel\get;
 use App\Enums\IncomeReceiptStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;

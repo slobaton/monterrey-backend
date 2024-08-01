@@ -3,12 +3,33 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Date;
-use App\Http\Requests\CancelIncomeReceiptRequest;
 use App\Models\IncomeReceipt;
+use Illuminate\Support\Facades\Date;
+use Spatie\QueryBuilder\QueryBuilder;
+use App\Http\Requests\CancelIncomeReceiptRequest;
+use App\Http\Resources\IncomeReceiptCollection;
 
 class IncomeReceiptController extends Controller
 {
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request): IncomeReceiptCollection
+    {
+        $incomeReceipts = QueryBuilder::for(IncomeReceipt::class)
+            ->allowedFilters(IncomeReceipt::getAllowedFilters())
+            ->defaultSort(IncomeReceipt::getDefaultSort())
+            ->allowedSorts(IncomeReceipt::getAllowedSorts())
+            ->allowedIncludes(IncomeReceipt::getAllowedIncludes());
+
+        $incomeReceipts = $request->has('page.number') && $request->has('page.size')
+            ? $incomeReceipts->jsonPaginate()
+            : $incomeReceipts->get();
+
+        return new IncomeReceiptCollection($incomeReceipts);
+    }
+
     /**
      * Add payment movement for the client.
      */
