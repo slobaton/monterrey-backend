@@ -123,7 +123,7 @@ class IncomeReceipt extends Model
 
     public static function getDefaultSort(): String
     {
-        return 'id';
+        return '-id';
     }
 
     public static function getAllowedIncludes(): array
