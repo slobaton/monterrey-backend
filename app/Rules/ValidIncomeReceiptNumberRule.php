@@ -21,7 +21,7 @@ class ValidIncomeReceiptNumberRule implements ValidationRule
             $fail("El número de recibo es inválido. Debe ser consecutivo o existente. Sig Num: $validReceiptNumber");
         }
 
-        $receipt = IncomeReceipt::find($validReceiptNumber);
+        $receipt = IncomeReceipt::find($value);
 
         if (!is_null($receipt) && !$receipt->isActive()) {
             $fail("El número de recibo fue anulado. Debe ser un número de recibo libre o vigente. Sig Num: $validReceiptNumber");
