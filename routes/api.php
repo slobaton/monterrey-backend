@@ -15,6 +15,7 @@ use App\Http\Controllers\EffectController;
 use App\Http\Controllers\WashTypeController;
 use App\Http\Controllers\ClothSizeController;
 use App\Http\Controllers\ClothTypeController;
+use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\IncomeReceiptController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\WashOrderController;
@@ -99,6 +100,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(ReportController::class)->group(function () {
         Route::get('reports/general-count', 'generalReportCount');
+    });
+
+    Route::controller(IncomeController::class)->group(function () {
+        Route::get('incomes', 'index');
     });
 
     Route::controller(IncomeReceiptController::class)->group(function () {

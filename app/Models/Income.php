@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\IncomeType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,7 +33,7 @@ class Income extends Model
         return $this->belongsTo(IncomeReceipt::class, 'receipt_number', 'id');
     }
 
-    public static function AddIncome($receiptNumber, $concept, $type, $amount, $date): bool
+    public static function addIncome($receiptNumber, $concept, $type, $amount, $date): bool
     {
         $income = new Income();
         $income->receipt_number = $receiptNumber;
@@ -42,5 +43,39 @@ class Income extends Model
         $income->amount = $amount;
 
         return $income->save();
+    }
+
+    public static function getMonthlyIncomes($month, $year)
+    {
+        return Income::whereMonth('date', $month)
+            ->whereYear('date', $year)
+            ->orderBy('date')
+            ->orderBy('created_at')
+            ->get();
+    }
+
+    public static function getDetailedIncomeByMonth($month, $year)
+    {
+        $monthlyIncomes = Income::getMonthlyIncomes($month, $year);
+        $totalRealIncome = 0;
+        $totalIncome = 0;
+
+        $monthlyIncomes = $monthlyIncomes->map(function ($income, int $key) use (&$totalRealIncome, &$totalIncome) {
+            $incomeSubTotal = $totalIncome + (float)$income->amount;
+            $income->sub_total = $incomeSubTotal;
+
+            $totalIncome = $incomeSubTotal;
+            $totalRealIncome = $income->type == IncomeType::NORMAL->value
+                ? $totalRealIncome + (float)$income->amount
+                : $totalRealIncome;
+
+            return $income;
+        });
+
+        return [
+            'total_income' => $totalIncome,
+            'total_real_income' => $totalRealIncome,
+            'incomes' => $monthlyIncomes,
+        ];
     }
 }
