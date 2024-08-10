@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Enums\IncomeType;
+use App\Enums\IncomeReceiptStatus;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,6 +34,38 @@ class Income extends Model
     public function receipt(): BelongsTo
     {
         return $this->belongsTo(IncomeReceipt::class, 'receipt_number', 'id');
+    }
+
+    public static function registerIncomeProcess($receiptNumber, $concept, $amount, $date, $userId, $clientName = null): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $receipt = IncomeReceipt::firstOrCreate(
+                ['id' => $receiptNumber],
+                ['id' => $receiptNumber, 'date' => $date, 'status' => IncomeReceiptStatus::ACTIVE->value, 'user_id' => $userId]
+            );
+
+            $conceptItems = collect([$clientName, $concept]);
+            $concept = $conceptItems->filter()->implode(' - ');
+
+            $incomeCreated = Income::addIncome($receipt->id, $concept, IncomeType::NORMAL->value, $amount, $date);
+
+            if (!$incomeCreated) {
+                DB::rollBack();
+
+                return false;
+            }
+
+            DB::commit();
+
+            return true;
+        } catch (\Exception $ex) {
+            Log::error("Unexpected error happened registering an income :: Exception: {ex}", ['ex' => $ex]);
+            DB::rollBack();
+
+            return false;
+        }
     }
 
     public static function addIncome($receiptNumber, $concept, $type, $amount, $date): bool

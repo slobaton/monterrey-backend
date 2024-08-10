@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Income;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Date;
+use App\Http\Requests\AddIncomeRequest;
 
 class IncomeController extends Controller
 {
@@ -23,5 +25,28 @@ class IncomeController extends Controller
         $monthlyIncomeDetail = Income::getDetailedIncomeByMonth($month, $year);
 
         return $this->respondWithSuccess($monthlyIncomeDetail);
+    }
+
+    /**
+     * Add other income.
+     */
+    public function store(AddIncomeRequest $request)
+    {
+        $userId = $request->user()->id;
+        $receiptNumber = $request->get('receipt_number');
+        $concept = $request->get('concept');
+        $amount = $request->get('amount', 0);
+        $clientName = $request->get('client_name');
+
+        $date = $request->get('date', Date::now()->toDateString());
+        $date = Date::parse($date);
+
+        $incomeAdded = Income::registerIncomeProcess($receiptNumber, $concept, $amount, $date, $userId, $clientName);
+
+        if (!$incomeAdded) {
+            return $this->respondError('cannot add income');
+        }
+
+        return $this->respondWithSuccess();
     }
 }

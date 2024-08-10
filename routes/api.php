@@ -104,6 +104,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::controller(IncomeController::class)->group(function () {
         Route::get('incomes', 'index');
+        Route::post('incomes', 'store');
     });
 
     Route::controller(IncomeReceiptController::class)->group(function () {
