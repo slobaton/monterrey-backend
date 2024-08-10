@@ -122,4 +122,5 @@ Route::controller(ReportController::class)
     ->group(function () {
         Route::get('reports/washOrder/{washOrderId}', [ReportController::class, 'washOrderReport']);
         Route::get('reports/clients/{clientId}/accountMovements', [ReportController::class, 'accountMovementsByDateRangeReport']);
+        Route::get('reports/incomes/monthly', [ReportController::class, 'monthlyIncomesReport']);
     });

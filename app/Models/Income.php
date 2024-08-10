@@ -107,9 +107,12 @@ class Income extends Model
             return $income;
         });
 
+        $lostIncome = $totalIncome - $totalRealIncome;
+
         return [
             'total_income' => $totalIncome,
             'total_real_income' => $totalRealIncome,
+            'lost_income' => $lostIncome,
             'incomes' => $monthlyIncomes,
         ];
     }
