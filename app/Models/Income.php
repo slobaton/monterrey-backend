@@ -89,22 +89,33 @@ class Income extends Model
         return $income->save();
     }
 
-    public static function getMonthlyIncomes($month, $year)
+    public static function getYearlyIncomes($year)
     {
-        return Income::whereMonth('date', $month)
-            ->whereYear('date', $year)
+        return Income::whereYear('date', $year)
             ->orderBy('date')
             ->orderBy('created_at')
             ->get();
     }
 
-    public static function getDetailedIncomeByMonth($month, $year)
+    public static function getMonthlyIncomes($month, $year)
     {
-        $monthlyIncomes = Income::getMonthlyIncomes($month, $year);
+        return Income::whereYear('date', $year)
+            ->whereMonth('date', $month)
+            ->orderBy('date')
+            ->orderBy('created_at')
+            ->get();
+    }
+
+    public static function getDetailedIncomes($month = null, $year)
+    {
+        $incomes = !is_null($month)
+            ? Income::getMonthlyIncomes($month, $year)
+            : Income::getYearlyIncomes($year);
+
         $totalRealIncome = 0;
         $totalIncome = 0;
 
-        $monthlyIncomes = $monthlyIncomes->map(function ($income, int $key) use (&$totalRealIncome, &$totalIncome) {
+        $incomes = $incomes->map(function ($income, int $key) use (&$totalRealIncome, &$totalIncome) {
             $incomeSubTotal = $totalIncome + (float)$income->amount;
             $income->sub_total = $incomeSubTotal;
 
@@ -122,7 +133,7 @@ class Income extends Model
             'total_income' => $totalIncome,
             'total_real_income' => $totalRealIncome,
             'lost_income' => $lostIncome,
-            'incomes' => $monthlyIncomes,
+            'incomes' => $incomes,
         ];
     }
 }

@@ -15,16 +15,16 @@ class IncomeController extends Controller
     public function index(Request $request)
     {
         $request->validate([
-            'month' => 'required|integer|between:1,12',
+            'month' => 'sometimes|nullable|integer|between:1,12',
             'year' => 'required|integer|digits:4|min:1900|max:' . date('Y'),
         ]);
 
         $month = $request->month;
         $year = $request->year;
 
-        $monthlyIncomeDetail = Income::getDetailedIncomeByMonth($month, $year);
+        $detailesIncomes = Income::getDetailedIncomes($month, $year);
 
-        return $this->respondWithSuccess($monthlyIncomeDetail);
+        return $this->respondWithSuccess($detailesIncomes);
     }
 
     /**

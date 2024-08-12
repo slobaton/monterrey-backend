@@ -118,7 +118,7 @@ class ReportController extends Controller
         $month = $request->month;
         $year = $request->year;
 
-        $monthlyIncome = Income::getDetailedIncomeByMonth($month, $year);
+        $monthlyIncome = Income::getDetailedIncomes($month, $year);
 
         $data = [
             ...$monthlyIncome,
@@ -127,6 +127,40 @@ class ReportController extends Controller
         ];
 
         $pdf = Pdf::loadView('reports/income-monthly', $data);
+        $pdf->setPaper('letter', 'portrait');
+        $this->addPagination($pdf);
+        $this->addExtraInfo($pdf, $user);
+
+        $timestamp = Carbon::now()->timestamp;
+
+        return $pdf->stream("incomes-{$timestamp}.pdf");
+    }
+
+    public function yearlyIncomesReport(Request $request)
+    {
+        $rules = [
+            'year' => 'required|integer|digits:4|min:1900|max:' . date('Y'),
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $userId = $request->get('userId');
+        $user = User::find($userId);
+
+        $year = $request->year;
+
+        $yearlyIncome = Income::getDetailedIncomes(year: $year);
+
+        $data = [
+            ...$yearlyIncome,
+            "year" => $year
+        ];
+
+        $pdf = Pdf::loadView('reports/income-yearly', $data);
         $pdf->setPaper('letter', 'portrait');
         $this->addPagination($pdf);
         $this->addExtraInfo($pdf, $user);
