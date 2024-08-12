@@ -4,6 +4,7 @@ namespace App\Enums;
 
 enum IncomeType: string
 {
-    case NORMAL = 'normal';
-    case WITHLOSS = 'with_loss';
+    case PAYMENT = 'payment';
+    case DISCOUNT = 'discount';
+    case OTHER = 'other';
 }

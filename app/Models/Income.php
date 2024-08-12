@@ -36,6 +36,15 @@ class Income extends Model
         return $this->belongsTo(IncomeReceipt::class, 'receipt_number', 'id');
     }
 
+    public static function verifyUniqueTypePerReceipt($receiptNumber, IncomeType $type)
+    {
+        $receiptPerType = Income::where('receipt_number', $receiptNumber)
+            ->where('type', $type->value)
+            ->first();
+
+        return is_null($receiptPerType);
+    }
+
     public static function registerIncomeProcess($receiptNumber, $concept, $amount, $date, $userId, $clientName = null): bool
     {
         try {
@@ -49,7 +58,7 @@ class Income extends Model
             $conceptItems = collect([$clientName, $concept]);
             $concept = $conceptItems->filter()->implode(' - ');
 
-            $incomeCreated = Income::addIncome($receipt->id, $concept, IncomeType::NORMAL->value, $amount, $date);
+            $incomeCreated = Income::addIncome($receipt->id, $concept, IncomeType::OTHER->value, $amount, $date);
 
             if (!$incomeCreated) {
                 DB::rollBack();
@@ -100,7 +109,7 @@ class Income extends Model
             $income->sub_total = $incomeSubTotal;
 
             $totalIncome = $incomeSubTotal;
-            $totalRealIncome = $income->type == IncomeType::NORMAL->value
+            $totalRealIncome = $income->type != IncomeType::DISCOUNT->value
                 ? $totalRealIncome + (float)$income->amount
                 : $totalRealIncome;
 

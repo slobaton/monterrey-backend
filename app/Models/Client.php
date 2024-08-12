@@ -102,7 +102,7 @@ class Client extends Model
                 ['id' => $receiptNumber],
                 ['id' => $receiptNumber, 'date' => $date, 'status' => IncomeReceiptStatus::ACTIVE->value, 'user_id' => $userId]
             );
-            $incomeCreated = Income::addIncome($receipt->id, $this->full_name, IncomeType::NORMAL->value, $amount, $date);
+            $incomeCreated = Income::addIncome($receipt->id, $this->full_name, IncomeType::PAYMENT->value, $amount, $date);
             $movementCreated = AccountMovement::addPayment($this, $receipt->id, $amount, $date);
 
             if (!$movementCreated || !$clientUpdated || !$incomeCreated) {
@@ -132,7 +132,7 @@ class Client extends Model
                 ['id' => $receiptNumber],
                 ['id' => $receiptNumber, 'date' => $date, 'status' => IncomeReceiptStatus::ACTIVE->value, 'user_id' => $userId]
             );
-            $incomeCreated = Income::addIncome($receipt->id, $this->full_name, IncomeType::WITHLOSS->value, $amount, $date);
+            $incomeCreated = Income::addIncome($receipt->id, $this->full_name, IncomeType::DISCOUNT->value, $amount, $date);
             $movementCreated = AccountMovement::addDiscount($this, $receiptNumber, $concept, $amount, $date);
 
             if (!$movementCreated || !$clientUpdated || !$incomeCreated) {

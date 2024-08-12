@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use App\Enums\IncomeReceiptStatus;
-use App\Enums\IncomeType;
 use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -65,15 +64,6 @@ class IncomeReceipt extends Model
         $previousReceipt = IncomeReceipt::find($receiptNumber - 1);
 
         return !is_null($previousReceipt);
-    }
-
-    public static function verifyUniquePerType($receiptNumber, IncomeType $type)
-    {
-        $receiptPerType = Income::where('receipt_number', $receiptNumber)
-            ->where('type', $type->value)
-            ->first();
-
-        return is_null($receiptPerType);
     }
 
     public static function verifyCancelableNumber($receiptNumber): bool
