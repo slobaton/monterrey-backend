@@ -106,7 +106,7 @@ class Income extends Model
             ->get();
     }
 
-    public static function getDetailedIncomes($month = null, $year)
+    public static function getDetailedIncomes($year, $month = null)
     {
         $incomes = !is_null($month)
             ? Income::getMonthlyIncomes($month, $year)

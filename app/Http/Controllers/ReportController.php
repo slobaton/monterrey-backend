@@ -118,7 +118,7 @@ class ReportController extends Controller
         $month = $request->month;
         $year = $request->year;
 
-        $monthlyIncome = Income::getDetailedIncomes($month, $year);
+        $monthlyIncome = Income::getDetailedIncomes($year, $month);
 
         $data = [
             ...$monthlyIncome,
@@ -153,7 +153,7 @@ class ReportController extends Controller
 
         $year = $request->year;
 
-        $yearlyIncome = Income::getDetailedIncomes(year: $year);
+        $yearlyIncome = Income::getDetailedIncomes($year);
 
         $data = [
             ...$yearlyIncome,

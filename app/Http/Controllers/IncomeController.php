@@ -22,7 +22,7 @@ class IncomeController extends Controller
         $month = $request->month;
         $year = $request->year;
 
-        $detailesIncomes = Income::getDetailedIncomes($month, $year);
+        $detailesIncomes = Income::getDetailedIncomes($year, $month);
 
         return $this->respondWithSuccess($detailesIncomes);
     }
