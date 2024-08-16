@@ -22,7 +22,7 @@ return new class extends Migration
                 ->unsigned();
 
             $table->string('concept', 150);
-            $table->enum('type', [IncomeType::PAYMENT->value, IncomeType::DISCOUNT->value, IncomeType::OTHER->value])
+            $table->enum('type', [IncomeType::PAYMENT->value, IncomeType::DISCOUNT->value, IncomeType::OTHER->value, IncomeType::EMPTY->value])
                 ->default(IncomeType::OTHER->value);
 
             $table->decimal('amount', 10, 2);

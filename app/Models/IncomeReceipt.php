@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\IncomeReceiptStatus;
+use App\Enums\IncomeType;
 use Illuminate\Support\Facades\Log;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\AllowedFilter;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
 
 class IncomeReceipt extends Model
 {
@@ -87,6 +89,8 @@ class IncomeReceipt extends Model
     public static function cancelReceipt($receiptNumber, $canceledReason, $date, $userId): bool
     {
         try {
+            DB::beginTransaction();
+
             $canceledReceipt = new IncomeReceipt();
             $canceledReceipt->id = $receiptNumber;
             $canceledReceipt->user_id = $userId;
@@ -94,9 +98,21 @@ class IncomeReceipt extends Model
             $canceledReceipt->canceled_reason = $canceledReason;
             $canceledReceipt->status = IncomeReceiptStatus::CANCELED->value;
 
-            return $canceledReceipt->save();
+            $receiptCanceled = $canceledReceipt->save();
+            $incomeCreated = Income::addIncome($canceledReceipt->id, "Recibo Cancelado - {$canceledReason}", IncomeType::EMPTY->value, 0, $date);
+
+            if (!$receiptCanceled || !$incomeCreated) {
+                DB::rollBack();
+
+                return false;
+            }
+
+            DB::commit();
+
+            return true;
         } catch (\Exception $ex) {
             Log::error("Unexpected error happened trying to cancel the income receipt :: Exception: {ex}", ["ex" => $ex]);
+            DB::rollBack();
 
             return false;
         }
