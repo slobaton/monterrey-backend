@@ -92,6 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('parameters', 'index');
         Route::get('parameters/{parameter}', 'show');
         Route::patch('parameters/{parameter}', 'update');
+        Route::get('parameters/currency/changeRate', 'getSystemCurrencyChangeRateParam');
     });
 
     Route::controller(AccountMovementController::class)->group(function () {
@@ -115,7 +116,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Get authorization hash key
     Route::get('auth/key', [LoginController::class, 'getPublicKey']);
 });
-
 
 Route::controller(ReportController::class)
     ->middleware('auth.publicKey')
