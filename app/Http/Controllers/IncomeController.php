@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Roles;
 use App\Models\Income;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
@@ -9,6 +10,12 @@ use App\Http\Requests\AddIncomeRequest;
 
 class IncomeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
+            ->only(['index', 'store']);
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Roles;
 use Illuminate\Http\Request;
 use App\Models\AccountMovement;
 use App\Models\WashOrderDetail;
@@ -9,6 +10,12 @@ use App\Enums\AccountMovementType;
 
 class AccountMovementController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
+            ->only(['getMovementById']);
+    }
+
     /**
      * Retrieve account movement information
      */

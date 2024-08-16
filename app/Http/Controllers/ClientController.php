@@ -17,7 +17,6 @@ use App\Http\Requests\UpdateClientRequest;
 use App\Http\Resources\ClientEffectPriceCollection;
 use App\Http\Resources\ClientWashTypePriceCollection;
 use App\Http\Resources\ClientParameterValueCollection;
-use App\Models\IncomeReceipt;
 
 class ClientController extends Controller
 {
@@ -26,7 +25,7 @@ class ClientController extends Controller
         $this->middleware('role:' . Roles::ADMIN->value)
             ->only(['update', 'destroy']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
-            ->only(['getWashTypes', 'getEffects', 'getParameters', 'addPaymentMovement', 'addDiscountMovement', 'getCurrencyChangeRate']);
+            ->only(['getWashTypes', 'getEffects', 'getParameters', 'getAccountMovements', 'addPaymentMovement', 'addDiscountMovement', 'getCurrencyChangeRate']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
             ->only(['index', 'store', 'show']);
     }

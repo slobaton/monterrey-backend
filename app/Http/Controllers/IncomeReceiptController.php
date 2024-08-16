@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Roles;
 use Illuminate\Http\Request;
 use App\Models\IncomeReceipt;
 use Illuminate\Support\Facades\Date;
 use Spatie\QueryBuilder\QueryBuilder;
-use App\Http\Requests\CancelIncomeReceiptRequest;
 use App\Http\Resources\IncomeReceiptCollection;
+use App\Http\Requests\CancelIncomeReceiptRequest;
 
 class IncomeReceiptController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
+            ->only(['index', 'cancelReceipt']);
+    }
 
     /**
      * Display a listing of the resource.
