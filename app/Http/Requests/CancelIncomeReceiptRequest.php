@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\IncomeType;
-use App\Rules\MinClientBalanceRule;
-use App\Rules\ValidIncomeReceiptNumberRule;
+use App\Rules\ValidCancelableIncomeReceiptRule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class AddDiscountRequest extends FormRequest
+class CancelIncomeReceiptRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +23,8 @@ class AddDiscountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'receipt_number' => ['required', 'numeric', 'min:1', new ValidIncomeReceiptNumberRule(IncomeType::DISCOUNT)],
-            'concept' => 'required|string',
-            'amount' => ['required', 'numeric', 'min:1', new MinClientBalanceRule($this->client)],
+            'receipt_number' => ['required', 'numeric', 'min:1', new ValidCancelableIncomeReceiptRule],
+            'canceled_reason' => 'required|string',
             'date' => 'sometimes|nullable|date'
         ];
     }

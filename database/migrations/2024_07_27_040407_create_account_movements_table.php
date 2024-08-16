@@ -13,7 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('account_movements', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id')
+                ->unsigned();
 
             $table->uuid('client_id');
             $table->uuid('wash_order_id')
@@ -21,8 +22,8 @@ return new class extends Migration
 
             $table->bigInteger('receipt_number')
                 ->unsigned()
-                ->unique()
                 ->nullable();
+
             $table->date('date');
             $table->string('concept', 150);
             $table->enum('type', [AccountMovementType::CHARGE->value, AccountMovementType::PAYMENT->value, AccountMovementType::DISCOUNT->value])
@@ -38,6 +39,10 @@ return new class extends Migration
             $table->foreign('wash_order_id')
                 ->references('id')
                 ->on('wash_orders');
+
+            $table->foreign('receipt_number')
+                ->references('id')
+                ->on('income_receipts');
         });
     }
 

@@ -33,7 +33,7 @@ class AccountMovement extends Model
         'amount' => 'real',
     ];
 
-    private static $monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    public static $monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
     public function washOrder(): BelongsTo
     {
@@ -71,10 +71,11 @@ class AccountMovement extends Model
         return $accountMovement->save();
     }
 
-    public static function addDiscount(Client $client, $concept, $amount, $date): bool
+    public static function addDiscount(Client $client, $receiptNumber, $concept, $amount, $date): bool
     {
         $accountMovement = new AccountMovement();
         $accountMovement->client_id = $client->id;
+        $accountMovement->receipt_number = $receiptNumber;
         $accountMovement->date = $date;
         $accountMovement->concept = $concept;
         $accountMovement->type = AccountMovementType::DISCOUNT->value;

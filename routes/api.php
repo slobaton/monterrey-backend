@@ -15,6 +15,8 @@ use App\Http\Controllers\EffectController;
 use App\Http\Controllers\WashTypeController;
 use App\Http\Controllers\ClothSizeController;
 use App\Http\Controllers\ClothTypeController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\IncomeReceiptController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\WashOrderController;
 use App\Http\Controllers\WashOrderDetailController;
@@ -90,6 +92,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('parameters', 'index');
         Route::get('parameters/{parameter}', 'show');
         Route::patch('parameters/{parameter}', 'update');
+        Route::get('parameters/currency/changeRate', 'getSystemCurrencyChangeRateParam');
     });
 
     Route::controller(AccountMovementController::class)->group(function () {
@@ -100,14 +103,25 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('reports/general-count', 'generalReportCount');
     });
 
+    Route::controller(IncomeController::class)->group(function () {
+        Route::get('incomes', 'index');
+        Route::post('incomes', 'store');
+    });
+
+    Route::controller(IncomeReceiptController::class)->group(function () {
+        Route::get('income-receipts', 'index');
+        Route::post('income-receipts/cancel', 'cancelReceipt');
+    });
+
     // Get authorization hash key
     Route::get('auth/key', [LoginController::class, 'getPublicKey']);
 });
-
 
 Route::controller(ReportController::class)
     ->middleware('auth.publicKey')
     ->group(function () {
         Route::get('reports/washOrder/{washOrderId}', [ReportController::class, 'washOrderReport']);
         Route::get('reports/clients/{clientId}/accountMovements', [ReportController::class, 'accountMovementsByDateRangeReport']);
+        Route::get('reports/incomes/yearly', [ReportController::class, 'yearlyIncomesReport']);
+        Route::get('reports/incomes/monthly', [ReportController::class, 'monthlyIncomesReport']);
     });

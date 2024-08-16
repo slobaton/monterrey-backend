@@ -2,17 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Enums\Roles;
 use App\Models\User;
 use App\Models\Client;
 use App\Models\Effect;
+use App\Models\Income;
 use App\Models\WashType;
 use App\Models\WashOrder;
-use App\Models\AccountMovement;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use App\Models\AccountMovement;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Carbon\Carbon;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class ReportController extends Controller
 {
@@ -93,6 +97,77 @@ class ReportController extends Controller
         $timestamp = Carbon::now()->timestamp;
 
         return $pdf->stream("movements-{$timestamp}.pdf");
+    }
+
+    public function monthlyIncomesReport(Request $request)
+    {
+        $rules = [
+            'month' => 'required|integer|between:1,12',
+            'year' => 'required|integer|digits:4|min:1900|max:' . date('Y'),
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $userId = $request->get('userId');
+        $user = User::find($userId);
+
+        $month = $request->month;
+        $year = $request->year;
+
+        $monthlyIncome = Income::getDetailedIncomes($year, $month);
+
+        $data = [
+            ...$monthlyIncome,
+            "month" => Str::upper(AccountMovement::$monthNames[$month]),
+            "year" => $year
+        ];
+
+        $pdf = Pdf::loadView('reports/income-monthly', $data);
+        $pdf->setPaper('letter', 'portrait');
+        $this->addPagination($pdf);
+        $this->addExtraInfo($pdf, $user);
+
+        $timestamp = Carbon::now()->timestamp;
+
+        return $pdf->stream("incomes-{$timestamp}.pdf");
+    }
+
+    public function yearlyIncomesReport(Request $request)
+    {
+        $rules = [
+            'year' => 'required|integer|digits:4|min:1900|max:' . date('Y'),
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        $userId = $request->get('userId');
+        $user = User::find($userId);
+
+        $year = $request->year;
+
+        $yearlyIncome = Income::getDetailedIncomes($year);
+
+        $data = [
+            ...$yearlyIncome,
+            "year" => $year
+        ];
+
+        $pdf = Pdf::loadView('reports/income-yearly', $data);
+        $pdf->setPaper('letter', 'portrait');
+        $this->addPagination($pdf);
+        $this->addExtraInfo($pdf, $user);
+
+        $timestamp = Carbon::now()->timestamp;
+
+        return $pdf->stream("incomes-{$timestamp}.pdf");
     }
 
     public function generalReportCount(Request $request)

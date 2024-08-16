@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\IncomeType;
+use App\Rules\MinClientBalanceRule;
+use App\Rules\ValidIncomeReceiptNumberRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AddPaymentRequest extends FormRequest
@@ -22,8 +25,8 @@ class AddPaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'receipt_number' => 'required|numeric|min:1|unique:account_movements,receipt_number',
-            'amount' => 'required|numeric|min:1',
+            'receipt_number' => ['required', 'numeric', 'min:1', new ValidIncomeReceiptNumberRule(IncomeType::PAYMENT)],
+            'amount' => ['required', 'numeric', 'min:1', new MinClientBalanceRule($this->client)],
             'date' => 'sometimes|nullable|date'
         ];
     }
