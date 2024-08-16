@@ -3,9 +3,7 @@
 namespace Database\Seeders;
 
 use App\Enums\Roles;
-use App\Models\Role;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -23,19 +21,39 @@ class DatabaseSeeder extends Seeder
         $secreRole = \App\Models\Role::create([
             'name' => Roles::SECRETARY
         ]);
+        $receptionistRole = \App\Models\Role::create([
+            'name' => Roles::RECEPTIONIST
+        ]);
+
         $admin = \App\Models\User::create([
             'name' => 'Admin',
             'username' => 'admin',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+            'password' => 'password'
         ]);
         $secre = \App\Models\User::create([
             'name' => 'Secretary',
             'username' => 'secre',
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'
+            'password' => 'password'
         ]);
+        $receptionist = \App\Models\User::create([
+            'name' => 'Receptionist',
+            'username' => 'recep',
+            'password' => 'password'
+        ]);
+
         $admin->roles()->attach($role);
         $secre->roles()->attach($secreRole);
+        $receptionist->roles()->attach($receptionistRole);
+
         \App\Models\User::factory(100)->create();
-        \App\Models\Client::factory(100)->create();
+
+        $this->call([
+            ParametersSeeder::class,
+            ClientSeeder::class,
+            EffectSeeder::class,
+            WashTypeSeeder::class,
+            ClothTypeSeeder::class,
+            ClothSizeSeeder::class,
+        ]);
     }
 }

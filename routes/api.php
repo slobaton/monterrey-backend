@@ -1,10 +1,26 @@
 <?php
 
-use App\Http\Controllers\ClientController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\LoginController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\AccountMovementController;
+use App\Http\Controllers\SystemParameterController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserRoleController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\ClientEffectPriceController;
+use App\Http\Controllers\ClientParameterValueController;
+use App\Http\Controllers\ClientWashTypePriceController;
+use App\Http\Controllers\EffectController;
+use App\Http\Controllers\WashTypeController;
+use App\Http\Controllers\ClothSizeController;
+use App\Http\Controllers\ClothTypeController;
+use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\IncomeReceiptController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\WashOrderController;
+use App\Http\Controllers\WashOrderDetailController;
+use App\Http\Controllers\UserPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,7 +36,92 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [LoginController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('users', UserController::class);
     Route::post('logout', [LoginController::class, 'logout']);
+
+    Route::apiResource('users', UserController::class);
+    Route::post('/user/{user}/assign-roles', [UserRoleController::class, 'assignRoles']);
+    Route::get('/user/{user}/roles', [UserRoleController::class, 'getUserRoles']);
+    Route::get('/roles', RoleController::class);
+    Route::post('/users/update-password', [UserPasswordController::class, 'updatePassword']);
+
     Route::apiResource('clients', ClientController::class);
+    Route::get('clients/{client}/wash-types', [ClientController::class, 'getWashTypes']);
+    Route::get('clients/{client}/effects', [ClientController::class, 'getEffects']);
+    Route::get('clients/{client}/parameters', [ClientController::class, 'getParameters']);
+    Route::get('clients/{client}/movements', [ClientController::class, 'getAccountMovements']);
+    Route::post('clients/{client}/payment', [ClientController::class, 'addPaymentMovement']);
+    Route::post('clients/{client}/discount', [ClientController::class, 'addDiscountMovement']);
+    Route::get('clients/{client}/currency-rate', [ClientController::class, 'getCurrencyChangeRate']);
+
+    Route::apiResource('wash-types', WashTypeController::class);
+    Route::apiResource('effects', EffectController::class);
+    Route::apiResource('cloth-types', ClothTypeController::class);
+    Route::apiResource('cloth-sizes', ClothSizeController::class);
+
+    Route::apiResource('wash-orders', WashOrderController::class)
+        ->parameters(['wash-orders' => 'order']);
+    Route::post('wash-orders/{washOrder}/approve', [WashOrderController::class, 'approveOrder']);
+    Route::get('wash-orders/{client}/by-client', [WashOrderController::class, 'fetchOrdersByClient']);
+
+    Route::apiResource('wash-order-details', WashOrderDetailController::class)
+        ->parameters(['wash-order-details' => 'washOrderDetail']);
+    Route::post('wash-order-details/calculate', [WashOrderDetailController::class, 'calculatePrices']);
+
+    Route::controller(ClientWashTypePriceController::class)->group(function () {
+        Route::get('clients/{client}/wash-types/{washTypeId}/prices/{id}', 'getPriceById');
+        Route::post('clients/{client}/wash-types/{washType}/prices', 'assignPrice');
+        Route::patch('clients/{client}/wash-types/{washType}/prices/{id}', 'updatePrice');
+        Route::delete('clients/{clientId}/wash-types/{washTypeId}/prices/{id}', 'deletePrice');
+    });
+
+    Route::controller(ClientEffectPriceController::class)->group(function () {
+        Route::get('clients/{client}/effects/{effectId}/prices/{id}', 'getPriceById');
+        Route::post('clients/{client}/effects/{effect}/prices', 'assignPrice');
+        Route::patch('clients/{client}/effects/{effect}/prices/{id}', 'updatePrice');
+        Route::delete('clients/{clientId}/effects/{effectId}/prices/{id}', 'deletePrice');
+    });
+
+    Route::controller(ClientParameterValueController::class)->group(function () {
+        Route::get('clients/{client}/parameters/{parameterId}/values/{id}', 'getValueById');
+        Route::post('clients/{client}/parameters/{parameter}/values', 'assignValue');
+        Route::patch('clients/{client}/parameters/{parameter}/values/{id}', 'updateValue');
+        Route::delete('clients/{clientId}/parameters/{parameterId}/values/{id}', 'deleteValue');
+    });
+
+    Route::controller(SystemParameterController::class)->group(function () {
+        Route::get('parameters', 'index');
+        Route::get('parameters/{parameter}', 'show');
+        Route::patch('parameters/{parameter}', 'update');
+        Route::get('parameters/currency/changeRate', 'getSystemCurrencyChangeRateParam');
+    });
+
+    Route::controller(AccountMovementController::class)->group(function () {
+        Route::get('account-movements/{movement}', 'getMovementById');
+    });
+
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('reports/general-count', 'generalReportCount');
+    });
+
+    Route::controller(IncomeController::class)->group(function () {
+        Route::get('incomes', 'index');
+        Route::post('incomes', 'store');
+    });
+
+    Route::controller(IncomeReceiptController::class)->group(function () {
+        Route::get('income-receipts', 'index');
+        Route::post('income-receipts/cancel', 'cancelReceipt');
+    });
+
+    // Get authorization hash key
+    Route::get('auth/key', [LoginController::class, 'getPublicKey']);
 });
+
+Route::controller(ReportController::class)
+    ->middleware('auth.publicKey')
+    ->group(function () {
+        Route::get('reports/washOrder/{washOrderId}', [ReportController::class, 'washOrderReport']);
+        Route::get('reports/clients/{clientId}/accountMovements', [ReportController::class, 'accountMovementsByDateRangeReport']);
+        Route::get('reports/incomes/yearly', [ReportController::class, 'yearlyIncomesReport']);
+        Route::get('reports/incomes/monthly', [ReportController::class, 'monthlyIncomesReport']);
+    });

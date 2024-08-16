@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use F9Web\ApiResponseHelpers;
 use Illuminate\Http\JsonResponse;
 use App\Http\Resources\UserResource;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -25,7 +28,9 @@ class LoginController extends Controller
             return $this->respondForbidden('These credentials do not match our records');
         }
 
-        $user = $request->user();
+        $userId = $request->user()->id;
+        $user = User::with('roles')->find($userId);
+
         $token = $user->createToken("{$user->email} Personal Access Token");
 
         $user->token = [
@@ -41,5 +46,16 @@ class LoginController extends Controller
         $request->user()->currentAccessToken()->delete();
 
         return $this->respondWithSuccess();
+    }
+
+    public function getPublicKey(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $hashKey = Crypt::encrypt($userId);
+
+        return $this->respondWithSuccess([
+            "key" => $hashKey
+        ]);
     }
 }

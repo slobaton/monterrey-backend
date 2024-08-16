@@ -18,14 +18,18 @@ return new class extends Migration
                 ->nullable()
                 ->unique();
             $table->string('name');
-            $table->string('paternal_surname');
-            $table->string('maternal_surname');
+            $table->string('paternal_surname')->nullable();
+            $table->string('maternal_surname')->nullable();
             $table->string('phone', 15)->nullable();
             $table->string('cellphone', 15)->nullable();
             $table->text('address')->nullable();
             $table->text('observations')->nullable();
             $table->boolean('is_active')
                 ->default(true);
+
+            $table->decimal('debt_balance', 10, 2)
+                ->unsigned()
+                ->default(0);
 
             $table->timestamps();
         });

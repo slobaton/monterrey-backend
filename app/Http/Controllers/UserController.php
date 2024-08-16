@@ -18,7 +18,7 @@ class UserController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('role:'.Roles::ADMIN->value);
+        $this->middleware('role:' . Roles::ADMIN->value);
     }
     /**
      * Display a listing of the resource.
@@ -43,7 +43,7 @@ class UserController extends Controller
      */
     public function store(StoreUserRequest $request): JsonResponse
     {
-        $user = User::create($request->all());
+        User::create($request->all());
 
         return $this->respondCreated([
             'message' => 'User has been created',

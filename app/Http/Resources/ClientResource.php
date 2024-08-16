@@ -26,8 +26,6 @@ class ClientResource extends ApiResource
             'address'          => $this->address,
             'observations'     => $this->observations,
             'is_active'        => $this->is_active,
-            'user_id'          => $this->user_id,
-            'user'             => $this->user,
             'created_at'       => $this->created_at,
             'updated_at'       => $this->updated_at
         ];

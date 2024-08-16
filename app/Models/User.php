@@ -3,16 +3,19 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\Roles;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Support\Facades\DB;
 use Spatie\QueryBuilder\AllowedSort;
 use Spatie\QueryBuilder\AllowedFilter;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable
 {
@@ -52,7 +55,7 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    public function roles()
+    public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class);
     }
@@ -62,14 +65,26 @@ class User extends Authenticatable
         return $this->roles()->whereIn('name', $roleName)->exists();
     }
 
-    protected function password(): Attribute
+    public function isAdmin(): bool
+    {
+        return $this->hasAnyRole([Roles::ADMIN->value]);
+    }
+
+    protected function fullname(): Attribute
     {
         return Attribute::make(
-            set: fn (string $password) => bcrypt($password),
+            get: fn () => "{$this->name} {$this->paternal_surname} {$this->maternal_surname}"
         );
     }
 
-    protected static function getAllowedFilters()
+    protected function password(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $password) => bcrypt($password)
+        );
+    }
+
+    protected static function getAllowedFilters(): array
     {
         return [
             'username',
@@ -81,7 +96,7 @@ class User extends Authenticatable
         ];
     }
 
-    protected static function getAllowedSorts()
+    protected static function getAllowedSorts(): array
     {
         return [
             'username',

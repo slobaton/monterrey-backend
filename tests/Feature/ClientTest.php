@@ -30,7 +30,6 @@ it('should return every client (index)', function () {
 });
 
 it('should create a client (store)', function () {
-    User::factory()->create();
     $client = [
         'nit'              => '133012233',
         'name'             => 'Abel',
@@ -41,11 +40,20 @@ it('should create a client (store)', function () {
         'cellphone'         => '65788223',
         'observations' => 'Lorem ipsum, test observation'
     ];
-    $response = postJson(route('clients.store'), $client)
-        ->assertStatus(Response::HTTP_CREATED);
 
-    expect($response->getData())
-        ->message->toBe('Client has been created!');
+    $createdClient = postJson(route('clients.store'), $client)
+        ->assertStatus(Response::HTTP_OK)
+        ->json('data');
+
+    expect($createdClient)
+        ->nit->toBe($client['nit'])
+        ->name->toBe($client['name'])
+        ->paternal_surname->toBe($client['paternal_surname'])
+        ->maternal_surname->toBe($client['maternal_surname'])
+        ->address->toBe($client['address'])
+        ->phone->toBe($client['phone'])
+        ->cellphone->toBe($client['cellphone'])
+        ->observations->toBe($client['observations']);
 });
 
 it('should update an existing client (update)', function () {
@@ -73,7 +81,6 @@ it('should update an existing client (update)', function () {
         ->json('data');
 
     expect($updatedClient)
-        ->nit->toBe($newData['nit'])
         ->nit->toBe($newData['nit'])
         ->name->toBe($newData['name'])
         ->paternal_surname->toBe($newData['paternal_surname'])
