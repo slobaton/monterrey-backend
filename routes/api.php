@@ -79,6 +79,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('clients/{client}/effects/{effect}/prices', 'assignPrice');
         Route::patch('clients/{client}/effects/{effect}/prices/{id}', 'updatePrice');
         Route::delete('clients/{clientId}/effects/{effectId}/prices/{id}', 'deletePrice');
+
+        Route::get('clients/{client}/effects/prices', 'getWithClientPrices');
     });
 
     Route::controller(ClientParameterValueController::class)->group(function () {

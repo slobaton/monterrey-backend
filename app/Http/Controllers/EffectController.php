@@ -52,7 +52,7 @@ class EffectController extends Controller
      */
     public function store(StoreEffectRequest $request): JsonResponse
     {
-        $user = Effect::create($request->all());
+        Effect::create($request->all());
 
         return $this->respondCreated([
             'message' => 'Effect has been created',

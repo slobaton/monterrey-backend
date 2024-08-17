@@ -32,6 +32,32 @@ class Effect extends Model
         return $this->hasMany(ClientEffectPrice::class, 'effect_id', 'id');
     }
 
+    public function scopeAll(Builder $query, $search): Builder
+    {
+        return $query->where(DB::raw('LOWER(name)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(description)'), 'LIKE', "%" . strtolower($search) . "%")
+            ->orWhere(DB::raw('LOWER(is_active)'), 'LIKE', "%" . strtolower($search) . "%");
+    }
+
+    public static function getEffectsWithClientPrices($clientId)
+    {
+        return Effect::leftJoin('client_effect_prices as cefp', function ($join) use ($clientId) {
+            $join->on('effects.id', '=', 'cefp.effect_id')
+                ->where('cefp.client_id', '=', $clientId);
+        })
+            ->select([
+                'effects.id',
+                'effects.name',
+                'effects.description',
+                'effects.is_active',
+                'effects.created_at',
+                'effects.updated_at',
+                DB::raw('CASE WHEN cefp.price IS NOT NULL THEN cefp.price ELSE effects.price END as price')
+            ])
+            ->orderBy('effects.name')
+            ->get();
+    }
+
     public static function getAllowedFilters(): array
     {
         return [
@@ -40,13 +66,6 @@ class Effect extends Model
             'is_active',
             AllowedFilter::scope('all'),
         ];
-    }
-
-    public function scopeAll(Builder $query, $search): Builder
-    {
-        return $query->where(DB::raw('LOWER(name)'), 'LIKE', "%" . strtolower($search) . "%")
-            ->orWhere(DB::raw('LOWER(description)'), 'LIKE', "%" . strtolower($search) . "%")
-            ->orWhere(DB::raw('LOWER(is_active)'), 'LIKE', "%" . strtolower($search) . "%");
     }
 
     public static function getAllowedSorts(): array
