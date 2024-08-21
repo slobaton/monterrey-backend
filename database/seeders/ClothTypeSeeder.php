@@ -25,7 +25,7 @@ class ClothTypeSeeder extends Seeder
             ['name' => 'Panta.Chama'],
             ['name' => 'Short'],
             ['name' => 'Capri'],
-            ['name' => 'Conjunto de 3 pieza'],
+            ['name' => 'Conjunto de 3 piezas'],
             ['name' => 'Prenda O'],
             ['name' => 'Short Corto'],
             ['name' => 'Pant. Amarrado'],

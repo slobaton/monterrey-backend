@@ -27,7 +27,7 @@ class AddDiscountRequest extends FormRequest
         return [
             'receipt_number' => ['required', 'numeric', 'min:1', new ValidIncomeReceiptNumberRule(IncomeType::DISCOUNT)],
             'concept' => 'required|string',
-            'amount' => ['required', 'numeric', 'min:1', new MinClientBalanceRule($this->client)],
+            'amount' => ['required', 'numeric', 'min:1', new MinClientBalanceRule($this->client, $this->date)],
             'date' => 'sometimes|nullable|date'
         ];
     }

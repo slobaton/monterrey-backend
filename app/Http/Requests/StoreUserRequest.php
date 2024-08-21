@@ -26,7 +26,7 @@ class StoreUserRequest extends FormRequest
             'paternal_surname' => 'required_without:maternal_surname|string|max:255',
             'maternal_surname' => 'required_without:paternal_surname|string|max:255',
             'username'         => 'required|string|max:255|unique:App\Models\User,username',
-            'email'            => 'required|email|max:255|unique:App\Models\User,email',
+            'email'            => 'sometimes|nullable|email|max:255|unique:App\Models\User,email',
             'password'         => 'required|confirmed',
         ];
     }
