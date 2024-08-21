@@ -10,6 +10,7 @@ use App\Models\ClientEffectPrice;
 use App\Http\Resources\ClientEffectPriceResource;
 use App\Http\Requests\StoreClientEffectPriceRequest;
 use App\Http\Requests\UpdateClientEffectPriceRequest;
+use App\Http\Resources\EffectCollection;
 
 class ClientEffectPriceController extends Controller
 {
@@ -89,5 +90,12 @@ class ClientEffectPriceController extends Controller
         $effectPrice->delete();
 
         return $this->respondNoContent();
+    }
+
+    public function getWithClientPrices(Client $client)
+    {
+        $effects = Effect::getEffectsWithClientPrices($client->id);
+
+        return new EffectCollection($effects);
     }
 }

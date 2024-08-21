@@ -35,8 +35,7 @@ class Client extends Model
         'cellphone',
         'address',
         'observations',
-        'is_active',
-        'debt_balance'
+        'is_active'
     ];
 
     protected $casts = [
@@ -203,6 +202,7 @@ class Client extends Model
             'maternal_surname',
             'phone',
             'cellphone',
+            'debt_balance',
             'is_active',
             AllowedSort::field('created_at'),
             AllowedSort::field('updated_at'),
