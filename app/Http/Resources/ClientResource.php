@@ -24,6 +24,7 @@ class ClientResource extends ApiResource
             'phone'            => $this->phone,
             'cellphone'        => $this->cellphone,
             'address'          => $this->address,
+            'debt_balance'     => $this->debt_balance,
             'observations'     => $this->observations,
             'is_active'        => $this->is_active,
             'created_at'       => $this->created_at,

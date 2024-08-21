@@ -84,11 +84,11 @@ class AccountMovement extends Model
         return $accountMovement->save();
     }
 
-    public static function getBalanceUntilDate($clientId, $date)
+    public static function getBalanceUntilDate($clientId, $date, $considerDate = false)
     {
         $balance = DB::table('account_movements')
             ->where('client_id', $clientId)
-            ->where('date', '<', $date)
+            ->where('date', $considerDate ? '<=' : '<', $date)
             ->sum('amount');
 
         return $balance ?? 0;

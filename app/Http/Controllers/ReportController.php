@@ -122,7 +122,7 @@ class ReportController extends Controller
 
         $data = [
             ...$monthlyIncome,
-            "month" => Str::upper(AccountMovement::$monthNames[$month]),
+            "month" => Str::upper(AccountMovement::$monthNames[$month - 1]),
             "year" => $year
         ];
 
