@@ -26,12 +26,14 @@ class UpdateWashOrderRequest extends FormRequest
     {
         return [
             'client_id'    => 'required|string|exists:App\Models\Client,id',
-            'wash_type_id' => 'required|integer|exists:App\Models\WashType,id',
+            'wash_type_id' => 'exclude_if:is_rewash,true|required|integer|exists:App\Models\WashType,id',
             'date'         => 'required|date',
             'deliver_quantity' => 'nullable|sometimes|integer',
             'deliver_date' => 'nullable|sometimes|date',
             'observations' => 'nullable|sometimes|string',
-            'is_special_price' => 'required|boolean'
+            'is_special_price' => 'required|boolean',
+            'is_rewash' => 'required|boolean',
+            'rewash_price' => 'exclude_unless:is_rewash,true|required|numeric|min:0|max:99999999,99'
         ];
     }
 }

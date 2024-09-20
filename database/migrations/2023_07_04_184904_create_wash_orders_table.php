@@ -16,7 +16,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
 
             $table->uuid('client_id');
-            $table->unsignedBigInteger('wash_type_id');
+            $table->unsignedBigInteger('wash_type_id')
+                ->nullable();
 
             $table->bigInteger('code')
                 ->unsigned()
@@ -39,7 +40,13 @@ return new class extends Migration
             $table->text('observations')
                 ->nullable();
 
-            $table->boolean('is_special_price');
+            $table->boolean('is_special_price')
+                ->default(false);
+
+            $table->boolean('is_rewash')
+                ->default(false);
+            $table->decimal('rewash_price', 10, 2)
+                ->nullable();
 
             $table->timestamps();
             $table->softDeletes();

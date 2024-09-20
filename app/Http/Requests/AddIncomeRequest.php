@@ -25,7 +25,7 @@ class AddIncomeRequest extends FormRequest
     {
         return [
             'receipt_number' => ['required', 'numeric', 'min:1', new ValidIncomeReceiptNumberRule(IncomeType::OTHER)],
-            'amount' => ['required', 'numeric', 'min:1'],
+            'amount' => ['required|numeric|min:1|max:99999999,99'],
             'date' => 'sometimes|nullable|date',
             'concept' => 'required|string|max:100',
             'client_name' => 'sometimes|nullable|string'

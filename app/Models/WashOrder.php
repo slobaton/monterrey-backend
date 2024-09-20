@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Facades\Date;
 
 final class WashOrder extends Model
 {
@@ -34,13 +33,17 @@ final class WashOrder extends Model
         'deliver_quantity',
         'deliver_date',
         'observations',
-        'is_special_price'
+        'is_special_price',
+        'is_rewash',
+        'rewash_price'
     ];
 
     protected $casts = [
         'date' => 'date',
         'total_price' => 'real',
-        'is_special_price' => 'boolean'
+        'is_special_price' => 'boolean',
+        'is_rewash' => 'boolean',
+        'rewash_price' => 'real'
     ];
 
     public function details(): HasMany
@@ -127,6 +130,10 @@ final class WashOrder extends Model
 
     public function getWashPrice()
     {
+        if ($this->is_rewash) {
+            return $this->rewash_price;
+        }
+
         $washType = $this->washType;
 
         $clientWashTypePrice = $washType->clientPrices()
@@ -255,7 +262,14 @@ final class WashOrder extends Model
 
     protected static function getAllowedSorts()
     {
-        return [];
+        return [
+            'code',
+            'date',
+            'total_price',
+            'total_quantity',
+            'is_special_price',
+            'is_rewash'
+        ];
     }
 
     public static function getOrdersCount()
