@@ -106,7 +106,13 @@
             <tr>
                 <td colspan="3"><b>Cliente:</b> {{ $client->fullname }}</td>
                 <td colspan="2"><b>Fecha:</b> {{ $washOrder->date->format('d/m/Y') }}</td>
-                <td colspan="2"><b>Tipo Lavado:</b> {{ $washOrder->washType->name }}</td>
+                <td colspan="2">
+                    @if (!$washOrder->is_rewash)
+                        <b>Tipo Lavado:</b> {{ $washOrder->washType->name }}
+                    @else
+                        <b>Es Relavado.</b>
+                    @endif
+                </td>
             </tr>
             <tr>
                 <td class="order-observations" colspan="7"><b>Observaciones: </b> {{ $washOrder->observations }}</td>
