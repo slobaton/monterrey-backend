@@ -14,5 +14,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return response('Welcome to the LaundryAPP RESTful API v1.0')
+        ->header('Content-Type', 'text/plain');
 });
