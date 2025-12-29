@@ -14,6 +14,11 @@ class UpdateWashOrderRequest extends FormRequest
     {
         $washOrder = $this->route()->parameter('order');
 
+        // Allow if current user is an admin
+        if ($this->user() && $this->user()->isAdmin()) {
+            return true;
+        }
+
         return $washOrder ? $washOrder->status === OrderStatus::CREATED->value : false;
     }
 

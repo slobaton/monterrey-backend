@@ -23,7 +23,7 @@ class WashOrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(PaginationRequest $request)
+    public function index(PaginationRequest $request): WashOrderCollection
     {
         $washOrder = QueryBuilder::for(WashOrder::class)
             ->withCount('printHistories')
@@ -72,7 +72,7 @@ class WashOrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateWashOrderRequest $request, WashOrder $order)
+    public function update(UpdateWashOrderRequest $request, WashOrder $order): WashOrderResource
     {
         $order->update($request->all());
 
