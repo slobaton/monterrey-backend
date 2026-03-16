@@ -242,7 +242,7 @@
                 <td>
                     <div class="detail-row-2col">
                         <div class="detail-left">
-                            <div><b>TIPO:</b> {{ Str::upper($detail->clothType->name) }}</div>
+                            <div><b>TIPO PRENDA:</b> {{ Str::upper($detail->clothType->name) }}</div>
                             <div><b>TAM:</b> {{ Str::upper($detail->clothSize->name) }}</div>
                             <div><b>CANT:</b> {{ $detail->quantity }}</div>
                         </div>
