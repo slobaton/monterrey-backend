@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\Roles;
 use Illuminate\Http\Request;
 
 class WashOrderResource extends ApiResource
@@ -15,6 +16,8 @@ class WashOrderResource extends ApiResource
      */
     public function toArray(Request $request): array
     {
+        $isReceptionist = $request->user()?->hasAnyRole([Roles::RECEPTIONIST->value]);
+
         $data = [
             'id'                 => $this->id,
             'client_id'          => $this->client_id,
@@ -22,16 +25,19 @@ class WashOrderResource extends ApiResource
             'code'               => $this->code,
             'date'               => $this->date,
             'total_quantity'     => $this->total_quantity,
-            'total_price'        => $this->total_price,
             'status'             => $this->status,
             'deliver_quantity'   => $this->deliver_quantity,
             'observations'       => $this->observations,
             'is_rewash'          => $this->is_rewash,
-            'rewash_price'       => $this->rewash_price,
             'print_count'        => $this->print_histories_count,
             'created_at'         => $this->created_at,
             'updated_at'         => $this->updated_at
         ];
+
+        if (!$isReceptionist) {
+            $data['total_price']  = $this->total_price;
+            $data['rewash_price'] = $this->rewash_price;
+        }
 
         $client = new ClientResource($this->whenLoaded('client'));
         if (!is_null($client)) {

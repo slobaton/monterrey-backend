@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Enums\Roles;
 use Illuminate\Http\Request;
 
 class WashOrderDetailResource extends ApiResource
@@ -15,26 +16,31 @@ class WashOrderDetailResource extends ApiResource
      */
     public function toArray(Request $request): array
     {
+        $isReceptionist = $request->user()?->hasAnyRole([Roles::RECEPTIONIST->value]);
+
         $data = [
             'id'                     => $this->id,
             'wash_order_id'          => $this->wash_order_id,
             'cloth_type_id'          => $this->cloth_type_id,
             'cloth_size_id'          => $this->cloth_size_id,
-            'wash_price'             => $this->wash_price,
-            'effect_price'           => $this->effect_price,
             'is_focalizado_active'   => $this->is_focalizado_active,
-            'focalizado_price'       => $this->focalizado_price,
             'is_nevado_active'       => $this->is_nevado_active,
-            'nevado_price'           => $this->nevado_price,
             'num_buttonholes'        => $this->num_buttonholes,
-            'buttonholes_price'      => $this->buttonholes_price,
-            'unit_price'             => $this->unit_price,
             'quantity'               => $this->quantity,
-            'subtotal_price'        => $this->subtotal_price,
             'observations'           => $this->observations,
             'created_at'             => $this->created_at,
             'updated_at'             => $this->updated_at
         ];
+
+        if (!$isReceptionist) {
+            $data['wash_price']        = $this->wash_price;
+            $data['effect_price']      = $this->effect_price;
+            $data['focalizado_price']  = $this->focalizado_price;
+            $data['nevado_price']      = $this->nevado_price;
+            $data['buttonholes_price'] = $this->buttonholes_price;
+            $data['unit_price']        = $this->unit_price;
+            $data['subtotal_price']    = $this->subtotal_price;
+        }
 
         $clothType = new ClothTypeResource($this->whenLoaded('clothType'));
         if (!is_null($clothType)) {
