@@ -33,7 +33,6 @@ final class WashOrder extends Model
         'deliver_quantity',
         'deliver_date',
         'observations',
-        'is_special_price',
         'is_rewash',
         'rewash_price'
     ];
@@ -41,7 +40,6 @@ final class WashOrder extends Model
     protected $casts = [
         'date' => 'date',
         'total_price' => 'real',
-        'is_special_price' => 'boolean',
         'is_rewash' => 'boolean',
         'rewash_price' => 'real'
     ];
@@ -267,7 +265,6 @@ final class WashOrder extends Model
             'date',
             'total_price',
             'total_quantity',
-            'is_special_price',
             'is_rewash'
         ];
     }
