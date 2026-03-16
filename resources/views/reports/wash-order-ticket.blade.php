@@ -186,7 +186,6 @@
         /* ======== Pie de página ======== */
         .footer {
             margin-top: 6px;
-            text-align: center;
             font-size: 9px;
             line-height: 10px;
             border-top: 1px dashed #000;
@@ -195,7 +194,7 @@
 
         @font-face {
             font-family: 'primeicons';
-            font-display: block;
+            /* font-display: block; */
             src: url('{{ 'file://'.str_replace('\\','/',public_path('fonts/primeicons.ttf')) }}') format('truetype'),
                 url('/fonts/primeicons.woff2') format('woff2'),
                 url('/fonts/primeicons.woff') format('woff'),
@@ -219,10 +218,6 @@
         .pi:before {
             --webkit-backface-visibility:hidden;
             backface-visibility: hidden;
-        }
-
-        .pi-check-square:before {
-            content: "\e98c";
         }
 
     </style>
@@ -283,17 +278,16 @@
                             <div><b>CANT:</b> {{ $detail->quantity }}</div>
                         </div>
                         <div class="detail-right">
-                            <div class="efectos-header">EFECTOS</div>
-                            <div class="efectos-list">
+                            <div class="efectos-header"><b>EFECTOS</b></div>
+                            <!-- <div class="efectos-list"> -->
                                 <ul>
                                     @foreach($detail->effects as $effect)
                                         <li class="efecto-item">
-                                            <span class="pi">&#xE98C;</span>
-                                            <span class="efecto-name">{{ Str::upper($effect->name) }}</span>
+                                            <span class="efecto-name"><i class="pi">&#xE98C;</i> {{ Str::upper($effect->name) }}</span>
                                         </li>
                                     @endforeach
                                 </ul>
-                            </div>
+                            <!-- </div> -->
                         </div>
                     </div>
                 </td>
@@ -312,7 +306,12 @@
 
     <!-- ======== PIE DE PÁGINA ======== -->
     <div class="footer">
-        Gracias por preferirnos
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <td style="text-align:left; vertical-align:top;">{{ $washOrder->printHistories()->count() > 1 ? 'REIMPRESION' : '' }}</td>
+                <td style="text-align:right; vertical-align:top;">{{ optional($washOrder->created_at)->format('d/m/Y H:i:s') }}</td>
+            </tr>
+        </table>
     </div>
 </div>
 </body>

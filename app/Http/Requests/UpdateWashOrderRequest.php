@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Enums\OrderStatus;
+use App\Enums\Roles;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateWashOrderRequest extends FormRequest
@@ -27,6 +28,15 @@ class UpdateWashOrderRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            if ($this->boolean('is_rewash') && !$this->user()?->hasAnyRole([Roles::ADMIN->value, Roles::SECRETARY->value])) {
+                $validator->errors()->add('is_rewash', 'No tiene permiso para modificar órdenes de relavado.');
+            }
+        });
+    }
+
     public function rules(): array
     {
         return [
