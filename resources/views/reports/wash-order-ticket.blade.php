@@ -25,37 +25,6 @@
             text-align: center;
             margin-bottom: 4px;
         }
-        /*
-         * Contenedor de la empresa (logo + texto opcional)
-         * Centra todo lo que haya dentro de él
-         */
-        .header .empresa {
-            width: 100%;
-            margin-bottom: 4px;
-        }
-        /*
-         * Ajustamos el logo a un ancho máximo de 100px,
-         * con height auto para mantener proporción
-         */
-        .header .empresa .logo {
-            max-width: 100px;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-
-        /* Si deseas mostrar el nombre de la empresa debajo del logo */
-        .header .empresa .nombre-empresa {
-            font-size: 14px;
-            font-weight: bold;
-            line-height: 14px;
-            margin-top: 2px;
-        }
-        .header .empresa .subtitulo {
-            font-size: 10px;
-            line-height: 10px;
-            margin-top: 0px;
-        }
 
         /* Código / número de ficha: separado con bordes punteados */
         .header .codigo {
