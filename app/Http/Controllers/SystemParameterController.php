@@ -59,16 +59,4 @@ class SystemParameterController extends Controller
         return new SystemParameterResource($parameter);
     }
 
-    /**
-     * Retrieve currency change rate param value
-     */
-    public function getSystemCurrencyChangeRateParam()
-    {
-        $currencyRateParam = SystemParameter::where('code', SystemParameter::CURRENCY_CHANGE_RATE)
-            ->first();
-
-        return $this->respondWithSuccess([
-            'currency_rate' => $currencyRateParam->value
-        ]);
-    }
 }

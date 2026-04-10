@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\Roles;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreWashOrderRequest extends FormRequest
@@ -19,6 +20,15 @@ class StoreWashOrderRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
      */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            if ($this->boolean('is_rewash') && !$this->user()?->hasAnyRole([Roles::ADMIN->value, Roles::SECRETARY->value])) {
+                $validator->errors()->add('is_rewash', 'No tiene permiso para crear órdenes de relavado.');
+            }
+        });
+    }
+
     public function rules(): array
     {
         return [
@@ -28,7 +38,6 @@ class StoreWashOrderRequest extends FormRequest
             'deliver_quantity' => 'nullable|sometimes|integer',
             'deliver_date' => 'nullable|sometimes|date',
             'observations' => 'nullable|sometimes|string',
-            'is_special_price' => 'required|boolean',
             'is_rewash' => 'required|boolean',
             'rewash_price' => 'exclude_unless:is_rewash,true|required|numeric|min:0|max:99999999,99'
         ];

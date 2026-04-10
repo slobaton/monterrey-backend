@@ -30,8 +30,6 @@ class SystemParameter extends Model
     const NEVADO_PRICE = 'nevado_price';
     const BUTTONHOLE_PRICE = 'buttonhole_price';
     const BUTTONHOLE_MIN = 'buttonhole_min';
-    const CURRENCY_CHANGE_RATE = 'currency_change_rate';
-
     public function clientValues(): HasMany
     {
         return $this->hasMany(ClientParameterValue::class, 'system_parameter_id', 'id');

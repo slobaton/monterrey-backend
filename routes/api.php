@@ -51,7 +51,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('clients/{client}/movements', [ClientController::class, 'getAccountMovements']);
     Route::post('clients/{client}/payment', [ClientController::class, 'addPaymentMovement']);
     Route::post('clients/{client}/discount', [ClientController::class, 'addDiscountMovement']);
-    Route::get('clients/{client}/currency-rate', [ClientController::class, 'getCurrencyChangeRate']);
 
     Route::apiResource('wash-types', WashTypeController::class);
     Route::apiResource('effects', EffectController::class);
@@ -94,7 +93,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('parameters', 'index');
         Route::get('parameters/{parameter}', 'show');
         Route::patch('parameters/{parameter}', 'update');
-        Route::get('parameters/currency/changeRate', 'getSystemCurrencyChangeRateParam');
     });
 
     Route::controller(AccountMovementController::class)->group(function () {
