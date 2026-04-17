@@ -25,7 +25,7 @@ class ClientController extends Controller
         $this->middleware('role:' . Roles::ADMIN->value)
             ->only(['update', 'destroy']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value)
-            ->only(['getWashTypes', 'getEffects', 'getParameters', 'getAccountMovements', 'addPaymentMovement', 'addDiscountMovement']);
+            ->only(['getWashTypes', 'getEffects', 'getParameters', 'getAccountMovements', 'addPaymentMovement', 'addDiscountMovement', 'getCurrencyChangeRate']);
         $this->middleware('role:' . Roles::ADMIN->value . ',' . Roles::SECRETARY->value . ',' . Roles::RECEPTIONIST->value)
             ->only(['index', 'store', 'show']);
     }
@@ -205,4 +205,14 @@ class ClientController extends Controller
         return $this->respondWithSuccess();
     }
 
+    public function getCurrencyChangeRate(Request $request, Client $client)
+    {
+        $currencyRate = $client->getCurrencyRate();
+
+        $data = [
+            'value' => $currencyRate
+        ];
+
+        return $this->respondWithSuccess($data);
+    }
 }

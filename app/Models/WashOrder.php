@@ -33,6 +33,7 @@ final class WashOrder extends Model
         'deliver_quantity',
         'deliver_date',
         'observations',
+        'is_special_price',
         'is_rewash',
         'rewash_price'
     ];
@@ -40,6 +41,7 @@ final class WashOrder extends Model
     protected $casts = [
         'date' => 'date',
         'total_price' => 'real',
+        'is_special_price' => 'boolean',
         'is_rewash' => 'boolean',
         'rewash_price' => 'real'
     ];
@@ -265,6 +267,7 @@ final class WashOrder extends Model
             'date',
             'total_price',
             'total_quantity',
+            'is_special_price',
             'is_rewash'
         ];
     }
@@ -285,14 +288,14 @@ final class WashOrder extends Model
     public function checkPermissionOrFail(): void
     {
         if ($this->status === OrderStatus::CREATED->value) {
-            abort_json(403, 'No tienes permiso.');
+            abort(403, 'No tienes permiso.');
         }
     }
 
     public function checkIfUserCanPrint($washOrder, $user): void
     {
-        if ($washOrder->printHistories()->count() > 1 && ! $user->isAdmin()) {
-            abort_json(403, 'No está permitido imprimir más de una vez a menos que seas administrador.');
+        if ($washOrder->printHistories()->count() > 1 && !$user->isAdmin()) {
+            abort(403, 'Not allowed to print more than once unless you are an admin.');
         }
     }
 

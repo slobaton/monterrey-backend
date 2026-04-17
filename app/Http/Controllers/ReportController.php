@@ -32,12 +32,12 @@ class ReportController extends Controller
         $user = User::find($userId);
 
         if (!$user) {
-            abort_json(404, 'Usuario no encontrado.');
+            abort(404, 'User not found.');
         }
 
         $washOrder = WashOrder::with(['client', 'washType', 'details'])->find($washOrderId);
         if (!$washOrder) {
-            abort_json(404, 'Orden de lavado no encontrada.');
+            abort(404, 'Wash Order not found.');
         }
 
         $washOrder->checkPermissionOrFail();
@@ -48,7 +48,7 @@ class ReportController extends Controller
 
         $data = $washOrder->prepareReportData($user);
 
-        $pdf = Pdf::loadView('reports/wash-order-ticket', $data)
+        $pdf = Pdf::loadView('reports/wash-order', $data)
             ->setPaper('letter', 'landscape');
 
         $this->addExtraInfo($pdf, $user);
@@ -96,7 +96,7 @@ class ReportController extends Controller
 
         $timestamp = Carbon::now()->timestamp;
 
-        return $pdf->stream(filename: "movements-{$timestamp}.pdf");
+        return $pdf->stream("movements-{$timestamp}.pdf");
     }
 
     public function monthlyIncomesReport(Request $request)

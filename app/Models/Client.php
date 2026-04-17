@@ -165,6 +165,20 @@ class Client extends Model
         return $this->save();
     }
 
+    public function getCurrencyRate()
+    {
+        $currencyRateParam = SystemParameter::where('code', SystemParameter::CURRENCY_CHANGE_RATE)
+            ->firstOrFail();
+
+        $clientCurrencyRateParam = $currencyRateParam->clientValues()
+            ->where('client_id', $this->id)
+            ->first();
+
+        return $clientCurrencyRateParam
+            ? $clientCurrencyRateParam->value
+            : $currencyRateParam->value;
+    }
+
     public static function getAllowedFilters()
     {
         return [
